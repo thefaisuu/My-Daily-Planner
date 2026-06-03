@@ -72,6 +72,7 @@ function PageRenderer() {
 
 export default function App() {
   const { user, setUser, authLoading, toast, setToast } = useApp();
+  const [authView, setAuthView] = useState(null); // null = landing, 'login' | 'signup' = auth modal
 
   if (authLoading) {
     return (
@@ -86,8 +87,6 @@ export default function App() {
       </div>
     );
   }
-
-  const [authView, setAuthView] = useState(null); // null = landing, 'login' | 'signup' = auth modal
 
   if (!user) {
     if (authView) {
