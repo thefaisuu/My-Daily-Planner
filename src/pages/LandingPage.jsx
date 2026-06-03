@@ -50,28 +50,12 @@ const FEATURES = [
     bg: 'bg-purple-50',
     border: 'border-purple-100',
   },
-  {
-    icon: '✨',
-    title: 'Planner AI',
-    desc: 'Your personal AI assistant powered by Gemini. Get personalized advice, motivation, daily plans, and wellness tips 24/7.',
-    gradient: 'from-[#5B6CFF] to-[#A78BFA]',
-    bg: 'bg-slate-50',
-    border: 'border-slate-100',
-  },
-  {
-    icon: '☀️',
-    title: 'Daily Spark',
-    desc: 'Wake up to an AI-generated morning, afternoon, evening or night briefing tailored to your actual habits and schedule data.',
-    gradient: 'from-yellow-400 to-orange-400',
-    bg: 'bg-yellow-50',
-    border: 'border-yellow-100',
-  },
 ];
 
 const STATS = [
-  { value: '8+', label: 'Productivity Tools', icon: '🛠️' },
+  { value: '6+', label: 'Productivity Tools', icon: '🛠️' },
   { value: '100%', label: 'Privacy First', icon: '🔒' },
-  { value: '24/7', label: 'AI Assistance', icon: '✨' },
+  { value: 'Modern', label: 'Dashboard UI', icon: '🎨' },
   { value: 'Free', label: 'Always Free', icon: '💝' },
 ];
 
@@ -80,14 +64,14 @@ const TESTIMONIALS = [
     name: 'Sarah K.',
     role: 'Freelance Designer',
     avatar: '👩‍🎨',
-    text: 'My Daily Planner completely transformed my mornings. The habit tracker + AI briefing combo is unreal!',
+    text: 'My Daily Planner completely transformed my mornings. The habit tracker and printable daily schedule are exactly what I needed!',
     stars: 5,
   },
   {
     name: 'Ahmed R.',
     role: 'Software Engineer',
     avatar: '👨‍💻',
-    text: 'Finally an app that has everything in one place. The Planner AI gives surprisingly useful advice based on my real data.',
+    text: 'Finally an app that has everything in one place. The customizable widgets and notes help me stay extremely organized throughout the day.',
     stars: 5,
   },
   {
@@ -270,7 +254,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-200 bg-white/80 backdrop-blur-sm shadow-sm mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">AI-Powered Productivity Suite</span>
+            <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Personal Productivity Suite</span>
           </div>
 
           {/* Headline */}
@@ -286,7 +270,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed mb-10 font-medium">
-            Habits, schedule, notes, mood, water, focus and an AI assistant — all in one gorgeous personal planner that actually helps you grow.
+            Habits, schedule, notes, mood, water, and focus timer — all in one gorgeous personal planner that actually helps you grow.
           </p>
 
           {/* CTA Buttons */}
@@ -326,15 +310,6 @@ export default function LandingPage({ onLogin, onSignup }) {
                 </div>
               ))}
             </div>
-            {/* Floating AI badge */}
-            <div className="absolute -top-4 -right-4 sm:-right-8 flex items-center gap-2 px-4 py-2.5 rounded-2xl shadow-xl border border-indigo-100 bg-white/95 backdrop-blur-sm">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-sm"
-                style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>✦</div>
-              <div>
-                <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">Planner AI</p>
-                <p className="text-xs font-bold text-slate-700">Ready to help! ✨</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -355,7 +330,7 @@ export default function LandingPage({ onLogin, onSignup }) {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-4">
               <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Everything You Need</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-4">8 powerful tools,{' '}
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-4">6 powerful tools,{' '}
               <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
                 one beautiful app
               </span>
@@ -405,9 +380,9 @@ export default function LandingPage({ onLogin, onSignup }) {
               },
               {
                 step: '03',
-                title: 'Let AI guide your day',
-                desc: 'Your personalized Daily Spark briefing updates throughout the day. Chat with Planner AI anytime for advice.',
-                icon: '✨',
+                title: 'Track your progress',
+                desc: 'View your completion charts, keep streaks alive, and review mood logs to see how you grow.',
+                icon: '📈',
                 color: '#f472b6',
               },
             ].map((step, i) => (
