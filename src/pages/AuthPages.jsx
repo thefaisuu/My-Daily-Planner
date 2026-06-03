@@ -156,7 +156,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
               ✨
             </div>
             <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
-              Planner AI
+              My Daily Planner
             </h2>
             <p className="text-xs font-semibold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-widest">
               {view === 'login' ? 'Welcome Back' : view === 'signup' ? 'Get Started' : 'Reset Password'}
