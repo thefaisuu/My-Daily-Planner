@@ -6,7 +6,6 @@ const NAV_ITEMS = [
   { icon: '😊', label: 'Mood', id: 'Mood' },
   { icon: '📝', label: 'Notes', id: 'Notes' },
   { icon: '💧', label: 'Water', id: 'Water' },
-  { icon: '✦', label: 'Planner AI', id: 'AI Assistant' },
   { icon: '⚙️', label: 'Settings', id: 'Settings' },
 ];
 

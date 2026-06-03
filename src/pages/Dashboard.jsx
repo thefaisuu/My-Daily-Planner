@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { getCachedBriefing, saveCachedBriefing } from '../utils/supabase';
 import { supabase } from '../lib/supabase';
 
 /* ═══════════════════════════════════════════════════════
@@ -532,87 +531,11 @@ function PriorityTasksCard({ navigate, darkMode }) {
   );
 }
 
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
-
-async function fetchDailyBriefing(context, timePeriod) {
-  const systemPrompt = `You are a warm, motivating personal planner assistant. Generate a highly motivating daily briefing for the ${timePeriod} period in exactly 3 short sentences. Use emojis. Base it on their context (habits, schedule, mood, water). Speak directly to the user.
-- If Morning: help them start the day with focus, energy, and priority planning.
-- If Afternoon: give them a mid-day boost to stay focused, hydrate, and maintain momentum.
-- If Evening: celebrate progress, review what went well, and start winding down.
-- If Night: encourage deep rest, relaxation, off-screen sleep prep, and self-care.`;
-
-  const res = await fetch(
-    'https://openrouter.ai/api/v1/chat/completions',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Planner AI'
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: `Here is my planner context for today:\n${context}`
-          }
-        ],
-        temperature: 0.85,
-        max_tokens: 200,
-        stream: false
-      })
-    }
-  );
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `HTTP ${res.status}`);
-  }
-
-  const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error('Failed to retrieve briefing.');
-  return text;
-}
-
-function getBriefingContext(data) {
-  const { habits, water, mood } = data;
-  const doneHabits = habits.filter(h => h.doneToday).length;
-  const totalHabits = habits.length;
-  const habitsList = habits.map(h => `${h.icon} ${h.name} (${h.doneToday ? 'done' : 'pending'})`).join(', ');
-
-  const scheduleRaw = localStorage.getItem('planner_schedule');
-  let eventsStr = 'none';
-  try {
-    if (scheduleRaw) {
-      const slots = JSON.parse(scheduleRaw);
-      const events = Object.entries(slots)
-        .filter(([, v]) => v.task?.trim())
-        .map(([h, v]) => `${h}:00: ${v.task} (${v.done ? 'done' : 'pending'})`);
-      if (events.length > 0) eventsStr = events.join(' | ');
-    }
-  } catch (_) {}
-
-  return `Habits completed: ${doneHabits}/${totalHabits}. Today's Habits: ${habitsList || 'None'}.
-Water intake: ${water.glasses}/${water.goal} glasses.
-Mood logged: ${mood ? `${mood.emoji} ${mood.label} (${mood.note || ''})` : 'Not logged yet'}.
-Schedule events: ${eventsStr}.`;
-}
-
 function DashboardSkeleton() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 animate-pulse max-w-7xl mx-auto">
       {/* Greeting Banner skeleton */}
       <div className="h-44 w-full rounded-3xl bg-slate-200 dark:bg-slate-700" />
-      
-      {/* AI Daily Briefing skeleton */}
-      <div className="h-28 w-full rounded-3xl bg-slate-200 dark:bg-slate-700" />
       
       {/* Daily Summary skeleton */}
       <div className="flex gap-3 overflow-x-auto pb-1">
@@ -639,10 +562,6 @@ export default function Dashboard() {
   const [now,     setNow]     = useState(new Date());
   const [data,    setData]    = useState({ habits: [], notes: [], water: { glasses: 0, goal: 8 }, mood: null });
   const [sessions]            = useState(0); // focus sessions from timer (resets on page reload)
-
-  const [briefing, setBriefing]         = useState('');
-  const [loadingBriefing, setLoadingBriefing]   = useState(false);
-  const [briefingError, setError]       = useState('');
 
   const [loading, setLoading] = useState(true);
   const isInitialLoad = useRef(true);
@@ -784,57 +703,9 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const loadBriefing = useCallback(async (force = false, currentData = data) => {
-    const period = getTimePeriod();
-    const date = `${todayKey()}-${period.toLowerCase()}`;
-    const userEmail = user?.email || 'ata@planner.app';
-    setLoadingBriefing(true);
-    setError('');
-    try {
-      if (!force) {
-        const cached = await getCachedBriefing(date, userEmail);
-        if (cached) {
-          setBriefing(cached);
-          setLoadingBriefing(false);
-          return;
-        }
-      }
-      const context = getBriefingContext(currentData);
-      const newBriefing = await fetchDailyBriefing(context, period);
-      setBriefing(newBriefing);
-      await saveCachedBriefing(date, newBriefing, userEmail);
-    } catch (err) {
-      console.error(err);
-      setError(err.message || 'Could not load briefing.');
-    } finally {
-      setLoadingBriefing(false);
-    }
-  }, [user?.email, data]);
-
   useEffect(() => {
-    let active = true;
-    const period = getTimePeriod();
-    const date = `${todayKey()}-${period.toLowerCase()}`;
-    const userEmail = user?.email || 'ata@planner.app';
-    
-    if (userEmail) {
-      getCachedBriefing(date, userEmail).then(cached => {
-        if (active && cached) {
-          setBriefing(cached);
-        }
-      }).catch(err => console.error('Failed to get cached briefing:', err));
-    }
-
-    loadAllDBData().then(freshData => {
-      if (active) {
-        loadBriefing(false, freshData);
-      }
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [loadAllDBData, loadBriefing, user?.email]);
+    loadAllDBData();
+  }, [loadAllDBData]);
 
   /* Refresh data every 30s */
   useEffect(() => {
@@ -842,24 +713,14 @@ export default function Dashboard() {
     return () => clearInterval(id);
   }, [loadAllDBData]);
 
-  /* Re-read when localStorage changes or on planner-data-changed event */
+  /* Re-read on planner-data-changed event */
   useEffect(() => {
     const handler = () => {
-      loadAllDBData().then(freshData => {
-        const period = getTimePeriod();
-        const date = `${todayKey()}-${period.toLowerCase()}`;
-        const userEmail = user?.email || 'ata@planner.app';
-        getCachedBriefing(date, userEmail).then(cached => {
-          setBriefing(cached || '');
-          if (!cached) {
-            loadBriefing(false, freshData);
-          }
-        });
-      });
+      loadAllDBData();
     };
     window.addEventListener('planner-data-changed', handler);
     return () => window.removeEventListener('planner-data-changed', handler);
-  }, [loadAllDBData, loadBriefing, user?.email]);
+  }, [loadAllDBData]);
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000);
@@ -879,40 +740,6 @@ export default function Dashboard() {
 
         {/* ── Greeting (full width) ── */}
         <GreetingBanner now={now} habits={habits} water={water} mood={mood} />
-
-        {/* ── AI Daily Briefing (full width) ── */}
-        <div className="card col-span-full border border-pink-100 bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:from-slate-800/50 dark:to-slate-800/30 animate-fade-in">
-          <div className="flex items-center justify-between pb-3 border-b border-pink-100/30">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">✨</span>
-              <h2 className="font-black text-slate-700 dark:text-slate-200 text-sm uppercase tracking-wider">Daily Spark</h2>
-            </div>
-            <button
-              onClick={() => loadBriefing(true)}
-              disabled={loadingBriefing}
-              className={`p-1.5 rounded-xl hover:bg-pink-100/60 dark:hover:bg-slate-700 text-slate-500 hover:text-pink-600 transition-all ${loadingBriefing ? 'animate-spin opacity-50' : ''}`}
-              title="Regenerate briefing"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18" />
-              </svg>
-            </button>
-          </div>
-          <div className="pt-4">
-            {loadingBriefing ? (
-              <div className="flex items-center gap-3 py-2 text-slate-400">
-                <svg className="w-5 h-5 animate-spin text-pink-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                <span className="text-sm font-semibold animate-pulse">Brewing your message...</span>
-              </div>
-            ) : briefingError ? (
-              <p className="text-xs text-rose-500 font-semibold">⚠️ {briefingError}</p>
-            ) : (
-              <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic">
-                "{briefing || 'Have a beautiful and productive day ahead!'}"
-              </p>
-            )}
-          </div>
-        </div>
 
         {/* ── Daily Summary (full width) ── */}
         <DailySummary habits={habits} water={water} mood={mood} sessions={sessions} />

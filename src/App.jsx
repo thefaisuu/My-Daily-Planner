@@ -9,7 +9,6 @@ import FocusTimerPage from './pages/FocusTimerPage';
 import MoodPage from './pages/MoodPage';
 import NotesPage from './pages/NotesPage';
 import WaterPage from './pages/WaterPage';
-import AIAssistantPage from './pages/AIAssistantPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPages from './pages/AuthPages';
@@ -57,7 +56,6 @@ function PageRenderer() {
       case 'Notes':          return <NotesPage />;
       case 'Water':          return <WaterPage />;
       case 'Notifications':  return <NotificationsPage />;
-      case 'AI Assistant':   return <AIAssistantPage />;
       case 'Settings':       return <SettingsPage />;
       default:               return <Dashboard />;
     }
