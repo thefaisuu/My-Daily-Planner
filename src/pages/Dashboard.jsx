@@ -455,7 +455,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
 
       const init = {};
       SLOT_HOURS.forEach(h => {
-        init[h] = { task: '', done: false, cat: 'work' };
+        init[h] = { task: '', done: false, cat: 'work', startTime: `${String(h).padStart(2,'0')}:00`, endTime: `${String(Math.min(h + 1, 23)).padStart(2,'0')}:00` };
       });
 
       if (data) {
@@ -464,18 +464,24 @@ function PriorityTasksCard({ navigate, darkMode }) {
           if (!isNaN(hour) && init[hour] !== undefined) {
             let parsedTask = row.task;
             let cat = 'work';
+            let startTime = `${String(hour).padStart(2,'0')}:00`;
+            let endTime = `${String(Math.min(hour + 1, 23)).padStart(2,'0')}:00`;
             try {
               if (row.task.startsWith('{')) {
                 const json = JSON.parse(row.task);
                 parsedTask = json.task || '';
                 cat = json.cat || 'work';
+                startTime = json.startTime || startTime;
+                endTime = json.endTime || endTime;
               }
             } catch (_) {}
 
             init[hour] = {
               task: parsedTask,
               done: row.completed,
-              cat
+              cat,
+              startTime,
+              endTime
             };
           }
         });
@@ -499,14 +505,52 @@ function PriorityTasksCard({ navigate, darkMode }) {
     return () => window.removeEventListener('planner-data-changed', loadSlots);
   }, [loadSlots]);
 
-  /* Build display list: current slot + next 2 with tasks */
+  const getMins = (timeStr, defaultHour) => {
+    if (timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      if (!isNaN(h)) return h * 60 + (m || 0);
+    }
+    return defaultHour * 60;
+  };
+
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  /* Build display list: current slot + next 2 with tasks, sorted chronologically */
   const filled = SLOT_HOURS
     .filter(h => slots[h]?.task?.trim())
-    .map(h => ({ hour: h, label: slotLabel(h), ...slots[h] }));
+    .map(h => {
+      const slot = slots[h];
+      const startMin = getMins(slot.startTime, h);
+      const endMin = getMins(slot.endTime, h + 1);
+      const isCurrent = nowMin >= startMin && nowMin < endMin;
+      const isPast = nowMin >= endMin;
+      
+      const timeLabel = (t) => {
+        if (!t) return '';
+        const [hStr, mStr] = t.split(':');
+        const hVal = parseInt(hStr);
+        const mVal = parseInt(mStr || '0');
+        if (isNaN(hVal)) return t;
+        const ampm = hVal < 12 ? 'AM' : 'PM';
+        const h12 = hVal === 0 ? 12 : hVal > 12 ? hVal - 12 : hVal;
+        return `${h12}:${String(mVal).padStart(2,'0')} ${ampm}`;
+      };
 
-  const current  = filled.find(s => s.hour === currentHour) || null;
-  const upcoming = filled.filter(s => s.hour > currentHour).slice(0, current ? 2 : 3);
-  const display  = [...(current ? [{ ...current, isCurrent: true }] : []), ...upcoming];
+      return {
+        hour: h,
+        label: slot.startTime ? timeLabel(slot.startTime) : slotLabel(h),
+        startMin,
+        endMin,
+        isCurrent,
+        isPast,
+        ...slot
+      };
+    })
+    .sort((a, b) => a.startMin - b.startMin);
+
+  const current  = filled.find(s => s.isCurrent) || null;
+  const upcoming = filled.filter(s => !s.isPast && !s.isCurrent).slice(0, current ? 2 : 3);
+  const display  = [...(current ? [current] : []), ...upcoming];
 
   const doneCount  = filled.filter(s => s.done).length;
   const totalCount = filled.length;

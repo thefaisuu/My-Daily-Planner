@@ -442,7 +442,7 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
             : isCompleted ? 'bg-emerald-400 text-white'
             : darkMode    ? 'bg-slate-700 text-slate-300'
             :               'bg-slate-100 text-slate-500'}`}>
-            {slot.label}
+            {data?.startTime ? timeLabel(data.startTime) : slot.label}
           </span>
 
           {isCurrent && (
@@ -1122,6 +1122,17 @@ export default function SchedulePage() {
     if (!slotData[s.hour]?.task?.trim()) return false; // never show empty slots
     if (activeFilter === 'completed') return slotData[s.hour]?.done;
     return true; // 'all' = all filled slots
+  }).sort((a, b) => {
+    const dataA = slotData[a.hour];
+    const dataB = slotData[b.hour];
+    const getStartMin = (slot, data) => {
+      if (data?.startTime) {
+        const [sh, sm] = data.startTime.split(':').map(Number);
+        if (!isNaN(sh)) return sh * 60 + (sm || 0);
+      }
+      return slot.hour * 60;
+    };
+    return getStartMin(a, dataA) - getStartMin(b, dataB);
   });
 
   const filledSlots = SLOTS.filter(s => slotData[s.hour]?.task?.trim());
@@ -1300,8 +1311,25 @@ export default function SchedulePage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {visibleSlots.map((slot) => {
-                    const isCurrent = slot.hour === currentHour;
-                    const isPast    = slot.hour < currentHour;
+                    const data = slotData[slot.hour];
+                    const getSlotStatus = () => {
+                      const currentH = now.getHours();
+                      const currentM = now.getMinutes();
+                      const currentMin = currentH * 60 + currentM;
+                      const getMins = (timeStr, defaultHour) => {
+                        if (timeStr) {
+                          const [h, m] = timeStr.split(':').map(Number);
+                          if (!isNaN(h)) return h * 60 + (m || 0);
+                        }
+                        return defaultHour * 60;
+                      };
+                      const startMin = getMins(data?.startTime, slot.hour);
+                      const endMin   = getMins(data?.endTime, slot.hour + 1);
+                      const isCurrent = currentMin >= startMin && currentMin < endMin;
+                      const isPast    = currentMin >= endMin;
+                      return { isCurrent, isPast };
+                    };
+                    const { isCurrent, isPast } = getSlotStatus();
                     return (
                       <div key={slot.hour} id={`slot-${slot.hour}`}
                         className={`${isCurrent ? 'md:col-span-2' : ''} transition-all duration-300`}>
