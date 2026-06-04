@@ -80,10 +80,9 @@ function saveMoods(data) {
 ═══════════════════════════════════════════════════════ */
 function MoodSelector({ selected, onSelect, darkMode }) {
   return (
-    <div className="flex items-end justify-center gap-3 sm:gap-5">
+    <div className="flex items-end justify-center gap-1.5 sm:gap-5">
       {MOODS.map((m, i) => {
         const isSelected = selected === m.id;
-        const size = isSelected ? 88 : 68;
         return (
           <button
             key={m.id}
@@ -93,10 +92,10 @@ function MoodSelector({ selected, onSelect, darkMode }) {
           >
             {/* Emoji bubble */}
             <div
-              className="rounded-3xl flex items-center justify-center transition-all duration-300 relative"
+              className={`rounded-3xl flex items-center justify-center transition-all duration-300 relative
+                ${isSelected ? 'w-14 h-14 sm:w-[88px] sm:h-[88px]' : 'w-10 h-10 sm:w-[68px] sm:h-[68px]'}
+              `}
               style={{
-                width: size,
-                height: size,
                 background: isSelected
                   ? `radial-gradient(circle at 35% 30%, ${m.color}40, ${m.color}20)`
                   : darkMode ? '#1e293b' : '#f8fafc',
@@ -106,7 +105,9 @@ function MoodSelector({ selected, onSelect, darkMode }) {
                   : 'none',
               }}
             >
-              <span style={{ fontSize: isSelected ? 44 : 34 }} className="leading-none select-none transition-all duration-300">
+              <span className={`leading-none select-none transition-all duration-300
+                ${isSelected ? 'text-2xl sm:text-[44px]' : 'text-xl sm:text-[34px]'}
+              `}>
                 {m.emoji}
               </span>
               {/* Glow ring */}
@@ -117,7 +118,7 @@ function MoodSelector({ selected, onSelect, darkMode }) {
             </div>
             {/* Label */}
             <span
-              className="text-xs font-black uppercase tracking-wider transition-all duration-200"
+              className="text-[9px] sm:text-xs font-black uppercase tracking-wider transition-all duration-200"
               style={{ color: isSelected ? m.color : darkMode ? '#64748b' : '#94a3b8' }}
             >
               {m.label}
@@ -642,7 +643,7 @@ export default function MoodPage() {
             <div className="space-y-5">
 
               {/* Mood selector card */}
-              <div className={`rounded-3xl p-6 sm:p-8 border shadow-sm
+              <div className={`rounded-3xl p-4 sm:p-8 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}
                 ${sel ? `shadow-lg` : ''}`}
                 style={sel ? { boxShadow: `0 8px 32px ${sel.glow}` } : {}}
