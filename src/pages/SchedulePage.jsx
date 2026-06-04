@@ -61,13 +61,14 @@ function timeLabel(t) {
 /* ═══════════════════════════════════════════════════════
    ADD / EDIT EVENT MODAL
 ═══════════════════════════════════════════════════════ */
-function EventModal({ hour, slotLabel, existing, darkMode, onSave, onClose }) {
+function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onClose }) {
   const [task,      setTask]      = useState(existing?.task      || '');
   const [cat,       setCat]       = useState(existing?.cat       || 'work');
   const [date,      setDate]      = useState(existing?.date      || todayISO());
   const [startTime, setStartTime] = useState(existing?.startTime || hourToTime(hour));
   const [endTime,   setEndTime]   = useState(existing?.endTime   || hourToTime(Math.min(hour + 1, 23)));
   const [note,      setNote]      = useState(existing?.note      || '');
+  const [bookingError, setBookingError] = useState(false);
 
   const inputRef    = useRef(null);
   const backdropRef = useRef(null);
@@ -76,8 +77,25 @@ function EventModal({ hour, slotLabel, existing, darkMode, onSave, onClose }) {
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
+  // Check if chosen time range overlaps any existing event (excluding this slot)
+  const hasTimeConflict = (newStart, newEnd) => {
+    if (!allSlots) return false;
+    return Object.entries(allSlots).some(([h, slot]) => {
+      if (parseInt(h) === hour) return false;   // skip the current slot (editing)
+      if (!slot?.task?.trim())  return false;   // skip empty slots
+      const s = slot.startTime || hourToTime(parseInt(h));
+      const e = slot.endTime   || hourToTime(Math.min(parseInt(h) + 1, 23));
+      return newStart < e && newEnd > s;         // overlap condition
+    });
+  };
+
   const handleSave = () => {
     if (!task.trim()) return;
+    if (hasTimeConflict(startTime, endTime)) {
+      setBookingError(true);
+      return;
+    }
+    setBookingError(false);
     onSave(hour, task.trim(), cat, date, startTime, endTime, note.trim());
     onClose();
   };
@@ -124,6 +142,18 @@ function EventModal({ hour, slotLabel, existing, darkMode, onSave, onClose }) {
             </svg>
           </button>
         </div>
+
+        {/* ── Already booked error ── */}
+        {bookingError && (
+          <div className="mx-6 mb-2 px-4 py-3 rounded-2xl flex items-center gap-3"
+            style={{ background: '#fef2f2', border: '1.5px solid #fca5a5' }}>
+            <span className="text-lg">🚫</span>
+            <div>
+              <p className="text-sm font-black text-red-600">This time slot is already booked!</p>
+              <p className="text-xs text-red-400 mt-0.5">Please edit the existing event or pick a different hour.</p>
+            </div>
+          </div>
+        )}
 
         <div className="px-6 pb-6 pt-5 space-y-5">
 
@@ -915,6 +945,7 @@ export default function SchedulePage() {
           hour={modal.hour}
           slotLabel={modal.label}
           existing={slotData[modal.hour]}
+          allSlots={slotData}
           darkMode={darkMode}
           onSave={handleSave}
           onClose={() => setModal(null)}
@@ -977,10 +1008,9 @@ export default function SchedulePage() {
               {/* Filter + category strip */}
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
-                  { id: 'all',       label: `All (${filledSlots.length})`                                               },
-                  { id: 'filled',    label: `Events (${filledSlots.length})`                                            },
-                  { id: 'empty',     label: `Free (${filledSlots.length > 0 ? SLOTS.length - filledSlots.length : 0})` },
-                  { id: 'completed', label: `Done (${doneSlots.length})`                                                },
+                  { id: 'all',       label: `All (${filledSlots.length})`    },
+                  { id: 'filled',    label: `Events (${filledSlots.length})` },
+                  { id: 'completed', label: `Done (${doneSlots.length})`     },
                 ].map(f => (
                   <button key={f.id} onClick={() => setFilt(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200
