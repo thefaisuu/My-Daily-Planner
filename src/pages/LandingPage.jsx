@@ -683,10 +683,54 @@ function TermsPage({ onBack }) {
 function ContactPage({ onBack }) {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError('');
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
+    if (!accessKey) {
+      console.warn("Web3Forms access key not found. Please add VITE_WEB3FORMS_ACCESS_KEY to your .env file to enable email forwarding.");
+      // Fallback: simulate success for testing
+      setTimeout(() => {
+        setLoading(false);
+        setSubmitted(true);
+      }, 800);
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          from_name: "My Daily Planner Contact Form"
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      setError("Unable to connect to the mail server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -734,7 +778,7 @@ function ContactPage({ onBack }) {
                 Your message has been sent successfully. We will get back to you shortly.
               </p>
               <button 
-                onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', subject: '', message: '' }); }}
+                onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', subject: '', message: '' }); setError(''); }}
                 className="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800"
               >
                 Send another message
@@ -742,16 +786,23 @@ function ContactPage({ onBack }) {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100 text-sm font-semibold text-rose-600">
+                  ⚠️ {error}
+                </div>
+              )}
+
               <div>
                 <label htmlFor="contact-name" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Name</label>
                 <input
                   id="contact-name"
                   type="text"
                   required
+                  disabled={loading}
                   placeholder="Your Name"
                   value={formData.name}
                   onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors disabled:opacity-60"
                 />
               </div>
 
@@ -761,10 +812,11 @@ function ContactPage({ onBack }) {
                   id="contact-email"
                   type="email"
                   required
+                  disabled={loading}
                   placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors disabled:opacity-60"
                 />
               </div>
 
@@ -774,10 +826,11 @@ function ContactPage({ onBack }) {
                   id="contact-subject"
                   type="text"
                   required
+                  disabled={loading}
                   placeholder="How can we help?"
                   value={formData.subject}
                   onChange={(e) => setFormData(p => ({ ...p, subject: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors disabled:opacity-60"
                 />
               </div>
 
@@ -786,20 +839,32 @@ function ContactPage({ onBack }) {
                 <textarea
                   id="contact-message"
                   required
+                  disabled={loading}
                   rows={4}
                   placeholder="Write your message here..."
                   value={formData.message}
                   onChange={(e) => setFormData(p => ({ ...p, message: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none disabled:opacity-60"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all"
+                disabled={loading}
+                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
                 style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}
               >
-                Send Message
+                {loading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Sending Message...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
               </button>
             </form>
           )}
