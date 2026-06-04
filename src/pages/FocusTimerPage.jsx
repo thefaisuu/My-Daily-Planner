@@ -360,6 +360,18 @@ export default function FocusTimerPage() {
     return settings.longMin * 60;
   }, [settings]);
 
+  /* ── Switch mode ── */
+  const switchMode = useCallback((m, autoRun = false) => {
+    clearInterval(intervalRef.current);
+    const dur = getDuration(m);
+    setMode(m);
+    setTotalSecs(dur);
+    setSecsLeft(dur);
+    setRunning(autoRun);
+    setCompleted(false);
+  }, [getDuration]);
+
+
   /* ── Tab title ── */
   useEffect(() => {
     if (!settings.tabTitle) { document.title = 'My Daily Planner 🌸'; return; }
@@ -429,16 +441,7 @@ export default function FocusTimerPage() {
     }
   }, [completed, triggerNotification, switchMode]);
 
-  /* ── Switch mode ── */
-  const switchMode = (m, autoRun = false) => {
-    clearInterval(intervalRef.current);
-    const dur = getDuration(m);
-    setMode(m);
-    setTotalSecs(dur);
-    setSecsLeft(dur);
-    setRunning(autoRun);
-    setCompleted(false);
-  };
+
 
   /* ── Update duration when settings change (only if not running) ── */
   useEffect(() => {
