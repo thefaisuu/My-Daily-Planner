@@ -270,7 +270,20 @@ export default function FocusTimerPage() {
   const [settings, setSettings] = useState(() => {
     try {
       const saved = localStorage.getItem('planner_timer_settings');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            focusMin:  typeof parsed.focusMin === 'number' ? parsed.focusMin : 25,
+            shortMin:  typeof parsed.shortMin === 'number' ? parsed.shortMin : 5,
+            longMin:   typeof parsed.longMin === 'number' ? parsed.longMin : 15,
+            sessions:  typeof parsed.sessions === 'number' ? parsed.sessions : 4,
+            sound:     typeof parsed.sound === 'boolean' ? parsed.sound : true,
+            autoStart: typeof parsed.autoStart === 'boolean' ? parsed.autoStart : false,
+            tabTitle:  typeof parsed.tabTitle === 'boolean' ? parsed.tabTitle : true,
+          };
+        }
+      }
     } catch (_) {}
     return {
       focusMin:  25,
@@ -284,13 +297,15 @@ export default function FocusTimerPage() {
   });
 
   useEffect(() => {
-    localStorage.setItem('planner_timer_settings', JSON.stringify(settings));
+    if (settings) {
+      localStorage.setItem('planner_timer_settings', JSON.stringify(settings));
+    }
   }, [settings]);
 
   /* ── Timer state ── */
   const [mode,        setMode]        = useState('focus');        // 'focus' | 'short_break' | 'long_break'
-  const [totalSecs,   setTotalSecs]   = useState(() => (settings.focusMin || 25) * 60);
-  const [secsLeft,    setSecsLeft]    = useState(() => (settings.focusMin || 25) * 60);
+  const [totalSecs,   setTotalSecs]   = useState(() => ((settings?.focusMin || 25) * 60));
+  const [secsLeft,    setSecsLeft]    = useState(() => ((settings?.focusMin || 25) * 60));
   const [running,     setRunning]     = useState(false);
   const [sessionsComp,setSessionsComp]= useState(0);             // focus sessions completed
   const [completed,   setCompleted]   = useState(false);          // just finished?
