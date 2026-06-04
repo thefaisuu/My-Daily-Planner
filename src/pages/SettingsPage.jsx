@@ -80,6 +80,14 @@ export default function SettingsPage() {
   };
 
   const [clearing, setClearing] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    confirmText: '',
+    isDanger: true,
+  });
 
   const clearAllData = async () => {
     setClearing(true);
@@ -302,39 +310,51 @@ export default function SettingsPage() {
   };
 
   // ── Delete Account ──
-  const handleDeleteAccount = async () => {
-    const confirm1 = window.confirm('Are you sure you want to delete your account? This action is permanent and cannot be undone.');
-    if (!confirm1) return;
+  const handleDeleteAccount = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Delete Your Account?',
+      message: 'Are you sure you want to delete your account? This action is permanent and cannot be undone.',
+      confirmText: 'Delete Account',
+      isDanger: true,
+      onConfirm: () => {
+        setConfirmModal({
+          isOpen: true,
+          title: 'Are you absolutely certain?',
+          message: 'All your data, habits, schedule, and briefings will be permanently erased. There is no going back.',
+          confirmText: 'Yes, Erase Everything',
+          isDanger: true,
+          onConfirm: async () => {
+            setConfirmModal(prev => ({ ...prev, isOpen: false }));
+            setToast({ message: 'Deleting account...', type: 'info' });
 
-    const confirm2 = window.confirm('Are you absolutely certain? All your data, habits, schedule, and briefings will be permanently erased.');
-    if (!confirm2) return;
+            try {
+              if (supabase) {
+                // Delete profile row (will cascade to data tables in schema)
+                const { error: deleteProfileError } = await supabase
+                  .from('profiles')
+                  .delete()
+                  .eq('id', user.id);
 
-    setToast({ message: 'Deleting account...', type: 'info' });
+                if (deleteProfileError) throw deleteProfileError;
 
-    try {
-      if (supabase) {
-        clearAllData();
-        
-        // Delete profile row (will cascade to data tables in schema)
-        const { error: deleteProfileError } = await supabase
-          .from('profiles')
-          .delete()
-          .eq('id', user.id);
-
-        if (deleteProfileError) throw deleteProfileError;
-
-        await logout();
-        setToast({ message: 'Account deleted', type: 'info' });
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        clearAllData();
-        await logout();
-        setToast({ message: 'Mock account deleted', type: 'info' });
+                await clearAllData();
+                await logout();
+                setToast({ message: 'Account deleted', type: 'info' });
+              } else {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                await clearAllData();
+                await logout();
+                setToast({ message: 'Mock account deleted', type: 'info' });
+              }
+            } catch (err) {
+              console.error(err);
+              setToast({ message: err.message || 'Failed to delete account', type: 'error' });
+            }
+          }
+        });
       }
-    } catch (err) {
-      console.error(err);
-      setToast({ message: err.message || 'Failed to delete account', type: 'error' });
-    }
+    });
   };
 
   const dynamicInitials = profileName
@@ -515,10 +535,18 @@ export default function SettingsPage() {
               </button>
               <button
                 disabled={clearing}
-                onClick={async () => {
-                  if (window.confirm('Clear ALL planner data? This cannot be undone.')) {
-                    await clearAllData();
-                  }
+                onClick={() => {
+                  setConfirmModal({
+                    isOpen: true,
+                    title: 'Clear All Planner Data?',
+                    message: 'This will permanently delete all your daily schedule, habits tracker entries, mood logs, water logs, and notes. This action cannot be undone.',
+                    confirmText: 'Yes, Clear Data',
+                    isDanger: true,
+                    onConfirm: async () => {
+                      setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                      await clearAllData();
+                    }
+                  });
                 }}
                 className={`text-xs font-black border-2 px-4 py-2 rounded-2xl transition-colors
                   ${clearing
@@ -537,6 +565,85 @@ export default function SettingsPage() {
           Made with ♥️ by Haider & Faisal
         </div>
 
+      </div>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        isDanger={confirmModal.isDanger}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
+    </div>
+  );
+}
+
+/* ── Custom Confirm Modal Component ── */
+function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText, cancelText, isDanger }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
+        onClick={onCancel}
+      />
+      
+      {/* Card container */}
+      <div 
+        className="relative bg-white border border-slate-100 shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center"
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* Close Button */}
+        <button 
+          onClick={onCancel}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors text-lg"
+        >
+          ✕
+        </button>
+
+        <div className="flex flex-col items-center text-center space-y-4">
+          {/* Icon */}
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-md ${
+            isDanger ? 'bg-rose-50 text-rose-500 border border-rose-100' : 'bg-indigo-50 text-indigo-500 border border-indigo-100'
+          }`}>
+            {isDanger ? '⚠️' : 'ℹ️'}
+          </div>
+
+          {/* Title */}
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">
+            {title}
+          </h3>
+
+          {/* Message */}
+          <p className="text-sm font-semibold text-slate-500 leading-relaxed max-w-sm">
+            {message}
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-3 px-4 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all text-center"
+          >
+            {cancelText || 'Cancel'}
+          </button>
+          <button
+            onClick={onConfirm}
+            className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center ${
+              isDanger 
+                ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100'
+                : 'bg-gradient-to-r from-indigo-500 to-violet-600 hover:shadow-indigo-100'
+            }`}
+          >
+            {confirmText || 'Confirm'}
+          </button>
+        </div>
       </div>
     </div>
   );
