@@ -58,75 +58,6 @@ export default function SettingsPage() {
   const [avatarUrl, setAvatarUrl] = useState(user?.user_metadata?.avatar_url || '');
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
-  // Groq API settings states
-  const [groqKey, setGroqKey] = useState('');
-  const [showGroqKey, setShowGroqKey] = useState(false);
-  const [savingKey, setSavingKey] = useState(false);
-
-  useEffect(() => {
-    const loadApiKey = async () => {
-      if (!user) return;
-      let key = '';
-      if (supabase) {
-        try {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('gemini_api_key')
-            .eq('id', user.id)
-            .maybeSingle();
-          if (!error && data?.gemini_api_key) {
-            key = data.gemini_api_key;
-          }
-        } catch (e) {
-          console.warn('Failed to load API key from DB:', e);
-        }
-      }
-      if (!key) {
-        key = localStorage.getItem(`planner_groq_key_${user.id}`) || '';
-      }
-      
-      // Auto pre-populate user's provided key if empty
-      if (!key) {
-        key = import.meta.env.VITE_GROQ_API_KEY || '';
-        if (supabase) {
-          supabase
-            .from('profiles')
-            .update({ gemini_api_key: key })
-            .eq('id', user.id)
-            .then(({ error }) => {
-              if (!error) console.log('Pre-populated Groq API key auto-saved to DB');
-            });
-        }
-        localStorage.setItem(`planner_groq_key_${user.id}`, key);
-      }
-      
-      setGroqKey(key);
-    };
-    loadApiKey();
-  }, [user]);
-
-  const handleSaveGroqKey = async (e) => {
-    e.preventDefault();
-    setSavingKey(true);
-    setToast(null);
-    try {
-      if (supabase && user) {
-        const { error } = await supabase
-          .from('profiles')
-          .update({ gemini_api_key: groqKey })
-          .eq('id', user.id);
-        if (error) throw error;
-      }
-      localStorage.setItem(`planner_groq_key_${user.id}`, groqKey);
-      setToast({ message: 'Groq API Key saved successfully ✓', type: 'success' });
-    } catch (err) {
-      console.error(err);
-      setToast({ message: err.message || 'Failed to save API key', type: 'error' });
-    } finally {
-      setSavingKey(false);
-    }
-  };
-
   // Account settings states
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -481,46 +412,6 @@ export default function SettingsPage() {
               </div>
             </form>
           </div>
-        </Section>
-
-        {/* ── PLANNER BUDDY AI SECTION ── */}
-        <Section title="Planner Buddy AI Integration" icon="🤖">
-          <form onSubmit={handleSaveGroqKey} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                Groq API Key
-              </label>
-              <div className="relative">
-                <input
-                  type={showGroqKey ? 'text' : 'password'}
-                  placeholder="gsk_••••••••••••••••••••••••"
-                  value={groqKey}
-                  onChange={(e) => setGroqKey(e.target.value)}
-                  className="w-full px-4 py-2.5 pr-12 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-55 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowGroqKey(!showGroqKey)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-650 text-xs font-bold cursor-pointer transition-colors"
-                >
-                  {showGroqKey ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              <p className="text-[10px] text-slate-400 font-semibold mt-1">
-                We've configured Groq API to drive your Planner Buddy coach. You can change your key here.
-              </p>
-            </div>
-
-            <div className="flex justify-end pt-1">
-              <button
-                type="submit"
-                disabled={savingKey}
-                className="btn-primary text-xs py-2 px-4 shadow-pink-100 hover:shadow-pink-200"
-              >
-                {savingKey ? 'Saving...' : 'Save Groq Key ✓'}
-              </button>
-            </div>
-          </form>
         </Section>
 
         {/* ── ACCOUNT SECTION ── */}

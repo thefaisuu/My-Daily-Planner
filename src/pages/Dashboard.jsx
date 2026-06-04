@@ -928,26 +928,15 @@ Instructions:
       
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="text-xl">🤖</span>
+          <span className="text-xl text-indigo-500">✦</span>
           <div>
             <h3 className="font-black text-slate-700 text-base leading-none">Planner Buddy Insights</h3>
-            <span className="text-[10px] text-slate-400 font-bold mt-1.5 block">Your personal AI coach</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-[10px] font-black px-2.5 py-1.5 rounded-full flex items-center gap-1.5 ${currentConfig.badge}`}>
             <span>{currentConfig.icon}</span> {currentConfig.label}
           </span>
-          <button
-            onClick={() => loadBriefing(true)}
-            disabled={loading}
-            className="w-7 h-7 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-400 hover:text-indigo-500 cursor-pointer transition-all border border-transparent hover:border-slate-100"
-            title="Regenerate insights"
-          >
-            <svg className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-            </svg>
-          </button>
         </div>
       </div>
 
@@ -965,11 +954,6 @@ Instructions:
             </p>
           </div>
         )}
-      </div>
-
-      <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold uppercase tracking-wider pt-2 border-t border-slate-100/60">
-        <span>Generates 4 briefings daily</span>
-        <span>Next cache refresh: {period === 'Morning' ? '12:00 PM' : period === 'Afternoon' ? '5:00 PM' : period === 'Evening' ? '9:00 PM' : '5:00 AM'}</span>
       </div>
 
     </div>
