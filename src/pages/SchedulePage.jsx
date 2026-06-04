@@ -977,10 +977,10 @@ export default function SchedulePage() {
               {/* Filter + category strip */}
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
-                  { id: 'all',       label: `All (${SLOTS.length})`           },
-                  { id: 'filled',    label: `Events (${filledSlots.length})` },
-                  { id: 'empty',     label: `Free (${SLOTS.length - filledSlots.length})` },
-                  { id: 'completed', label: `Done (${doneSlots.length})`     },
+                  { id: 'all',       label: `All (${filledSlots.length})`                                               },
+                  { id: 'filled',    label: `Events (${filledSlots.length})`                                            },
+                  { id: 'empty',     label: `Free (${filledSlots.length > 0 ? SLOTS.length - filledSlots.length : 0})` },
+                  { id: 'completed', label: `Done (${doneSlots.length})`                                                },
                 ].map(f => (
                   <button key={f.id} onClick={() => setFilt(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200
