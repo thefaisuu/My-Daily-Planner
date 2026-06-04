@@ -165,9 +165,9 @@ export function NotificationBell() {
             sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
             page: 'Focus Timer',
             time: fc.timestamp,
-            color: '#a78bfa',
-            bg: 'bg-purple-50/50',
-            badge: 'bg-purple-100 text-purple-700'
+            color: '#C4B5FD',
+            bg: 'bg-purple-50/20',
+            badge: 'bg-[#C4B5FD]/20 text-[#3B1F5E]'
           });
         });
       }
@@ -181,9 +181,9 @@ export function NotificationBell() {
         sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
         page: 'Habits',
         time: timeHabit || new Date().toISOString(),
-        color: '#A78BFA',
-        bg: 'bg-violet-50',
-        badge: 'bg-violet-100 text-violet-700'
+        color: '#C4B5FD',
+        bg: 'bg-[#F5EEFF]/50',
+        badge: 'bg-[#C4B5FD]/20 text-[#3B1F5E]'
       });
     }
 
@@ -196,9 +196,9 @@ export function NotificationBell() {
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
         time: timeWater || new Date().toISOString(),
-        color: '#8DB4FF',
-        bg: 'bg-sky-50',
-        badge: 'bg-sky-100 text-sky-700'
+        color: '#F9A8D4',
+        bg: 'bg-pink-50/30',
+        badge: 'bg-pink-100 text-pink-700'
       });
     }
 
@@ -211,9 +211,9 @@ export function NotificationBell() {
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
         time: timeSchedule || new Date().toISOString(),
-        color: '#F59E0B',
-        bg: 'bg-amber-50',
-        badge: 'bg-amber-100 text-amber-700'
+        color: '#FDE68A',
+        bg: 'bg-yellow-50/30',
+        badge: 'bg-yellow-100 text-yellow-800'
       });
     }
 
@@ -225,9 +225,9 @@ export function NotificationBell() {
         sub: `You are feeling "${moodLabel}" today.`,
         page: 'Mood',
         time: timeMood || new Date().toISOString(),
-        color: '#22C55E',
-        bg: 'bg-emerald-50',
-        badge: 'bg-emerald-100 text-emerald-700'
+        color: '#86EFAC',
+        bg: 'bg-emerald-50/30',
+        badge: 'bg-emerald-100 text-emerald-800'
       });
     }
 
@@ -239,8 +239,8 @@ export function NotificationBell() {
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
         time: timeNotes || new Date().toISOString(),
-        color: '#f472b6',
-        bg: 'bg-pink-50',
+        color: '#F9A8D4',
+        bg: 'bg-pink-50/30',
         badge: 'bg-pink-100 text-pink-700'
       });
     }
@@ -270,7 +270,7 @@ export function NotificationBell() {
       <button
         id="notification-bell"
         onClick={() => setOpen(p => !p)}
-        className="relative p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-indigo-50 text-slate-500 cursor-pointer"
+        className="relative p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-[#F5EEFF]/65 text-slate-500 cursor-pointer"
         aria-label="Notifications"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -278,22 +278,22 @@ export function NotificationBell() {
         </svg>
         {notifications.length > 0 && (
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border border-white animate-pulse"
-            style={{ background: '#5B6CFF' }} />
+            style={{ background: '#F9A8D4' }} />
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-3xl shadow-2xl shadow-indigo-100/50 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-indigo-100">
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-3xl shadow-2xl shadow-[#C4B5FD]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-purple-100">
           {/* Header */}
-          <div className="px-5 py-4 border-b border-indigo-50 flex items-center justify-between">
-            <p className="font-black text-sm text-slate-700">Notifications</p>
-            <span className="badge bg-indigo-100 text-indigo-600">{notifications.length} new</span>
+          <div className="px-5 py-4 border-b border-purple-50 flex items-center justify-between">
+            <p className="font-black text-sm text-[#3B1F5E]">Notifications</p>
+            <span className="badge bg-[#C4B5FD]/20 text-[#3B1F5E]">{notifications.length} new</span>
           </div>
 
           {/* List — max 3 in dropdown */}
-          <div className="divide-y divide-indigo-50/50">
+          <div className="divide-y divide-purple-50/50">
             {notifications.length === 0 ? (
-              <div className="px-5 py-6 text-center text-slate-400">
+              <div className="px-5 py-6 text-center text-[#9B8AAE]">
                 <span className="text-xl block mb-1">🔔</span>
                 <p className="text-xs font-semibold">All caught up! No alerts.</p>
               </div>
@@ -301,23 +301,23 @@ export function NotificationBell() {
               notifications.slice(0, 3).map(n => (
                 <button key={n.id}
                   onClick={() => handleNotifClick(n.page)}
-                  className="w-full text-left px-5 py-3.5 hover:bg-indigo-50/60 transition-colors flex items-start gap-3 cursor-pointer">
+                  className="w-full text-left px-5 py-3.5 hover:bg-[#F5EEFF]/60 transition-colors flex items-start gap-3 cursor-pointer">
                   <span className="text-xl flex-shrink-0 mt-0.5">{n.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-700 truncate">{n.text}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{n.sub}</p>
+                    <p className="text-sm font-bold text-[#3B1F5E] truncate">{n.text}</p>
+                    <p className="text-xs text-[#9B8AAE] mt-0.5">{n.sub}</p>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-semibold flex-shrink-0 mt-1">{timeAgo(n.time)}</span>
+                  <span className="text-[10px] text-[#9B8AAE] font-semibold flex-shrink-0 mt-1">{timeAgo(n.time)}</span>
                 </button>
               ))
             )}
           </div>
 
           {/* Footer */}
-          <div className="px-5 py-3 text-center border-t border-indigo-50">
+          <div className="px-5 py-3 text-center border-t border-purple-50">
             <button
               onClick={() => { setActiveNav('Notifications'); setOpen(false); }}
-              className="text-xs font-black text-indigo-500 hover:text-indigo-700 transition-colors cursor-pointer">
+              className="text-xs font-black text-[#F9A8D4] hover:text-[#C4B5FD] transition-colors cursor-pointer">
               View all notifications →
             </button>
           </div>
@@ -376,7 +376,7 @@ function AvatarDropdown() {
         className="flex items-center gap-2 group cursor-pointer"
         aria-label="User menu"
       >
-        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#5B6CFF] via-[#8DB4FF] to-[#A78BFA]">
+        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#F9A8D4] via-[#F5EEFF] to-[#C4B5FD]">
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
@@ -384,8 +384,8 @@ function AvatarDropdown() {
           )}
         </div>
         <div className="hidden sm:flex items-center gap-1">
-          <span className="text-sm font-bold text-slate-700">{firstName}</span>
-          <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-slate-400`}
+          <span className="text-sm font-bold text-[#3B1F5E]">{firstName}</span>
+          <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-[#9B8AAE]`}
             fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
@@ -393,15 +393,15 @@ function AvatarDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 rounded-3xl shadow-2xl shadow-indigo-100/50 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-indigo-100">
-          <div className="px-5 py-4 border-b border-indigo-50">
-            <p className="font-bold text-sm text-slate-700 truncate">{displayName}</p>
-            <p className="text-xs text-slate-400 truncate">{email}</p>
+        <div className="absolute right-0 top-full mt-2 w-52 rounded-3xl shadow-2xl shadow-[#C4B5FD]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-purple-100">
+          <div className="px-5 py-4 border-b border-purple-50">
+            <p className="font-bold text-sm text-[#3B1F5E] truncate">{displayName}</p>
+            <p className="text-xs text-[#9B8AAE] truncate">{email}</p>
           </div>
           <div className="py-2">
             {menuItems.map(item => (
               <button key={item.label} id={`menu-${item.label}`}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors hover:bg-indigo-50 text-slate-600 cursor-pointer"
+                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F5EEFF]/65 text-[#3B1F5E] cursor-pointer"
                 onClick={() => { item.action(); setOpen(false); }}>
                 <span>{item.icon}</span>
                 {item.label}
@@ -422,12 +422,12 @@ export default function Navbar() {
   const dateStr   = `${dayName}, ${monthName} ${now.getDate()}`;
 
   return (
-    <header className="sticky top-0 z-20 flex items-center px-4 sm:px-6 h-16 gap-3 border-b transition-colors duration-300 bg-white/70 backdrop-blur-xl border-indigo-100/60">
+    <header className="sticky top-0 z-20 flex items-center px-4 sm:px-6 h-16 gap-3 border-b transition-colors duration-300 bg-white/60 backdrop-blur-xl border-purple-100/40">
       {/* Hamburger – mobile only */}
       <button
         id="hamburger-btn"
         onClick={toggleSidebar}
-        className="lg:hidden p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-indigo-50 text-slate-500"
+        className="lg:hidden p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-[#F5EEFF]/65 text-slate-500"
         aria-label="Open navigation menu"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -437,7 +437,7 @@ export default function Navbar() {
 
       {/* Date pill – centered */}
       <div className="flex-1 flex justify-center">
-        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-indigo-50/80 text-slate-600">
+        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-[#F5EEFF]/80 text-[#3B1F5E]">
           <span className="text-base">📅</span>
           <span className="hidden sm:inline">{dateStr}</span>
           <span className="inline sm:hidden">{`${now.getDate()} ${MONTHS[now.getMonth()].slice(0,3)}`}</span>

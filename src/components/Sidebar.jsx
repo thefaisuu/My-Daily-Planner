@@ -21,7 +21,7 @@ function NavLink({ item }) {
       <span>{item.label}</span>
       {isActive && (
         <span className="ml-auto w-1.5 h-1.5 rounded-full animate-pulse"
-          style={{ background: '#5B6CFF' }} />
+          style={{ background: '#3B1F5E' }} />
       )}
     </button>
   );
@@ -60,7 +60,7 @@ export default function Sidebar() {
           backdrop-blur-xl border-r shadow-2xl
           ${darkMode
             ? 'bg-slate-900/95 border-slate-700/60 shadow-indigo-950/40'
-            : 'bg-white/90 border-indigo-100/60 shadow-indigo-100/40'
+            : 'bg-[#F5EEFF]/95 border-purple-100/60 shadow-purple-100/20'
           }
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static lg:z-auto lg:shadow-none
@@ -70,7 +70,7 @@ export default function Sidebar() {
         {/* Logo & App Name */}
         <div className={`flex items-center gap-3 px-6 py-6 border-b ${darkMode ? 'border-slate-700/60' : 'border-indigo-100/60'}`}>
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md"
-            style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+            style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
             <span className="text-xl leading-none text-white">✦</span>
           </div>
           <div>
@@ -86,7 +86,7 @@ export default function Sidebar() {
           <button
             onClick={closeSidebar}
             className={`ml-auto p-1.5 rounded-xl transition-colors lg:hidden
-              ${darkMode ? 'hover:bg-slate-800 text-slate-400 hover:text-indigo-400' : 'hover:bg-indigo-50 text-slate-400 hover:text-indigo-600'}`}
+              ${darkMode ? 'hover:bg-slate-800 text-slate-400 hover:text-indigo-400' : 'hover:bg-purple-100/50 text-slate-400 hover:text-purple-600'}`}
             aria-label="Close sidebar"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -98,7 +98,7 @@ export default function Sidebar() {
         {/* Nav items */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           <p className={`px-4 mb-3 text-xs font-bold uppercase tracking-widest
-            ${darkMode ? 'text-slate-500' : 'text-indigo-300'}`}>
+            ${darkMode ? 'text-slate-500' : 'text-purple-400'}`}>
             Menu
           </p>
           {NAV_ITEMS.map((item) => (
@@ -111,10 +111,10 @@ export default function Sidebar() {
           <div 
             onClick={() => setActiveNav('Settings')}
             className={`flex items-center gap-3 px-3 py-3 rounded-2xl transition-colors cursor-pointer group
-              ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-indigo-50'}`}
+              ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-purple-100/40'}`}
           >
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-sm shadow-md bg-gradient-to-tr from-[#5B6CFF] via-[#8DB4FF] to-[#A78BFA]">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-sm shadow-md bg-gradient-to-tr from-[#F9A8D4] via-[#F5EEFF] to-[#C4B5FD]">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (

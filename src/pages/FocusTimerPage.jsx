@@ -5,9 +5,9 @@ import { useApp } from '../context/AppContext';
    CONSTANTS
 ═══════════════════════════════════════════════════════ */
 const MODES = {
-  focus:      { label: 'Focus',       emoji: '🍅', defaultMin: 25, color: '#f472b6', track: '#fce7f3', darkTrack: '#2d1a24' },
-  short_break:{ label: 'Short Break', emoji: '☕', defaultMin: 5,  color: '#34d399', track: '#d1fae5', darkTrack: '#0d2318' },
-  long_break: { label: 'Long Break',  emoji: '🌙', defaultMin: 15, color: '#818cf8', track: '#e0e7ff', darkTrack: '#1a1a3e' },
+  focus:      { label: 'Focus',       emoji: '🍅', defaultMin: 25, color: '#C4B5FD', track: '#F5EEFF', darkTrack: '#2d1a24' },
+  short_break:{ label: 'Short Break', emoji: '☕', defaultMin: 5,  color: '#86EFAC', track: '#E8FDF0', darkTrack: '#0d2318' },
+  long_break: { label: 'Long Break',  emoji: '🌙', defaultMin: 15, color: '#F9A8D4', track: '#FFF0F5', darkTrack: '#1a1a3e' },
 };
 
 const PRESETS = [

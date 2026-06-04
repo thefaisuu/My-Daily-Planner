@@ -166,27 +166,22 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
 
   return (
     <div
-      className={`relative rounded-3xl border-2 p-5 transition-all duration-300 group
+      className={`relative rounded-3xl border p-5 transition-all duration-300 group backdrop-blur-md
         ${habit.doneToday
           ? 'border-transparent shadow-lg scale-[1.01]'
-          : darkMode ? 'border-slate-700/60 hover:border-slate-600' : 'border-transparent hover:border-white hover:shadow-lg'
+          : darkMode ? 'border-slate-700/60 hover:border-slate-600' : 'border-[#C4B5FD]/25 hover:border-[#F9A8D4]/45 hover:shadow-lg'
         }`}
       style={{
-        background: habit.doneToday
-          ? darkMode
-            ? `linear-gradient(135deg, ${theme.ring}22, ${theme.accent}15)`
-            : `linear-gradient(135deg, ${theme.bg}, white)`
-          : darkMode ? '#1e293b' : 'white',
+        background: 'rgba(255, 255, 255, 0.65)',
         boxShadow: habit.doneToday
-          ? `0 8px 32px ${theme.ring}40`
-          : darkMode ? 'none' : '0 2px 8px rgba(0,0,0,0.06)',
+          ? `0 8px 32px rgba(134, 239, 172, 0.25)`
+          : '0 4px 20px rgba(59, 31, 94, 0.04)',
       }}
     >
       {/* Icon + Actions row */}
       <div className="flex items-start justify-between mb-4">
         {/* Icon blob */}
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm flex-shrink-0"
-          style={{ background: `linear-gradient(135deg, ${theme.ring}, ${theme.icon_bg})` }}>
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm flex-shrink-0 bg-gradient-to-tr from-[#F9A8D4]/30 to-[#C4B5FD]/30">
           {habit.icon}
         </div>
 
@@ -195,10 +190,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
           {/* Edit button */}
           <button
             onClick={() => onEditClick(habit)}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200
-              ${darkMode
-                ? 'bg-slate-800 text-slate-400 hover:text-indigo-400 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50'}`}
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#C4B5FD]/15 text-[#3B1F5E] hover:bg-[#C4B5FD] hover:text-white"
             title="Edit habit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -209,10 +201,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
           {/* Delete button */}
           <button
             onClick={() => setShowConfirm(true)}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200
-              ${darkMode
-                ? 'bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-400 hover:text-rose-600 hover:bg-rose-50'}`}
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#FCA5A5]/20 text-[#9f1239] hover:bg-[#FCA5A5] hover:text-white"
             title="Delete habit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -227,13 +216,13 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
               ${pressing ? 'scale-90' : habit.doneToday ? 'scale-105' : 'hover:scale-110'}
               ${habit.doneToday ? 'border-transparent shadow-md' : ''}`}
             style={habit.doneToday
-              ? { background: `linear-gradient(135deg, ${theme.accent}, ${theme.ring})`, boxShadow: `0 4px 12px ${theme.ring}60` }
-              : { borderColor: theme.ring }
+              ? { background: `#86EFAC`, boxShadow: `0 4px 12px rgba(134, 239, 172, 0.50)` }
+              : { borderColor: '#C4B5FD' }
             }
             aria-label={habit.doneToday ? 'Mark incomplete' : 'Mark complete'}
           >
             {habit.doneToday && (
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <svg className="w-4 h-4 text-[#065f46]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             )}
@@ -245,7 +234,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       <p className={`font-black text-base mb-1 leading-snug transition-all ${
         habit.doneToday
           ? 'line-through opacity-60'
-          : darkMode ? 'text-slate-100' : 'text-slate-700'
+          : darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'
       }`}>
         {habit.name}
       </p>
@@ -254,33 +243,32 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       <div className="flex items-center gap-2 mt-3">
         {/* Current streak */}
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl"
-          style={{ background: theme.badge }}>
+          style={{ background: '#FDE68A' }}>
           <span className="text-sm">🔥</span>
-          <span className="text-xs font-black" style={{ color: theme.text }}>{habit.streak} day{habit.streak !== 1 ? 's' : ''}</span>
+          <span className="text-xs font-black text-[#854d0e]">{habit.streak} day{habit.streak !== 1 ? 's' : ''}</span>
         </div>
 
         {/* Best streak */}
-        <div className={`flex items-center gap-1 px-2 py-1 rounded-xl ${darkMode ? 'bg-slate-700' : 'bg-slate-100'}`}>
+        <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white/70">
           <span className="text-xs">🏆</span>
-          <span className={`text-[10px] font-bold ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Best: {habit.bestStreak}</span>
+          <span className={`text-[10px] font-bold ${darkMode ? 'text-slate-400' : 'text-[#9B8AAE]'}`}>Best: {habit.bestStreak}</span>
         </div>
 
         {/* Done badge */}
         {habit.doneToday && (
-          <span className="ml-auto text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full"
-            style={{ background: theme.badge, color: theme.text }}>
+          <span className="ml-auto text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#86EFAC]/25 text-[#065f46]">
             Done ✓
           </span>
         )}
       </div>
 
       {/* Progress mini bar */}
-      <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: darkMode ? '#334155' : theme.badge }}>
+      <div className="mt-3 h-1.5 rounded-full overflow-hidden bg-purple-50">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: habit.doneToday ? '100%' : '0%',
-            background: `linear-gradient(to right, ${theme.accent}, ${theme.ring})`
+            background: `linear-gradient(to right, #F9A8D4, #C4B5FD)`
           }}
         />
       </div>
@@ -289,22 +277,22 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       {showConfirm && (
         <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-3 z-20"
           style={{ background: darkMode ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.96)', backdropFilter: 'blur(4px)' }}>
-          <p className={`text-sm font-black text-center px-4 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+          <p className={`text-sm font-black text-center px-4 ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
             Delete "{habit.name}"?
           </p>
-          <p className={`text-xs text-center px-4 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          <p className={`text-xs text-center px-4 ${darkMode ? 'text-slate-400' : 'text-[#9B8AAE]'}`}>
             This will reset your streak.
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setShowConfirm(false)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#3B1F5E] hover:bg-slate-200'
               }`}
             >Cancel</button>
             <button
               onClick={() => { onDelete(habit.id); setShowConfirm(false); }}
-              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-rose-500 text-white hover:bg-rose-600 transition-colors"
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-[#FCA5A5] text-[#9f1239] hover:bg-[#FCA5A5] hover:text-white transition-colors"
             >Delete</button>
           </div>
         </div>
@@ -948,7 +936,7 @@ export default function HabitsPage() {
       {/* Floating Action Button (FAB) to Add Habit */}
       <button
         onClick={() => { setHabitToEdit(null); setShowModal(true); }}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#F9A8D4] to-[#C4B5FD] text-[#3B1F5E] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label="Add new habit"
         title="Add new habit"
       >

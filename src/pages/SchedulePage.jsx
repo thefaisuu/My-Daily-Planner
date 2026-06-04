@@ -34,11 +34,11 @@ function generateSlots(startH = 6, endH = 23) {
 const SLOTS = generateSlots(6, 23);
 
 const CATEGORIES = [
-  { id: 'work',     label: 'Work',     color: '#f472b6', bg: 'bg-pink-100',    text: 'text-pink-700'    },
-  { id: 'personal', label: 'Personal', color: '#818cf8', bg: 'bg-indigo-100',  text: 'text-indigo-700'  },
-  { id: 'health',   label: 'Health',   color: '#34d399', bg: 'bg-emerald-100', text: 'text-emerald-700' },
-  { id: 'focus',    label: 'Focus',    color: '#c084fc', bg: 'bg-purple-100',  text: 'text-purple-700'  },
-  { id: 'break',    label: 'Break',    color: '#fbbf24', bg: 'bg-amber-100',   text: 'text-amber-700'   },
+  { id: 'work',     label: 'Work',     color: '#F9A8D4', bg: 'bg-pink-100/55',    text: 'text-pink-800'    },
+  { id: 'personal', label: 'Personal', color: '#C4B5FD', bg: 'bg-purple-100/55',  text: 'text-[#3B1F5E]'  },
+  { id: 'health',   label: 'Health',   color: '#86EFAC', bg: 'bg-emerald-100/55', text: 'text-emerald-800' },
+  { id: 'focus',    label: 'Focus',    color: '#C4B5FD', bg: 'bg-purple-100/55',  text: 'text-[#3B1F5E]'  },
+  { id: 'break',    label: 'Break',    color: '#FDE68A', bg: 'bg-yellow-100/55',  text: 'text-yellow-800'   },
 ];
 const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
 
@@ -356,7 +356,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
             <button onClick={handleSave} disabled={!task.trim()}
               className={`flex-1 py-3 rounded-2xl text-sm font-black text-white transition-all
                 ${task.trim() ? 'hover:shadow-lg hover:-translate-y-0.5 active:scale-95' : 'opacity-40 cursor-not-allowed'}`}
-              style={{ background: task.trim() ? 'linear-gradient(135deg, #f472b6, #c084fc)' : '#94a3b8' }}>
+              style={{ background: task.trim() ? 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' : '#9B8AAE' }}>
               {isEdit ? '✓ Save Changes' : '✨ Add Event'}
             </button>
           </div>
@@ -427,11 +427,11 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
     >
       {/* Left colour bar */}
       <div className={`w-1.5 flex-shrink-0 ${
-        isCompleted ? 'bg-gradient-to-b from-emerald-400 to-teal-400' :
-        isCurrent   ? 'bg-gradient-to-b from-pink-400 to-rose-500'   :
+        isCompleted ? 'bg-gradient-to-b from-[#86EFAC] to-[#6ee7b7]' :
+        isCurrent   ? 'bg-gradient-to-b from-[#F9A8D4] to-[#C4B5FD]'   :
         isEmpty     ? darkMode ? 'bg-slate-700' : 'bg-slate-200'     :
         isPast      ? 'bg-slate-300 dark:bg-slate-600'               :
-        'bg-gradient-to-b from-pink-200 to-purple-200'
+        'bg-gradient-to-b from-[#F5EEFF] to-[#FFF0F5]'
       }`} />
 
       <div className="flex-1 px-4 py-3 min-w-0">
@@ -439,8 +439,8 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
         <div className="flex items-center gap-2 mb-1.5">
           {/* Time badge */}
           <span className={`text-xs font-black flex-shrink-0 px-2.5 py-1 rounded-xl
-            ${isCurrent   ? 'bg-pink-400 text-white shadow-sm'
-            : isCompleted ? 'bg-emerald-400 text-white'
+            ${isCurrent   ? 'bg-[#F9A8D4] text-[#3B1F5E] shadow-sm'
+            : isCompleted ? 'bg-[#86EFAC] text-emerald-800'
             : darkMode    ? 'bg-slate-700 text-slate-300'
             :               'bg-slate-100 text-slate-500'}`}>
             {data?.startTime ? timeLabel(data.startTime) : slot.label}
@@ -485,8 +485,8 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
               title={isEmpty ? 'Add event' : 'Edit event'}
               className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all hover:scale-110
                 ${isEmpty
-                  ? 'bg-gradient-to-br from-pink-400 to-purple-400 text-white shadow-sm'
-                  : darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-pink-300' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'
+                  ? 'bg-gradient-to-br from-[#F9A8D4] to-[#C4B5FD] text-white shadow-sm'
+                  : darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-pink-300' : 'bg-slate-100 text-slate-500 hover:bg-purple-100 hover:text-[#3B1F5E]'
                 }`}
             >
               {isEmpty ? (
@@ -506,7 +506,7 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
                 onClick={() => onClear(slot)}
                 title="Delete event"
                 className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all hover:scale-110
-                  ${darkMode ? 'bg-slate-700 text-slate-400 hover:bg-rose-900/50 hover:text-rose-400' : 'bg-slate-100 text-slate-400 hover:bg-rose-100 hover:text-rose-500'}`}
+                  ${darkMode ? 'bg-slate-700 text-slate-400 hover:bg-rose-900/50 hover:text-rose-400' : 'bg-slate-100 text-slate-400 hover:bg-[#FCA5A5]/20 hover:text-[#9f1239]'}`}
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -521,8 +521,8 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
                 title={isCompleted ? 'Mark incomplete' : 'Mark done'}
                 className={`w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all duration-200 hover:scale-110
                   ${isCompleted
-                    ? 'bg-gradient-to-br from-emerald-400 to-teal-400 border-transparent shadow-sm'
-                    : darkMode ? 'border-slate-600 hover:border-emerald-400' : 'border-slate-200 hover:border-emerald-400'
+                    ? 'bg-gradient-to-br from-[#86EFAC] to-[#6ee7b7] border-transparent shadow-sm'
+                    : darkMode ? 'border-slate-600 hover:border-[#86EFAC]' : 'border-slate-200 hover:border-[#86EFAC]'
                   }`}
               >
                 {isCompleted && (
@@ -644,7 +644,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center shadow-md flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F9A8D4] to-[#C4B5FD] flex items-center justify-center shadow-md flex-shrink-0">
               <span className="text-lg">🎯</span>
             </div>
             <div>
@@ -655,13 +655,13 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
             </div>
           </div>
           {/* Progress ring */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-pink-50'}`}>
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
             <svg viewBox="0 0 24 24" className="w-6 h-6 -rotate-90">
-              <circle cx="12" cy="12" r="9" fill="none" stroke={darkMode ? '#334155' : '#fce7f3'} strokeWidth="3" />
-              <circle cx="12" cy="12" r="9" fill="none" stroke="#f472b6" strokeWidth="3"
+              <circle cx="12" cy="12" r="9" fill="none" stroke={darkMode ? '#334155' : '#F5EEFF'} strokeWidth="3" />
+              <circle cx="12" cy="12" r="9" fill="none" stroke="#F9A8D4" strokeWidth="3"
                 strokeDasharray={`${pct * 0.565} 56.5`} strokeLinecap="round" />
             </svg>
-            <span className={`text-xs font-black ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{pct}%</span>
+            <span className={`text-xs font-black ${darkMode ? 'text-slate-200' : 'text-[#3B1F5E]'}`}>{pct}%</span>
           </div>
         </div>
 
@@ -672,7 +672,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
             { icon: '⏰', val: filled - done,        label: 'Remaining' },
             { icon: '🔥', val: String(streak),       label: 'Streak'    },
           ].map((s, i) => (
-            <div key={i} className={`text-center py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
+            <div key={i} className={`text-center py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
               <p className="text-sm">{s.icon}</p>
               <p className={`text-sm font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
               <p className={`text-[10px] font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>{s.label}</p>

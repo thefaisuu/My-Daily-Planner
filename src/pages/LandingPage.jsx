@@ -178,12 +178,12 @@ export default function LandingPage({ onLogin, onSignup }) {
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       {/* ── Navigation ── */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md shadow-indigo-100/30' : 'bg-transparent'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md shadow-purple-100/20' : 'bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               <span className="text-white text-base font-black">✦</span>
             </div>
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
@@ -193,7 +193,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="hidden md:flex items-center gap-6">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
+                className="text-sm font-semibold text-slate-600 hover:text-[#C4B5FD] transition-colors">
                 {label}
               </button>
             ))}
@@ -202,12 +202,12 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <button onClick={onLogin}
-              className="px-5 py-2 rounded-2xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-colors">
+              className="px-5 py-2 rounded-2xl text-sm font-bold text-[#3B1F5E] hover:bg-[#F5EEFF]/80 transition-colors">
               Log In
             </button>
             <button onClick={onSignup}
-              className="px-5 py-2 rounded-2xl text-sm font-bold text-white shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all"
-              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              className="px-5 py-2 rounded-2xl text-sm font-bold text-white shadow-lg hover:shadow-pink-100 hover:-translate-y-0.5 transition-all"
+              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               Get Started Free →
             </button>
           </div>
@@ -232,7 +232,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 shadow-xl">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-indigo-600">
+                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-[#C4B5FD]">
                 {label}
               </button>
             ))}
@@ -241,7 +241,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                 Log In
               </button>
               <button onClick={onSignup} className="w-full py-2.5 rounded-2xl font-bold text-white text-center shadow-md"
-                style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+                style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
                 Get Started Free →
               </button>
             </div>
@@ -265,17 +265,17 @@ export default function LandingPage({ onLogin, onSignup }) {
 
         <div className="relative max-w-5xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-200 bg-white/80 backdrop-blur-sm shadow-sm mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-200 bg-white/80 backdrop-blur-sm shadow-sm mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Personal Productivity Suite</span>
+            <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Personal Productivity Suite</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-800 leading-[1.08] tracking-tight mb-6">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#3B1F5E] leading-[1.08] tracking-tight mb-6">
             Your entire life,{' '}
             <span className="relative inline-block">
               <span className="relative z-10 text-transparent bg-clip-text"
-                style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #A78BFA, #f472b6)' }}>
+                style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD, #FDF4FF)' }}>
                 beautifully organized
               </span>
             </span>
@@ -289,16 +289,16 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14">
             <button onClick={onSignup}
-              className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-indigo-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-pink-100 hover:-translate-y-1 active:translate-y-0 transition-all duration-200"
+              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               <span>Start for Free</span>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </button>
             <button onClick={onLogin}
-              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-slate-700 font-bold text-base border-2 border-slate-200 bg-white/80 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200">
-              <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-[#3B1F5E] font-bold text-base border-2 border-slate-200 bg-white/80 hover:border-purple-300 hover:bg-[#F5EEFF]/80 transition-all duration-200">
+              <svg className="w-5 h-5 text-[#C4B5FD]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In to Dashboard
@@ -328,7 +328,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       </section>
 
       {/* ── Stats Section ── */}
-      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #5B6CFF, #8DB4FF, #A78BFA)' }}>
+      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #F9A8D4, #F5EEFF, #C4B5FD)' }}>
         <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8">
           {STATS.map((stat, i) => (
             <AnimatedStat key={i} {...stat} delay={i * 100} />
@@ -340,11 +340,11 @@ export default function LandingPage({ onLogin, onSignup }) {
       <section id="features" className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-4">
-              <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Everything You Need</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-100 mb-4">
+              <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Everything You Need</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-4">6 powerful tools,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+            <h2 className="text-4xl sm:text-5xl font-black text-[#3B1F5E] mb-4">6 powerful tools,{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
                 one beautiful app
               </span>
             </h2>
@@ -365,11 +365,11 @@ export default function LandingPage({ onLogin, onSignup }) {
         style={{ background: 'linear-gradient(135deg, #f8f7ff 0%, #eef2ff 50%, #fdf2f8 100%)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-indigo-100 shadow-sm mb-4">
-              <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Simple Setup</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-purple-100 shadow-sm mb-4">
+              <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Simple Setup</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-4">Up and running in{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #f472b6)' }}>
+            <h2 className="text-4xl sm:text-5xl font-black text-[#3B1F5E] mb-4">Up and running in{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #c4b5fd)' }}>
                 60 seconds
               </span>
             </h2>
@@ -456,7 +456,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* ── Final CTA Section ── */}
       <section className="py-24 px-4 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #5B6CFF 0%, #8DB4FF 40%, #A78BFA 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #F9A8D4 0%, #F5EEFF 40%, #C4B5FD 100%)' }}>
         <FloatingOrbs />
         <div className="relative max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-5xl mx-auto mb-8 shadow-xl">
@@ -472,7 +472,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={onSignup}
-              className="group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-bold text-lg shadow-2xl hover:shadow-white/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+              className="group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-white text-[#3B1F5E] font-bold text-lg shadow-2xl hover:shadow-white/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
               <span>Create Free Account</span>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -492,7 +492,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               <span className="text-white text-sm font-black">✦</span>
             </div>
             <span className="font-black text-white text-sm">My Daily Planner</span>
@@ -538,7 +538,7 @@ function LegalPageLayout({ title, children, onBack }) {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               <span className="text-white text-base font-black">✦</span>
             </div>
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
@@ -557,7 +557,7 @@ function LegalPageLayout({ title, children, onBack }) {
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 relative z-10">
         <div className="bg-white/75 backdrop-blur-md border border-slate-100 shadow-xl rounded-[2.5rem] p-8 sm:p-12">
           <h1 className="text-3xl sm:text-4xl font-black text-slate-800 mb-8 tracking-tight">
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
               {title}
             </span>
           </h1>
@@ -851,8 +851,8 @@ function ContactPage({ onBack }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}
+                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-pink-100 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}
               >
                 {loading ? (
                   <>

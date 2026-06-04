@@ -844,7 +844,7 @@ export default function NotesPage() {
       {/* Floating Action Button (FAB) to Add Note */}
       <button
         onClick={() => setModal({})}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#F9A8D4] to-[#C4B5FD] text-[#3B1F5E] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label="Add new note"
         title="Add new note"
       >

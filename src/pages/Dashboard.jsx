@@ -94,7 +94,7 @@ function loadAllData() {
 ═══════════════════════════════════════════════════════ */
 
 /* ── Progress Ring ── */
-function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#f472b6','#c084fc'] }) {
+function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#F9A8D4','#C4B5FD'] }) {
   const r    = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const dash = circ * Math.min(pct, 1);
@@ -115,7 +115,7 @@ function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#f472b6','#c0
           style={{ transition: 'stroke-dasharray 1.2s cubic-bezier(0.34,1.56,0.64,1)' }} />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-xl font-black text-slate-700 dark:text-slate-100">{Math.round(pct * 100)}%</span>
+        <span className="text-xl font-black text-[#3B1F5E] dark:text-slate-100">{Math.round(pct * 100)}%</span>
       </div>
     </div>
   );
@@ -138,14 +138,14 @@ function GreetingBanner({ now, habits, water, mood }) {
 
   return (
     <div className="card col-span-full relative overflow-hidden !p-0"
-      style={{ background: 'linear-gradient(120deg, #5B6CFF 0%, #8DB4FF 50%, #A78BFA 100%)' }}>
+      style={{ background: 'linear-gradient(120deg, #F9A8D4 0%, #F5EEFF 55%, #C4B5FD 100%)' }}>
       <div className="relative p-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-white/80 text-sm font-bold flex items-center gap-2">
+          <p className="text-[#3B1F5E]/80 text-sm font-bold flex items-center gap-2">
             <span className="text-xl">{icon}</span> {text}
           </p>
-          <h2 className="text-white text-3xl sm:text-4xl font-black mt-1 tracking-tight">Hello, {displayName}! 👋</h2>
-          <p className="text-white/70 text-sm mt-1.5 font-semibold">
+          <h2 className="text-[#3B1F5E] text-3xl sm:text-4xl font-black mt-1 tracking-tight">Hello, {displayName}! 👋</h2>
+          <p className="text-[#3B1F5E]/70 text-sm mt-1.5 font-semibold">
             {DAYS[now.getDay()]}, {MONTHS[now.getMonth()]} {now.getDate()} · Let's make today count ✨
           </p>
         </div>
@@ -155,9 +155,9 @@ function GreetingBanner({ now, habits, water, mood }) {
             { v: `✅ ${done}/${total}`, l: 'habits today' },
             { v: mood ? `${mood.emoji} ${mood.label}` : '😊 —', l: 'mood today' },
           ].map((s, i) => (
-            <div key={i} className="px-4 py-2.5 rounded-2xl bg-white/20 backdrop-blur-sm text-center">
-              <p className="text-white font-black text-base">{s.v}</p>
-              <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">{s.l}</p>
+            <div key={i} className="px-4 py-2.5 rounded-2xl bg-[#3B1F5E]/10 backdrop-blur-sm text-center">
+              <p className="text-[#3B1F5E] font-black text-base">{s.v}</p>
+              <p className="text-[#3B1F5E]/70 text-[10px] font-bold uppercase tracking-wider">{s.l}</p>
             </div>
           ))}
         </div>
@@ -213,27 +213,27 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
   return (
     <div className="card flex flex-col gap-4 h-full">
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">✅ Habit Progress</h3>
-        <span className="badge bg-pink-100 text-pink-600">{done}/{total} done</span>
+        <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">✅ Habit Progress</h3>
+        <span className="badge bg-pink-100 text-pink-700">{done}/{total} done</span>
       </div>
       <div className="flex items-center gap-5">
-        <ProgressRing pct={pct} gradient={['#f472b6','#c084fc']} />
+        <ProgressRing pct={pct} gradient={['#F9A8D4','#C4B5FD']} />
         <div className="flex-1 space-y-2 min-w-0">
           {habits.slice(0, 5).map((h, i) => (
             <div key={h.id} className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ background: h.doneToday ? ringColors[i % ringColors.length] : '#e2e8f0' }} />
-              <span className={`text-xs font-semibold truncate flex-1 ${h.doneToday ? 'text-slate-600 dark:text-slate-300 line-through opacity-60' : 'text-slate-600 dark:text-slate-300'}`}>
+              <span className={`text-xs font-semibold truncate flex-1 ${h.doneToday ? 'text-[#3B1F5E]/60 dark:text-slate-300 line-through opacity-60' : 'text-[#3B1F5E]/80 dark:text-slate-300'}`}>
                 {h.emoji} {h.name}
               </span>
               <span className="text-[10px] font-black flex-shrink-0"
-                style={{ color: h.doneToday ? '#34d399' : '#cbd5e1' }}>
+                style={{ color: h.doneToday ? '#86EFAC' : '#cbd5e1' }}>
                 {h.doneToday ? '✓' : '—'}
               </span>
             </div>
           ))}
           {habits.length > 5 && (
-            <p className="text-[10px] text-slate-400 font-semibold">+{habits.length - 5} more habits</p>
+            <p className="text-[10px] text-[#9B8AAE] font-semibold">+{habits.length - 5} more habits</p>
           )}
         </div>
       </div>
@@ -389,11 +389,11 @@ function NotesCard({ notes, navigate, darkMode }) {
 /* ── Schedule-driven Today's Tasks card ── */
 const SLOT_HOURS = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 const CAT_COLORS = {
-  work:     { dot: '#5B6CFF', bg: 'bg-indigo-100',  text: 'text-indigo-700'  },
-  personal: { dot: '#A78BFA', bg: 'bg-violet-100',  text: 'text-violet-700'  },
-  health:   { dot: '#22C55E', bg: 'bg-emerald-100', text: 'text-emerald-700' },
-  focus:    { dot: '#8DB4FF', bg: 'bg-sky-100',     text: 'text-sky-700'     },
-  break:    { dot: '#F59E0B', bg: 'bg-amber-100',   text: 'text-amber-700'   },
+  work:     { dot: '#F9A8D4', bg: 'bg-pink-100/55',   text: 'text-pink-800'  },
+  personal: { dot: '#C4B5FD', bg: 'bg-purple-100/55', text: 'text-[#3B1F5E]' },
+  health:   { dot: '#86EFAC', bg: 'bg-emerald-100/55',text: 'text-emerald-800' },
+  focus:    { dot: '#C4B5FD', bg: 'bg-purple-100/55', text: 'text-[#3B1F5E]' },
+  break:    { dot: '#FDE68A', bg: 'bg-yellow-100/55', text: 'text-yellow-800' },
 };
 
 function slotLabel(hour) {
@@ -589,14 +589,14 @@ function PriorityTasksCard({ navigate, darkMode }) {
                 {/* Current indicator pulse */}
                 {slot.isCurrent && (
                   <span className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse"
-                    style={{ background: '#5B6CFF' }} />
+                    style={{ background: '#C4B5FD' }} />
                 )}
 
                 {/* Done tick */}
                 {!slot.isCurrent && (
                   <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center flex-shrink-0
-                    ${slot.done ? 'border-transparent' : 'border-indigo-200 dark:border-slate-600'}`}
-                    style={slot.done ? { background: 'linear-gradient(135deg,#5B6CFF,#A78BFA)' } : {}}>
+                    ${slot.done ? 'border-transparent' : 'border-purple-200 dark:border-slate-600'}`}
+                    style={slot.done ? { background: 'linear-gradient(135deg,#F9A8D4,#C4B5FD)' } : {}}>
                     {slot.done && (
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

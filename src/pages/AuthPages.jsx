@@ -148,19 +148,19 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         </button>
       )}
       {/* Container holding form and pastel gradient backdrop card */}
-      <div className="w-full max-w-md rounded-3xl p-0.5 bg-gradient-to-tr from-pink-300 via-purple-300 to-sky-300 shadow-2xl hover:shadow-pink-100 dark:hover:shadow-none transition-all duration-300">
+      <div className="w-full max-w-md rounded-3xl p-0.5 bg-gradient-to-tr from-[#F9A8D4] via-[#FDF4FF] to-[#C4B5FD] shadow-2xl hover:shadow-pink-100 dark:hover:shadow-none transition-all duration-300">
         
-        <div className="bg-white/90 dark:bg-slate-800/95 backdrop-blur-md rounded-[23px] px-6 py-8 sm:px-8">
+        <div className="bg-white/65 dark:bg-slate-800/95 backdrop-blur-md rounded-[23px] px-6 py-8 sm:px-8">
           
           {/* Logo / Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#5B6CFF] to-[#A78BFA] text-white text-2xl font-black shadow-md mb-2">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#F9A8D4] to-[#C4B5FD] text-white text-2xl font-black shadow-md mb-2">
               ✨
             </div>
-            <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+            <h2 className="text-2xl font-black text-[#3B1F5E] dark:text-slate-100 tracking-tight">
               My Daily Planner
             </h2>
-            <p className="text-xs font-semibold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-widest">
+            <p className="text-xs font-semibold text-[#9B8AAE] dark:text-slate-400 mt-1 uppercase tracking-widest">
               {view === 'login' ? 'Welcome Back' : view === 'signup' ? 'Get Started' : 'Reset Password'}
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                   placeholder="Enter your name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-slate-700 dark:text-slate-100 font-semibold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 transition-all"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                 />
               </div>
             )}
@@ -207,7 +207,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-slate-700 dark:text-slate-100 font-semibold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 transition-all"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
               />
             </div>
 
@@ -234,7 +234,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-slate-700 dark:text-slate-100 font-semibold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 transition-all"
+                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                   />
                   <button
                     type="button"
@@ -268,7 +268,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-slate-700 dark:text-slate-100 font-semibold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 transition-all"
+                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                   />
                   <button
                     type="button"
@@ -294,7 +294,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white font-extrabold text-sm shadow-lg shadow-pink-100 dark:shadow-none hover:shadow-pink-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-[#F9A8D4] to-[#F472B6] hover:from-[#F472B6] hover:to-[#ec4899] text-white font-extrabold text-sm shadow-lg shadow-pink-100/50 dark:shadow-none hover:shadow-pink-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
