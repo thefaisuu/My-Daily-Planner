@@ -49,13 +49,15 @@ const playNotificationSound = () => {
   }
 };
 
-function ToastNotification({ message, type, action, onDone }) {
+function ToastNotification({ message, type, action, playSound, onDone }) {
   useEffect(() => {
-    playNotificationSound();
+    if (playSound) {
+      playNotificationSound();
+    }
     if (action) return;
     const id = setTimeout(onDone, 4000);
     return () => clearTimeout(id);
-  }, [action, onDone]);
+  }, [action, playSound, onDone]);
 
   return (
     <div className={`fixed bottom-6 right-6 z-50 flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-black animate-bounce-in min-w-[280px] max-w-sm
@@ -154,6 +156,7 @@ export default function App() {
           message={toast.message}
           type={toast.type}
           action={toast.action}
+          playSound={toast.playSound}
           onDone={() => setToast(null)}
         />
       )}

@@ -1387,7 +1387,9 @@ export default function SchedulePage() {
               )}
 
               <p className={`mt-6 text-center text-xs font-semibold ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                🌙 Schedule ends at {latestEndTime} · Click any slot or the + button to add events
+                {Object.values(slotData).filter(s => s?.task?.trim()).length > 0
+                  ? `🌙 Schedule ends at ${latestEndTime} · Click any slot or the + button to add events`
+                  : 'there is no event logged'}
               </p>
             </div>
           </div>

@@ -264,23 +264,33 @@ function BottomDrawer({ open, onClose, children, darkMode }) {
    MAIN FOCUS TIMER PAGE
 ═══════════════════════════════════════════════════════ */
 export default function FocusTimerPage() {
-  const { darkMode } = useApp();
+  const { darkMode, showToast } = useApp();
 
   /* ── Settings ── */
-  const [settings, setSettings] = useState({
-    focusMin:  25,
-    shortMin:  5,
-    longMin:   15,
-    sessions:  4,
-    sound:     true,
-    autoStart: false,
-    tabTitle:  true,
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('planner_timer_settings');
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return {
+      focusMin:  25,
+      shortMin:  5,
+      longMin:   15,
+      sessions:  4,
+      sound:     true,
+      autoStart: false,
+      tabTitle:  true,
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('planner_timer_settings', JSON.stringify(settings));
+  }, [settings]);
 
   /* ── Timer state ── */
   const [mode,        setMode]        = useState('focus');        // 'focus' | 'short_break' | 'long_break'
-  const [totalSecs,   setTotalSecs]   = useState(25 * 60);
-  const [secsLeft,    setSecsLeft]    = useState(25 * 60);
+  const [totalSecs,   setTotalSecs]   = useState(() => (settings.focusMin || 25) * 60);
+  const [secsLeft,    setSecsLeft]    = useState(() => (settings.focusMin || 25) * 60);
   const [running,     setRunning]     = useState(false);
   const [sessionsComp,setSessionsComp]= useState(0);             // focus sessions completed
   const [completed,   setCompleted]   = useState(false);          // just finished?
@@ -288,8 +298,37 @@ export default function FocusTimerPage() {
   const [label,       setLabel]       = useState('');              // optional task label
 
   const intervalRef = useRef(null);
+  const runningRef  = useRef(running);
   const cfg         = MODES[mode];
   const pct         = secsLeft / totalSecs;
+
+  useEffect(() => {
+    runningRef.current = running;
+  }, [running]);
+
+  const triggerNotification = useCallback((title, body) => {
+    // 1. Show react toast with playSound = true
+    showToast(`${title}: ${body}`, 'success', null, true);
+
+    // 2. Show HTML5 browser notification if permitted
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification(title, {
+          body: body,
+          icon: '/favicon.ico',
+        });
+      } else if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification(title, {
+              body: body,
+              icon: '/favicon.ico',
+            });
+          }
+        });
+      }
+    }
+  }, [showToast]);
 
   /* ── Derive total from settings+mode ── */
   const getDuration = useCallback((m) => {
@@ -337,9 +376,12 @@ export default function FocusTimerPage() {
     if (!completed) return;
     if (mode === 'focus') {
       const next = (sessionsComp + 1) % settings.sessions === 0 ? 'long_break' : 'short_break';
-      setSessionsComp(s => s + 1);
+      const newCount = sessionsComp + 1;
+      setSessionsComp(newCount);
+      triggerNotification('Focus Session Complete! 🎉', `Great job! Session #${newCount} completed.`);
       if (settings.autoStart) { switchMode(next, true); }
     } else {
+      triggerNotification('Break Over! ⚡', 'Ready to focus again? Let\'s get back to work!');
       if (settings.autoStart) { switchMode('focus', true); }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -358,11 +400,11 @@ export default function FocusTimerPage() {
 
   /* ── Update duration when settings change (only if not running) ── */
   useEffect(() => {
-    if (running) return;
+    if (runningRef.current) return;
     const dur = getDuration(mode);
     setTotalSecs(dur);
     setSecsLeft(dur);
-  }, [settings.focusMin, settings.shortMin, settings.longMin, mode, getDuration, running]);
+  }, [settings.focusMin, settings.shortMin, settings.longMin, mode, getDuration]);
 
   /* ── Controls ── */
   const handleStart  = () => { setCompleted(false); setRunning(true); };

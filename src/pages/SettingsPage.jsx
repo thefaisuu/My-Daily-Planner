@@ -503,7 +503,7 @@ export default function SettingsPage() {
         <Section title="Data & Privacy" icon="🛡️">
           <div className="space-y-3">
             <p className="text-xs font-semibold text-slate-500 leading-relaxed">
-              All your planner data is stored locally in your browser. No data is stored on any external server.
+              All your planner data is stored in our server
             </p>
             <div className="flex gap-3 flex-wrap pt-1">
               <button

@@ -134,8 +134,8 @@ export function AppProvider({ children }) {
 
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success', action = null) => {
-    setToast({ message, type, action });
+  const showToast = (message, type = 'success', action = null, playSound = false) => {
+    setToast({ message, type, action, playSound });
   };
 
   const [confirmModal, setConfirmModal] = useState({
