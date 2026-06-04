@@ -79,10 +79,56 @@ export default function SettingsPage() {
     }
   };
 
-  const clearAllData = () => {
+  const [clearing, setClearing] = useState(false);
+
+  const clearAllData = async () => {
+    setClearing(true);
+    setToast({ message: 'Clearing your data...', type: 'info' });
+
+    // 1. Clear Local Storage
     ['planner_habits','planner_notes','planner_water','planner_moods','planner_schedule','planner_tasks','planner_focus','planner_ai_chats','planner_ai_timestamps','planner_supabase_mock_cache']
       .forEach(k => localStorage.removeItem(k));
+
+    // 2. Clear Supabase database if logged in
+    if (supabase && user) {
+      try {
+        const userId = user.id;
+        
+        // Delete all database records for this user
+        await Promise.all([
+          supabase.from('schedule_tasks').delete().eq('user_id', userId),
+          supabase.from('habit_logs').delete().eq('user_id', userId),
+          supabase.from('habits').delete().eq('user_id', userId),
+          supabase.from('mood_logs').delete().eq('user_id', userId),
+          supabase.from('notes').delete().eq('user_id', userId),
+          supabase.from('water_logs').delete().eq('user_id', userId),
+          supabase.from('chat_history').delete().eq('user_id', userId),
+          supabase.from('ai_briefings').delete().eq('user_id', userId)
+        ]);
+
+        // Clean user's storage avatars
+        try {
+          const { data: files } = await supabase.storage.from('avatars').list(userId);
+          if (files && files.length > 0) {
+            const filePaths = files.map(f => `${userId}/${f.name}`);
+            await supabase.storage.from('avatars').remove(filePaths);
+          }
+          await supabase.from('profiles').update({ avatar_url: null }).eq('id', userId);
+        } catch (storageErr) {
+          console.warn('Storage cleanup warning:', storageErr);
+        }
+
+        console.log('Successfully cleared all user data from Supabase server.');
+      } catch (err) {
+        console.error('Failed to clear user data from Supabase:', err);
+        setToast({ message: 'Failed to clear some cloud data', type: 'error' });
+      }
+    }
+
+    // 3. Dispatch event to notify other pages
     window.dispatchEvent(new Event('planner-data-changed'));
+    setClearing(false);
+    setToast({ message: 'All planner data cleared ✓', type: 'success' });
   };
 
   const validateAvatar = (file) => {
@@ -467,14 +513,20 @@ export default function SettingsPage() {
                 className="btn-secondary text-xs py-2 px-4 flex items-center gap-2">
                 📥 Export Data
               </button>
-              <button onClick={() => {
-                if (window.confirm('Clear ALL planner data? This cannot be undone.')) {
-                  clearAllData();
-                  setToast({ message: 'All planner data cleared', type: 'info' });
-                }
-              }}
-                className="text-xs font-black text-rose-500 border-2 border-rose-200 hover:bg-rose-50 px-4 py-2 rounded-2xl transition-colors">
-                🗑️ Clear All Data
+              <button
+                disabled={clearing}
+                onClick={async () => {
+                  if (window.confirm('Clear ALL planner data? This cannot be undone.')) {
+                    await clearAllData();
+                  }
+                }}
+                className={`text-xs font-black border-2 px-4 py-2 rounded-2xl transition-colors
+                  ${clearing
+                    ? 'text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed'
+                    : 'text-rose-500 border-rose-200 hover:bg-rose-50'
+                  }`}
+              >
+                {clearing ? '⏳ Clearing...' : '🗑️ Clear All Data'}
               </button>
             </div>
           </div>
