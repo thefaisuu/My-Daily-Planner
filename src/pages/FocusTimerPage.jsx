@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import PastelIcon from '../components/PastelIcon';
-import { Settings, X, RotateCcw, Play, Pause, SkipForward, Timer } from 'lucide-react';
+import { Settings, X, RotateCcw, Play, Pause, SkipForward, Timer, Brain, Coffee, Moon, Pin, Bell, Layers, Clock, Lightbulb } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════════ */
 const MODES = {
-  focus:      { label: 'Focus',       emoji: '🍅', defaultMin: 25, color: '#C4B5FD', track: '#F5EEFF', darkTrack: '#2d1a24' },
-  short_break:{ label: 'Short Break', emoji: '☕', defaultMin: 5,  color: '#86EFAC', track: '#E8FDF0', darkTrack: '#0d2318' },
-  long_break: { label: 'Long Break',  emoji: '🌙', defaultMin: 15, color: '#F9A8D4', track: '#FFF0F5', darkTrack: '#1a1a3e' },
+  focus:       { label: 'Focus',       iconName: 'Brain',       defaultMin: 25, color: '#C4B5FD', track: '#F5EEFF', darkTrack: '#2d1a24' },
+  short_break: { label: 'Short Break', iconName: 'Coffee',      defaultMin: 5,  color: '#86EFAC', track: '#E8FDF0', darkTrack: '#0d2318' },
+  long_break:  { label: 'Long Break',  iconName: 'Moon',        defaultMin: 15, color: '#F9A8D4', track: '#FFF0F5', darkTrack: '#1a1a3e' },
 };
 
 const PRESETS = [
@@ -104,9 +104,13 @@ function TimerRing({ pct, mode, running, secs, darkMode }) {
         )}
       </svg>
 
-      {/* Center content */}
-      <div className="relative flex flex-col items-center gap-1">
-        <span className="text-4xl leading-none mb-1">{cfg.emoji}</span>
+      <div className="relative flex flex-col items-center gap-1.5">
+        {(() => {
+          const ModeIcon = cfg.iconName === 'Brain' ? Brain
+                         : cfg.iconName === 'Coffee' ? Coffee
+                         : Moon;
+          return <ModeIcon size={32} className="mb-0.5" style={{ color: cfg.color }} strokeWidth={1.5} />;
+        })()}
         <span className={`text-6xl font-black tracking-tight tabular-nums ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}
           style={{ fontVariantNumeric: 'tabular-nums' }}>
           {fmt(secs)}
@@ -195,21 +199,48 @@ function SettingsPanel({ settings, setSettings, onPreset, darkMode }) {
 
       {/* Sliders */}
       <div className="space-y-4">
-        {input('🍅 Focus Duration',      'focusMin',  5, 120)}
-        {input('☕ Short Break',          'shortMin',  1, 30)}
-        {input('🌙 Long Break',           'longMin',   5, 60)}
-        {input('📍 Sessions before long', 'sessions',  2, 8)}
+        {input(
+          <span className="flex items-center gap-1.5">
+            <Brain size={12} strokeWidth={1.5} className="text-[#C4B5FD]" />
+            <span>Focus Duration</span>
+          </span>,
+          'focusMin', 5, 120
+        )}
+        {input(
+          <span className="flex items-center gap-1.5">
+            <Coffee size={12} strokeWidth={1.5} className="text-[#86EFAC]" />
+            <span>Short Break</span>
+          </span>,
+          'shortMin', 1, 30
+        )}
+        {input(
+          <span className="flex items-center gap-1.5">
+            <Moon size={12} strokeWidth={1.5} className="text-[#F9A8D4]" />
+            <span>Long Break</span>
+          </span>,
+          'longMin', 5, 60
+        )}
+        {input(
+          <span className="flex items-center gap-1.5">
+            <Pin size={12} strokeWidth={1.5} className="text-slate-400" />
+            <span>Sessions before long</span>
+          </span>,
+          'sessions', 2, 8
+        )}
       </div>
 
       {/* Toggles */}
       <div className="space-y-3">
         {[
-          { key: 'sound',     label: '🔔 Bell on finish'      },
-          { key: 'autoStart', label: '▶️ Auto-start next'     },
-          { key: 'tabTitle',  label: '🗂 Update tab title'     },
-        ].map(({ key, label }) => (
+          { key: 'sound',     label: 'Bell on finish',   icon: <Bell size={13} strokeWidth={1.5} className="text-slate-400" /> },
+          { key: 'autoStart', label: 'Auto-start next',  icon: <Play size={13} strokeWidth={1.5} className="text-slate-400" /> },
+          { key: 'tabTitle',  label: 'Update tab title', icon: <Layers size={13} strokeWidth={1.5} className="text-slate-400" /> },
+        ].map(({ key, label, icon }) => (
           <div key={key} className="flex items-center justify-between">
-            <span className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{label}</span>
+            <span className={`text-sm font-semibold flex items-center gap-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              {icon}
+              <span>{label}</span>
+            </span>
             <button
               onClick={() => setSettings(s => ({ ...s, [key]: !s[key] }))}
               className={`w-11 h-6 rounded-full transition-all duration-300 relative flex-shrink-0
@@ -377,16 +408,17 @@ export default function FocusTimerPage() {
 
   /* ── Tab title ── */
   useEffect(() => {
-    if (!settings.tabTitle) { document.title = 'My Daily Planner 🌸'; return; }
-    if (!running && secsLeft === totalSecs) {
-      document.title = `My Daily Planner 🌸`;
+    if (!settings.tabTitle) { document.title = 'My Daily Planner'; return; }
+    const cfg = MODES[mode];
+    if (secsLeft === 0) {
+      document.title = `My Daily Planner`;
     } else {
-      document.title = `${fmt(secsLeft)} — ${cfg.label} ${cfg.emoji}`;
+      document.title = `${fmt(secsLeft)} — ${cfg.label}`;
     }
-  }, [secsLeft, running, mode, settings.tabTitle, cfg, totalSecs]);
+  }, [secsLeft, mode, settings.tabTitle]);
 
   /* ── Cleanup title on unmount ── */
-  useEffect(() => () => { document.title = 'My Daily Planner 🌸'; }, []);
+  useEffect(() => () => { document.title = 'My Daily Planner'; }, []);
 
   /* ── Tick ── */
   useEffect(() => {
@@ -551,14 +583,20 @@ export default function FocusTimerPage() {
               {Object.entries(MODES).map(([key, m]) => (
                 <button key={key}
                   onClick={() => switchMode(key)}
-                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all duration-200
+                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all duration-200 flex items-center gap-1.5
                     ${mode === key
                       ? 'text-white shadow-md scale-105'
                       : darkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'
                     }`}
                   style={mode === key ? { background: `linear-gradient(135deg, ${m.color}dd, ${m.color})` } : {}}
                 >
-                  {m.emoji} {m.label}
+                  {(() => {
+                    const BtnIcon = m.iconName === 'Brain' ? Brain
+                                  : m.iconName === 'Coffee' ? Coffee
+                                  : Moon;
+                    return <BtnIcon size={13} strokeWidth={1.5} />;
+                  })()}
+                  <span>{m.label}</span>
                 </button>
               ))}
             </div>
@@ -656,14 +694,14 @@ export default function FocusTimerPage() {
             {/* ── Today's summary strip ── */}
             <div className={`w-full max-w-sm grid grid-cols-3 gap-3 mt-2`}>
               {[
-                { icon: '🍅', label: 'Focus sessions', val: sessionsComp },
-                { icon: '⏱️', label: 'Total focused',  val: `${Math.floor(sessionsComp * settings.focusMin / 60)}h ${(sessionsComp * settings.focusMin) % 60}m` },
-                { icon: '☕', label: 'Breaks taken',   val: Math.max(0, sessionsComp - (sessionsComp > 0 ? 0 : 0)) },
+                { iconName: 'Brain',   colorType: 'timer',     label: 'Focus sessions', val: sessionsComp },
+                { iconName: 'Clock',   colorType: 'dashboard', label: 'Total focused',  val: `${Math.floor(sessionsComp * settings.focusMin / 60)}h ${(sessionsComp * settings.focusMin) % 60}m` },
+                { iconName: 'Coffee',  colorType: 'habits',    label: 'Breaks taken',   val: Math.max(0, sessionsComp) },
               ].map((s, i) => (
-                <div key={i} className={`text-center py-3 px-2 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-white/80 border border-slate-100'} shadow-sm`}>
-                  <p className="text-xl">{s.icon}</p>
-                  <p className={`text-lg font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.label}</p>
+                <div key={i} className={`flex flex-col items-center justify-center py-3 px-2 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-white/80 border border-slate-100'} shadow-sm`}>
+                  <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={14} />
+                  <p className={`text-lg font-black mt-2 leading-none ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
+                  <p className={`text-[10px] font-bold leading-tight text-center mt-1.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.label}</p>
                 </div>
               ))}
             </div>
@@ -672,9 +710,12 @@ export default function FocusTimerPage() {
           {/* ════ DESKTOP SETTINGS SIDEBAR ════ */}
           <div className={`hidden lg:block w-80 xl:w-96 flex-shrink-0 rounded-3xl p-6 sticky top-20 border
             ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-pink-100/80'} shadow-sm backdrop-blur-sm`}>
-            <h3 className={`text-base font-black mb-5 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              ⚙️ Timer Settings
-            </h3>
+            <div className="flex items-center gap-2 mb-5">
+              <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+              <h3 className={`text-base font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                Timer Settings
+              </h3>
+            </div>
             <SettingsPanel
               settings={settings}
               setSettings={setSettings}
@@ -684,10 +725,13 @@ export default function FocusTimerPage() {
 
             {/* Tip box */}
             <div className={`mt-6 p-4 rounded-2xl ${darkMode ? 'bg-slate-700/50' : 'bg-pink-50'}`}>
-              <p className={`text-xs font-bold leading-relaxed ${darkMode ? 'text-slate-300' : 'text-pink-700'}`}>
-                💡 <strong>Pomodoro Technique:</strong> Work for 25 minutes, then take a 5-minute break.
-                After 4 sessions, take a longer 15–30 minute break.
-              </p>
+              <div className="flex items-start gap-2">
+                <Lightbulb size={16} className="text-amber-500 fill-amber-500/10 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                <p className={`text-xs font-semibold leading-relaxed ${darkMode ? 'text-slate-300' : 'text-pink-700'}`}>
+                  <strong>Pomodoro Technique:</strong> Work for 25 minutes, then take a 5-minute break.
+                  After 4 sessions, take a longer 15–30 minute break.
+                </p>
+              </div>
             </div>
 
             {/* Keyboard shortcuts */}
