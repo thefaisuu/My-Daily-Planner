@@ -69,7 +69,7 @@ function PageRenderer() {
 }
 
 export default function App() {
-  const { user, setUser, authLoading, toast, setToast } = useApp();
+  const { user, setUser, authLoading, toast, setToast, confirmModal, closeConfirm } = useApp();
   const [authView, setAuthView] = useState(null); // null = landing, 'login' | 'signup' = auth modal
 
   if (authLoading) {
@@ -121,6 +121,85 @@ export default function App() {
           onDone={() => setToast(null)}
         />
       )}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
+        isDanger={confirmModal.isDanger}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirm}
+      />
+    </div>
+  );
+}
+
+/* ── Custom Confirm Modal ── */
+function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText, cancelText, isDanger }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
+        onClick={onCancel}
+      />
+      
+      {/* Card container */}
+      <div 
+        className="relative bg-white border border-slate-100 shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center"
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* Close Button */}
+        <button 
+          onClick={onCancel}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors text-lg cursor-pointer"
+        >
+          ✕
+        </button>
+
+        <div className="flex flex-col items-center text-center space-y-4">
+          {/* Icon */}
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-md ${
+            isDanger ? 'bg-rose-50 text-rose-500 border border-rose-100' : 'bg-indigo-50 text-indigo-500 border border-indigo-100'
+          }`}>
+            {isDanger ? '⚠️' : 'ℹ️'}
+          </div>
+
+          {/* Title */}
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">
+            {title}
+          </h3>
+
+          {/* Message */}
+          <p className="text-sm font-semibold text-slate-500 leading-relaxed max-w-sm">
+            {message}
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-3 px-4 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all text-center cursor-pointer"
+          >
+            {cancelText || 'Cancel'}
+          </button>
+          <button
+            onClick={onConfirm}
+            className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center cursor-pointer ${
+              isDanger 
+                ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100'
+                : 'bg-gradient-to-r from-indigo-500 to-violet-600 hover:shadow-indigo-100'
+            }`}
+          >
+            {confirmText || 'Confirm'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

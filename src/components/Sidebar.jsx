@@ -28,7 +28,7 @@ function NavLink({ item }) {
 }
 
 export default function Sidebar() {
-  const { sidebarOpen, closeSidebar, darkMode, user, logout, setActiveNav } = useApp();
+  const { sidebarOpen, closeSidebar, darkMode, user, logout, setActiveNav, showConfirm } = useApp();
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Ata UmeR';
   const email = user?.email || 'ata@planner.app';
@@ -134,9 +134,13 @@ export default function Sidebar() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (window.confirm('Are you sure you want to log out?')) {
-                  logout();
-                }
+                showConfirm({
+                  title: 'Confirm Logout',
+                  message: 'Are you sure you want to log out of My Daily Planner?',
+                  confirmText: 'Log Out',
+                  isDanger: true,
+                  onConfirm: logout
+                });
               }}
               className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-slate-700/50 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
               title="Logout"

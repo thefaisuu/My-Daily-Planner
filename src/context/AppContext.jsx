@@ -138,6 +138,35 @@ export function AppProvider({ children }) {
     setToast({ message, type, action });
   };
 
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    isDanger: true,
+  });
+
+  const showConfirm = ({ title, message, onConfirm, confirmText = 'Confirm', cancelText = 'Cancel', isDanger = true }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        onConfirm();
+      },
+      confirmText,
+      cancelText,
+      isDanger,
+    });
+  };
+
+  const closeConfirm = () => {
+    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+  };
+
   // Remove any stale dark class from previous sessions
   document.documentElement.classList.remove('dark');
 
@@ -148,6 +177,7 @@ export function AppProvider({ children }) {
       activeNav, setActiveNav,
       user, setUser, logout, authLoading,
       toast, setToast, showToast,
+      confirmModal, showConfirm, closeConfirm,
     }}>
       {children}
     </AppContext.Provider>

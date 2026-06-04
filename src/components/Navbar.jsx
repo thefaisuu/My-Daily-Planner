@@ -279,7 +279,7 @@ export function NotificationBell() {
 }
 
 function AvatarDropdown() {
-  const { setActiveNav, user, logout } = useApp();
+  const { setActiveNav, user, logout, showConfirm } = useApp();
   const [open, setOpen]  = useState(false);
   const ref = useRef(null);
 
@@ -304,7 +304,19 @@ function AvatarDropdown() {
   const menuItems = [
     { icon: '⚙️', label: 'Settings', action: () => setActiveNav('Settings') },
     { icon: '🔔', label: 'Notifications', action: () => setActiveNav('Notifications') },
-    { icon: '🚪', label: 'Logout', action: () => { if (window.confirm('Are you sure you want to log out?')) logout(); } },
+    {
+      icon: '🚪',
+      label: 'Logout',
+      action: () => {
+        showConfirm({
+          title: 'Confirm Logout',
+          message: 'Are you sure you want to log out of My Daily Planner?',
+          confirmText: 'Log Out',
+          isDanger: true,
+          onConfirm: logout
+        });
+      }
+    },
   ];
 
   return (
