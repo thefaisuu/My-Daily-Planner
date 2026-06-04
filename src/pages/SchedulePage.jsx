@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Plus, Edit2, Trash2, Check, X, AlertCircle, Calendar, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Check, X, AlertCircle, Calendar, Loader2, Clock, Target } from 'lucide-react';
 import {
   connectGoogleCalendar,
   disconnectGoogleCalendar,
@@ -174,14 +174,14 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               value={task}
               onChange={e => setTask(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && task.trim() && handleSave()}
-              placeholder="e.g. 🧘 Morning yoga, 📞 Client call…"
+              placeholder="e.g. Morning yoga, Client call…"
               className={inputCls}
             />
           </div>
 
           {/* ── Date ── */}
           <div>
-            <label className={labelCls}>📆 Date</label>
+            <label className={labelCls}>Date</label>
             <div className="relative">
               <input
                 type="date"
@@ -221,7 +221,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
           {/* ── Start & End Time ── */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>⏰ Start Time</label>
+              <label className={labelCls}>Start Time</label>
               <input
                 type="time"
                 value={startTime}
@@ -237,7 +237,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               />
             </div>
             <div>
-              <label className={labelCls}>🏁 End Time</label>
+              <label className={labelCls}>End Time</label>
               <input
                 type="time"
                 value={endTime}
@@ -314,7 +314,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
 
           {/* ── Note ── */}
           <div>
-            <label className={labelCls}>📝 Note (optional)</label>
+            <label className={labelCls}>Note (optional)</label>
             <textarea
               value={note}
               onChange={e => setNote(e.target.value)}
@@ -330,8 +330,8 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               ${darkMode ? 'bg-slate-800/60 border-slate-700' : 'border-slate-100 bg-slate-50/80'}`}
               style={{ borderLeftColor: selCat.color, borderLeftWidth: 3 }}
             >
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 ${selCat.bg}`}>
-                📅
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${selCat.bg}`}>
+                <Calendar size={14} className={selCat.text} strokeWidth={1.5} />
               </div>
               <div className="min-w-0">
                 <p className={`text-sm font-black truncate ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{task}</p>
@@ -360,7 +360,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               className={`flex-1 py-3 rounded-2xl text-sm font-black text-white transition-all
                 ${task.trim() ? 'hover:shadow-lg hover:-translate-y-0.5 active:scale-95' : 'opacity-40 cursor-not-allowed'}`}
               style={{ background: task.trim() ? 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' : '#9B8AAE' }}>
-              {isEdit ? '✓ Save Changes' : '✨ Add Event'}
+              {isEdit ? 'Save Changes' : 'Add Event'}
             </button>
           </div>
         </div>
@@ -377,7 +377,7 @@ function DeleteConfirm({ slot, onConfirm, onCancel, darkMode }) {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-bounce-in">
       <div className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl shadow-2xl border
         ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-rose-100'}`}>
-        <span className="text-base">🗑️</span>
+        <Trash2 size={16} className="text-rose-500" strokeWidth={1.5} />
         <p className={`text-sm font-bold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
           Delete event at <span className="text-pink-500">{slot.label}</span>?
         </p>
@@ -556,12 +556,14 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
                 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                 {data.date && data.date !== todayISO() && (
                   <span className="flex items-center gap-1">
-                    📆 {new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })}
+                    <Calendar size={11} className="text-slate-400" strokeWidth={1.5} />
+                    <span>{new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })}</span>
                   </span>
                 )}
                 {data.startTime && (
                   <span className="flex items-center gap-1">
-                    ⏰ {timeLabel(data.startTime)}
+                    <Clock size={11} className="text-slate-400" strokeWidth={1.5} />
+                    <span>{timeLabel(data.startTime)}</span>
                     {data.endTime && data.endTime > data.startTime && ` – ${timeLabel(data.endTime)}`}
                   </span>
                 )}
@@ -640,7 +642,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F9A8D4] to-[#C4B5FD] flex items-center justify-center shadow-md flex-shrink-0">
-              <span className="text-lg">🎯</span>
+              <Target size={16} className="text-white" strokeWidth={1.5} />
             </div>
             <div>
               <p className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>Today's Focus</p>
@@ -1370,7 +1372,7 @@ export default function SchedulePage() {
 
               <p className={`mt-6 text-center text-xs font-semibold ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 {Object.values(slotData).filter(s => s?.task?.trim()).length > 0
-                  ? `🌙 Schedule ends at ${latestEndTime} · Click any slot or the + button to add events`
+                  ? `Schedule ends at ${latestEndTime} · Click any slot or the + button to add events`
                   : 'There is No Event Logged. Click any slot or the + button to add events'}
               </p>
             </div>

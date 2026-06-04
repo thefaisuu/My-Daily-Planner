@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Pin, Palette, Trash2, X, Search, Plus } from 'lucide-react';
+import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -21,7 +21,7 @@ const COLOR_MAP = Object.fromEntries(COLORS.map(c => [c.id, c]));
 
 const DEMO_NOTES = [
   {
-    id: 1, title: 'App redesign ideas 💡',
+    id: 1, title: 'App redesign ideas',
     body: 'Thinking about switching the nav to a bottom tab bar on mobile. Also want to add a pomodoro widget to the dashboard and a better onboarding flow for new users.\n\n• Glassmorphism header\n• Floating action button\n• Swipe gestures',
     color: 'pink', pinned: true,
     createdAt: Date.now() - 86400000 * 2,
@@ -35,35 +35,35 @@ const DEMO_NOTES = [
     updatedAt: Date.now() - 86400000,
   },
   {
-    id: 3, title: 'Book list 📚',
+    id: 3, title: 'Book list',
     body: '1. Atomic Habits – James Clear\n2. Deep Work – Cal Newport\n3. The Creative Act – Rick Rubin\n4. Four Thousand Weeks – Oliver Burkeman\n5. Essentialism – Greg McKeown\n6. Thinking, Fast and Slow',
     color: 'purple', pinned: false,
     createdAt: Date.now() - 86400000 * 10,
     updatedAt: Date.now() - 86400000 * 3,
   },
   {
-    id: 4, title: 'Grocery list 🛒',
+    id: 4, title: 'Grocery list',
     body: 'Oat milk, Greek yogurt, avocados ×3, sourdough bread, dark chocolate (85%), green tea, almonds, bananas, spinach, cherry tomatoes',
     color: 'mint', pinned: false,
     createdAt: Date.now() - 86400000,
     updatedAt: Date.now() - 7200000,
   },
   {
-    id: 5, title: 'Travel ideas ✈️',
-    body: 'Places to visit:\n🇯🇵 Japan – cherry blossom season (March/April)\n🇮🇸 Iceland – northern lights (Nov–Feb)\n🇵🇹 Portugal – Lisbon & Porto\n🇲🇦 Morocco – Marrakech medina\n\nBudget target: $3000/trip',
+    id: 5, title: 'Travel ideas',
+    body: 'Places to visit:\nJapan – cherry blossom season (March/April)\nIceland – northern lights (Nov–Feb)\nPortugal – Lisbon & Porto\nMorocco – Marrakech medina\n\nBudget target: $3000/trip',
     color: 'peach', pinned: true,
     createdAt: Date.now() - 86400000 * 15,
     updatedAt: Date.now() - 86400000 * 5,
   },
   {
-    id: 6, title: 'Daily affirmations 🌸',
+    id: 6, title: 'Daily affirmations',
     body: 'I am capable of achieving my goals.\nI choose joy and gratitude today.\nMy potential is limitless.\nI create my own opportunities.\nI am enough, exactly as I am.',
     color: 'rose', pinned: false,
     createdAt: Date.now() - 86400000 * 7,
     updatedAt: Date.now() - 86400000 * 2,
   },
   {
-    id: 7, title: 'Workout routine 💪',
+    id: 7, title: 'Workout routine',
     body: 'Mon: Upper body (chest + triceps)\nTue: Lower body (squats + deadlifts)\nWed: Rest / yoga\nThu: Back + biceps\nFri: HIIT cardio 20 min\nSat: Full body\nSun: Walk + stretching',
     color: 'lemon', pinned: false,
     createdAt: Date.now() - 86400000 * 3,
@@ -295,7 +295,11 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0 bg-transparent">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{isNew ? '✨' : '✏️'}</span>
+            {isNew ? (
+              <Sparkles size={16} style={{ color: c.accent }} />
+            ) : (
+              <Edit2 size={16} style={{ color: c.accent }} />
+            )}
             <p className="text-xs font-black uppercase tracking-wider" style={{ color: c.accent }}>
               {isNew ? 'New Note' : 'Edit Note'}
             </p>
@@ -601,7 +605,7 @@ export default function NotesPage() {
 
     const nextPinned = !noteToPin.pinned;
     setNotes(prev => prev.map(n => n.id === id ? { ...n, pinned: nextPinned } : n));
-    showToast(nextPinned ? 'Note pinned 📌' : 'Note unpinned 📍');
+    showToast(nextPinned ? 'Note pinned' : 'Note unpinned');
 
     if (!supabase || !user) {
       window.dispatchEvent(new Event('planner-data-changed'));
@@ -773,9 +777,13 @@ export default function NotesPage() {
           <NotesSkeleton />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4 animate-fade-in">
-            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center text-4xl
+            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center
               ${darkMode ? 'bg-slate-800' : 'bg-pink-50'}`}>
-              {search ? '🔍' : '📝'}
+              {search ? (
+                <Search size={36} className="text-[#C4B5FD]" strokeWidth={1.5} />
+              ) : (
+                <FileText size={36} className="text-[#F9A8D4]" strokeWidth={1.5} />
+              )}
             </div>
             <p className={`text-lg font-black ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
               {search ? 'No notes found' : 'No notes yet'}
@@ -836,9 +844,10 @@ export default function NotesPage() {
 
         {/* Bottom note count */}
         {notes.length > 0 && (
-          <p className={`mt-8 text-center text-xs font-semibold ${darkMode ? 'text-slate-700' : 'text-slate-300'}`}>
-            📝 {notes.length} notes · Auto-saves as you type · Hover a card to edit, pin, or delete
-          </p>
+          <div className={`mt-8 text-center text-xs font-semibold flex items-center justify-center gap-1.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+            <FileText size={13} strokeWidth={1.5} />
+            <span>{notes.length} notes · Auto-saves as you type · Hover a card to edit, pin, or delete</span>
+          </div>
         )}
       </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Camera, Settings } from 'lucide-react';
+import { Camera, Settings, Download, Trash2, Heart, Loader2 } from 'lucide-react';
 
 /* ── Toast ── */
 function Toast({ message, type = 'success', onDone }) {
@@ -21,10 +21,7 @@ function Section({ title, icon, children }) {
   return (
     <div className="card space-y-5">
       <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-        <div className="w-9 h-9 rounded-2xl flex items-center justify-center text-lg"
-          style={{ background: 'linear-gradient(135deg,#EEF1FF,#E0E7FF)' }}>
-          {icon}
-        </div>
+        {icon}
         <h2 className="font-black text-slate-700 text-base">{title}</h2>
       </div>
       {children}
@@ -371,7 +368,7 @@ export default function SettingsPage() {
 
       <div className="max-w-2xl space-y-5">
         {/* ── PROFILE SECTION ── */}
-        <Section title="Profile" icon="👤">
+        <Section title="Profile" icon={<PastelIcon name="User" colorType="settings" circleSize="w-9 h-9" size={16} />}>
           <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
             
             {/* Avatar block with upload button */}
@@ -426,7 +423,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* ── ACCOUNT SECTION ── */}
-        <Section title="Account Security" icon="🔒">
+        <Section title="Account Security" icon={<PastelIcon name="Lock" colorType="danger" circleSize="w-9 h-9" size={16} />}>
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -480,7 +477,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* ── NOTIFICATIONS SECTION ── */}
-        <Section title="Notifications" icon="🔔">
+        <Section title="Notifications" icon={<PastelIcon name="Bell" colorType="schedule" circleSize="w-9 h-9" size={16} />}>
           <ToggleRow label="Habit reminders" sub="Daily reminder to complete your habits"
             value={prefs.habitReminders ?? true} onChange={v => setPref('habitReminders', v)} />
           <ToggleRow label="Water reminders" sub="Hourly nudge to drink water"
@@ -492,7 +489,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* ── APP PREFERENCES SECTION ── */}
-        <Section title="App Preferences" icon="🎨">
+        <Section title="App Preferences" icon={<PastelIcon name="Palette" colorType="habits" circleSize="w-9 h-9" size={16} />}>
           <ToggleRow label="Show motivational quotes" sub="Daily quote on the dashboard"
             value={prefs.showQuotes ?? true} onChange={v => setPref('showQuotes', v)} />
           <ToggleRow label="Focus timer bell sound" sub="Play a soft bell when session ends"
@@ -502,7 +499,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* ── DATA & PRIVACY SECTION ── */}
-        <Section title="Data & Privacy" icon="🛡️">
+        <Section title="Data & Privacy" icon={<PastelIcon name="Shield" colorType="water" circleSize="w-9 h-9" size={16} />}>
           <div className="space-y-3">
             <p className="text-xs font-semibold text-slate-500 leading-relaxed">
               All your planner data is securely stored and backed up on our servers.
@@ -521,8 +518,9 @@ export default function SettingsPage() {
                   URL.revokeObjectURL(url);
                   setToast({ message: 'Backup downloaded ✓', type: 'success' });
                 }}
-                className="btn-secondary text-xs py-2 px-4 flex items-center gap-2">
-                📥 Export Data
+                className="btn-secondary text-xs py-2 px-4 flex items-center gap-1.5">
+                <Download size={13} strokeWidth={1.5} />
+                <span>Export Data</span>
               </button>
               <button
                 disabled={clearing}
@@ -537,21 +535,33 @@ export default function SettingsPage() {
                     }
                   });
                 }}
-                className={`text-xs font-black border-2 px-4 py-2 rounded-2xl transition-colors
+                className={`text-xs font-black border-2 px-4 py-2 rounded-2xl transition-colors flex items-center gap-1.5
                   ${clearing
                     ? 'text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed'
                     : 'text-rose-500 border-rose-200 hover:bg-rose-50'
                   }`}
               >
-                {clearing ? '⏳ Clearing...' : '🗑️ Clear All Data'}
+                {clearing ? (
+                  <>
+                    <Loader2 size={13} strokeWidth={1.5} className="animate-spin" />
+                    <span>Clearing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={13} strokeWidth={1.5} />
+                    <span>Clear All Data</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
         </Section>
 
         {/* ── FOOTER ── */}
-        <div className="text-center pt-8 pb-4 text-xs font-black text-slate-400 uppercase tracking-widest">
-          Made with ♥️ by Haider & Faisal
+        <div className="text-center pt-8 pb-4 text-xs font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-1">
+          <span>Made with</span>
+          <Heart size={12} className="text-rose-400 fill-rose-400" />
+          <span>by Haider & Faisal</span>
         </div>
 
       </div>

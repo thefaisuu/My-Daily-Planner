@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
+import { Heart, Mail, Users, CheckCircle, AlertTriangle, Hammer, Lock, Palette, Gift, CheckSquare, Droplet, Smile, Timer, Zap, Shield, TrendingUp, Calendar, FileText } from 'lucide-react';
 
 /* ── Feature cards data ── */
 const FEATURES = [
   {
-    icon: '✅',
+    iconName: 'CheckSquare',
     title: 'Habit Tracker',
-    desc: 'Build powerful daily routines with streak tracking, emoji icons, and progress rings. Turn small habits into life-changing wins.',
+    desc: 'Build powerful daily routines with streak tracking, custom theme tags, and progress rings. Turn small habits into life-changing wins.',
     gradient: 'from-pink-400 to-rose-500',
     bg: 'bg-pink-50',
     border: 'border-pink-100',
   },
   {
-    icon: '📅',
+    iconName: 'Calendar',
     title: 'Smart Schedule',
     desc: 'Plan every hour of your day with categorized time slots, completion tracking, and a printable agenda view.',
     gradient: 'from-indigo-400 to-violet-500',
@@ -19,7 +20,7 @@ const FEATURES = [
     border: 'border-indigo-100',
   },
   {
-    icon: '💧',
+    iconName: 'Droplet',
     title: 'Water Tracker',
     desc: 'Stay hydrated with visual glass-by-glass logging, daily goals, and streak reminders to keep you at peak performance.',
     gradient: 'from-sky-400 to-blue-500',
@@ -27,7 +28,7 @@ const FEATURES = [
     border: 'border-sky-100',
   },
   {
-    icon: '😊',
+    iconName: 'Smile',
     title: 'Mood Journal',
     desc: 'Track your emotional wellbeing daily. Log moods from Rough to Amazing with optional notes and a beautiful monthly calendar.',
     gradient: 'from-amber-400 to-orange-500',
@@ -35,7 +36,7 @@ const FEATURES = [
     border: 'border-amber-100',
   },
   {
-    icon: '📝',
+    iconName: 'FileText',
     title: 'Smart Notes',
     desc: 'Capture ideas in beautiful color-coded notes with pin support, rich text, and instant auto-save as you type.',
     gradient: 'from-emerald-400 to-teal-500',
@@ -53,31 +54,34 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: '6+', label: 'Productivity Tools', icon: '🛠️' },
-  { value: '100%', label: 'Privacy First', icon: '🔒' },
-  { value: 'Modern', label: 'Dashboard UI', icon: '🎨' },
-  { value: 'Free', label: 'Always Free', icon: '💝' },
+  { value: '6+', label: 'Productivity Tools', icon: <Hammer size={24} className="text-white" strokeWidth={1.5} /> },
+  { value: '100%', label: 'Privacy First', icon: <Lock size={24} className="text-white" strokeWidth={1.5} /> },
+  { value: 'Modern', label: 'Dashboard UI', icon: <Palette size={24} className="text-white" strokeWidth={1.5} /> },
+  { value: 'Free', label: 'Always Free', icon: <Gift size={24} className="text-white" strokeWidth={1.5} /> },
 ];
 
 const TESTIMONIALS = [
   {
     name: 'Sarah K.',
     role: 'Freelance Designer',
-    avatar: '👩‍🎨',
+    initials: 'SK',
+    bg: 'from-pink-400 to-rose-400',
     text: 'My Daily Planner completely transformed my mornings. The habit tracker and printable daily schedule are exactly what I needed!',
     stars: 5,
   },
   {
     name: 'Ahmed R.',
     role: 'Software Engineer',
-    avatar: '👨‍💻',
+    initials: 'AR',
+    bg: 'from-indigo-400 to-purple-400',
     text: 'Finally an app that has everything in one place. The customizable widgets and notes help me stay extremely organized throughout the day.',
     stars: 5,
   },
   {
     name: 'Priya M.',
     role: 'Student & Blogger',
-    avatar: '👩‍🎓',
+    initials: 'PM',
+    bg: 'from-amber-400 to-orange-400',
     text: 'The mood journal and focus timer have helped me stay on top of my mental health and study sessions. Love it!',
     stars: 5,
   },
@@ -98,9 +102,11 @@ function AnimatedStat({ value, label, icon, delay = 0 }) {
   }, []);
 
   return (
-    <div ref={ref} className={`flex flex-col items-center gap-2 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+    <div ref={ref} className={`flex flex-col items-center gap-2.5 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
       style={{ transitionDelay: `${delay}ms` }}>
-      <span className="text-4xl">{icon}</span>
+      <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shadow-md">
+        {icon}
+      </div>
       <p className="text-4xl font-black text-white">{value}</p>
       <p className="text-sm font-semibold text-white/70">{label}</p>
     </div>
@@ -121,13 +127,22 @@ function FeatureCard({ feature, index }) {
     return () => observer.disconnect();
   }, []);
 
+  const CardIcon = feature.iconName === 'CheckSquare' ? CheckSquare
+                 : feature.iconName === 'Calendar' ? Calendar
+                 : feature.iconName === 'Droplet' ? Droplet
+                 : feature.iconName === 'Smile' ? Smile
+                 : feature.iconName === 'Timer' ? Timer
+                 : FileText;
+
   return (
     <div ref={ref}
-      className={`group p-6 rounded-3xl border ${feature.bg} ${feature.border} hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default
-        ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-      style={{ transitionDelay: `${(index % 4) * 80}ms`, transition: 'all 0.5s ease' }}>
-      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-2xl mb-4 shadow-md group-hover:scale-110 transition-transform duration-200`}>
-        {feature.icon}
+      className={`p-6 rounded-3xl border bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-start text-left group
+        ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
+        ${feature.border}`}
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-white mb-4 shadow-md group-hover:scale-110 transition-transform duration-200`}>
+        <CardIcon size={20} strokeWidth={1.5} className="text-white" />
       </div>
       <h3 className="font-black text-slate-800 text-base mb-2">{feature.title}</h3>
       <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
@@ -309,19 +324,29 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="relative max-w-3xl mx-auto">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { icon: '✅', label: 'Habits', value: '5/7 done', color: '#f472b6', bg: '#fdf2f8' },
-                { icon: '💧', label: 'Water', value: '6/8 glasses', color: '#60a5fa', bg: '#eff6ff' },
-                { icon: '😊', label: 'Mood', value: 'Feeling Good', color: '#34d399', bg: '#ecfdf5' },
-                { icon: '⏱️', label: 'Focus', value: '3 sessions', color: '#a78bfa', bg: '#f5f3ff' },
-              ].map((card, i) => (
-                <div key={i}
-                  className="p-4 rounded-2xl border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 text-left"
-                  style={{ background: card.bg, borderColor: card.color + '33' }}>
-                  <span className="text-2xl">{card.icon}</span>
-                  <p className="text-[10px] font-bold uppercase tracking-wider mt-2" style={{ color: card.color + 'aa' }}>{card.label}</p>
-                  <p className="text-sm font-black mt-0.5" style={{ color: card.color }}>{card.value}</p>
-                </div>
-              ))}
+                { iconName: 'CheckSquare', label: 'Habits', value: '5/7 done', color: '#f472b6', bg: '#fdf2f8' },
+                { iconName: 'Droplet', label: 'Water', value: '6/8 glasses', color: '#60a5fa', bg: '#eff6ff' },
+                { iconName: 'Smile', label: 'Mood', value: 'Feeling Good', color: '#34d399', bg: '#ecfdf5' },
+                { iconName: 'Timer', label: 'Focus', value: '3 sessions', color: '#a78bfa', bg: '#f5f3ff' },
+              ].map((card, i) => {
+                const CardIcon = card.iconName === 'CheckSquare' ? CheckSquare
+                               : card.iconName === 'Droplet' ? Droplet
+                               : card.iconName === 'Smile' ? Smile
+                               : Timer;
+                return (
+                  <div key={i}
+                    className="p-4 rounded-2xl border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 text-left flex flex-col gap-2"
+                    style={{ background: card.bg, borderColor: card.color + '33' }}>
+                    <div className="w-9 h-9 rounded-xl bg-white/80 shadow-sm flex items-center justify-center">
+                      <CardIcon size={16} style={{ color: card.color }} strokeWidth={1.5} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.color + 'aa' }}>{card.label}</p>
+                      <p className="text-sm font-black mt-0.5" style={{ color: card.color }}>{card.value}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -381,21 +406,21 @@ export default function LandingPage({ onLogin, onSignup }) {
                 step: '01',
                 title: 'Create your free account',
                 desc: 'Sign up with email or Google in seconds. No credit card, no commitments, forever free.',
-                icon: '🔐',
+                icon: <Lock size={20} className="text-[#5B6CFF]" strokeWidth={1.5} />,
                 color: '#5B6CFF',
               },
               {
                 step: '02',
                 title: 'Set up your habits & schedule',
-                desc: 'Add your daily habits, pick your emoji, and block out your day in the smart scheduler.',
-                icon: '⚡',
+                desc: 'Add your daily habits, pick your theme colors, and block out your day in the smart scheduler.',
+                icon: <Zap size={20} className="text-[#A78BFA]" strokeWidth={1.5} />,
                 color: '#A78BFA',
               },
               {
                 step: '03',
                 title: 'Track your progress',
                 desc: 'View your completion charts, keep streaks alive, and review mood logs to see how you grow.',
-                icon: '📈',
+                icon: <TrendingUp size={20} className="text-[#f472b6]" strokeWidth={1.5} />,
                 color: '#f472b6',
               },
             ].map((step, i) => (
@@ -440,8 +465,8 @@ export default function LandingPage({ onLogin, onSignup }) {
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed italic mb-6">"{t.text}"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-xl">
-                    {t.avatar}
+                  <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${t.bg} flex items-center justify-center text-white text-xs font-black shadow-md`}>
+                    {t.initials}
                   </div>
                   <div>
                     <p className="font-black text-slate-800 text-sm">{t.name}</p>
@@ -497,9 +522,11 @@ export default function LandingPage({ onLogin, onSignup }) {
             </div>
             <span className="font-black text-white text-sm">My Daily Planner</span>
           </div>
-          <p className="text-slate-500 text-xs font-medium">
-            © {new Date().getFullYear()} Made with ♥️ by Haider & Faisal
-          </p>
+          <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
+            <span>© {new Date().getFullYear()} Made with</span>
+            <Heart size={12} className="text-rose-400 fill-rose-400" />
+            <span>by Haider & Faisal</span>
+          </div>
           <div className="flex gap-4">
             {['Privacy', 'Terms', 'Contact'].map(link => (
               <button
@@ -568,10 +595,10 @@ function LegalPageLayout({ title, children, onBack }) {
       </main>
 
       {/* Simple Footer */}
-      <footer className="py-6 px-4 bg-slate-900 border-t border-slate-800 text-center">
-        <p className="text-slate-500 text-xs font-medium">
-          © {new Date().getFullYear()} Made with ♥️ by Haider & Faisal
-        </p>
+      <footer className="py-6 px-4 bg-slate-900 border-t border-slate-800 flex items-center justify-center gap-1.5 text-slate-500 text-xs font-medium">
+        <span>© {new Date().getFullYear()} Made with</span>
+        <Heart size={12} className="text-rose-400 fill-rose-400" />
+        <span>by Haider & Faisal</span>
       </footer>
     </div>
   );
@@ -746,7 +773,9 @@ function ContactPage({ onBack }) {
             <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">Direct Contact Info</h3>
             
             <div className="flex items-start gap-3">
-              <span className="text-xl">✉️</span>
+              <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                <Mail size={14} className="text-[#C4B5FD]" strokeWidth={1.5} />
+              </div>
               <div>
                 <p className="font-bold text-slate-800 text-sm">Email Address</p>
                 <a 
@@ -759,7 +788,9 @@ function ContactPage({ onBack }) {
             </div>
 
             <div className="flex items-start gap-3">
-              <span className="text-xl">🤝</span>
+              <div className="w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
+                <Users size={14} className="text-[#F9A8D4]" strokeWidth={1.5} />
+              </div>
               <div>
                 <p className="font-bold text-slate-800 text-sm">Co-Founders</p>
                 <p className="text-slate-500 text-xs mt-0.5">Haider & Faisal</p>
@@ -771,8 +802,8 @@ function ContactPage({ onBack }) {
         {/* Contact Form */}
         <div className="md:col-span-7">
           {submitted ? (
-            <div className="p-8 rounded-3xl border border-emerald-100 bg-emerald-50 text-center space-y-3">
-              <span className="text-4xl">🎉</span>
+            <div className="p-8 rounded-3xl border border-emerald-100 bg-emerald-50 text-center flex flex-col items-center justify-center gap-3">
+              <CheckCircle size={36} className="text-emerald-500 animate-bounce" strokeWidth={1.5} />
               <h3 className="font-black text-emerald-800 text-lg">Thank you!</h3>
               <p className="text-sm text-emerald-600">
                 Your message has been sent successfully. We will get back to you shortly.
@@ -787,8 +818,9 @@ function ContactPage({ onBack }) {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100 text-sm font-semibold text-rose-600">
-                  ⚠️ {error}
+                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100 text-sm font-semibold text-rose-600 flex items-center gap-1.5">
+                  <AlertTriangle size={15} strokeWidth={1.5} className="text-rose-500 flex-shrink-0" />
+                  <span>{error}</span>
                 </div>
               )}
 

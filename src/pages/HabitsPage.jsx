@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles, Trophy, Calendar } from 'lucide-react';
+import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles, Trophy, Calendar, Leaf, Moon, Clock } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & DEFAULTS
@@ -111,11 +111,11 @@ function BigProgressRing({ done, total, darkMode }) {
   const dash = circ * (pct / 100);
 
   const msg =
-    pct === 100 ? '🎉 All done!'
-    : pct >= 75  ? '💪 Almost there!'
-    : pct >= 50  ? '🌟 Halfway there!'
-    : pct >= 25  ? '🚀 Keep going!'
-    :              '✨ Let\'s start!';
+    pct === 100 ? 'All done!'
+    : pct >= 75  ? 'Almost there!'
+    : pct >= 50  ? 'Halfway there!'
+    : pct >= 25  ? 'Keep going!'
+    :              'Let\'s start!';
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -899,15 +899,19 @@ export default function HabitsPage() {
           <HabitsSkeleton />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 animate-fade-in">
-            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center text-4xl
+            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center
               ${darkMode ? 'bg-slate-800' : 'bg-pink-50'}`}>
-              {filter === 'done' ? '🎉' : '🌱'}
+              {filter === 'done' ? (
+                <Trophy size={36} className="text-amber-500 fill-amber-500/10" strokeWidth={1.5} />
+              ) : (
+                <Leaf size={36} className="text-emerald-500 fill-emerald-500/10" strokeWidth={1.5} />
+              )}
             </div>
             <p className={`text-lg font-black ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
               {filter === 'done' ? 'No completed habits yet' : 'All habits done!'}
             </p>
             <p className={`text-sm ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-              {filter === 'done' ? 'Start checking off your habits!' : '🎉 Amazing work today!'}
+              {filter === 'done' ? 'Start checking off your habits!' : 'Amazing work today!'}
             </p>
             {filter !== 'done' && (
               <button onClick={() => { setHabitToEdit(null); setShowModal(true); }} className="btn-primary mt-2">
@@ -932,9 +936,10 @@ export default function HabitsPage() {
 
         {/* ── Bottom tip ── */}
         {habits.length > 0 && (
-          <p className={`mt-8 text-center text-xs font-semibold ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
-            🌙 Habits reset automatically at midnight · Hover a card to delete it
-          </p>
+          <div className={`mt-8 text-center text-xs font-semibold flex items-center justify-center gap-1.5 ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+            <Clock size={13} strokeWidth={1.5} />
+            <span>Habits reset automatically at midnight · Hover a card to delete it</span>
+          </div>
         )}
       </div>
 

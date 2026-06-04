@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Droplet, Droplets, Settings, Percent, Hourglass } from 'lucide-react';
+import { Droplet, Droplets, Settings, Percent, Hourglass, Target, Waves, Sparkles, Heart, Trophy, BarChart2, Lightbulb, Moon } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & STORAGE
@@ -318,9 +318,10 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
     <div className="space-y-5">
       {/* Daily glass goal */}
       <div>
-        <label className={`block text-[11px] font-black uppercase tracking-wider mb-2
+        <label className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider mb-2
           ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-          🎯 Daily Goal (glasses)
+          <Target size={12} className="text-[#F9A8D4]" strokeWidth={1.5} />
+          <span>Daily Goal (glasses)</span>
         </label>
         <div className="flex items-center gap-3">
           <button onClick={() => onGoalChange(Math.max(1, goal - 1))}
@@ -390,8 +391,9 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
       </div>
 
       {/* Reset today tip */}
-      <p className={`text-[11px] font-semibold leading-relaxed ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
-        🌙 Your progress resets automatically at midnight each day.
+      <p className={`flex items-center gap-1.5 text-[11px] font-semibold leading-relaxed ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+        <Moon size={11} className="text-indigo-400" strokeWidth={1.5} />
+        <span>Your progress resets automatically at midnight each day.</span>
       </p>
     </div>
   );
@@ -405,14 +407,18 @@ function GoalCelebration({ visible }) {
   return (
     <div className="text-center py-5 px-6 rounded-3xl animate-bounce-in"
       style={{ background: 'linear-gradient(135deg, #FDF4FF, #F5EEFF)' }}>
-      <div className="text-5xl mb-3 animate-bounce">🎉</div>
+      <div className="flex justify-center mb-3">
+        <Trophy size={48} className="text-amber-400 fill-amber-400/20 animate-bounce" strokeWidth={1.5} />
+      </div>
       <h3 className="text-xl font-black text-[#3B1F5E] mb-1">Daily goal reached!</h3>
       <p className="text-sm font-semibold text-[#C4B5FD]">
-        Amazing! You've hit your water target for today 💧✨
+        Amazing! You've hit your water target for today
       </p>
-      <div className="flex justify-center gap-2 mt-3 text-2xl">
-        {['💧','🌊','🫧','💙','✨'].map((e, i) => (
-          <span key={i} className="animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>{e}</span>
+      <div className="flex justify-center gap-4 mt-4">
+        {[Droplet, Waves, Sparkles, Heart].map((Icon, i) => (
+          <span key={i} className="animate-bounce p-2 rounded-full bg-white/70 shadow-sm" style={{ animationDelay: `${i * 0.1}s` }}>
+            <Icon size={18} className="text-[#C4B5FD] fill-[#C4B5FD]/10" strokeWidth={1.5} />
+          </span>
         ))}
       </div>
     </div>
@@ -632,11 +638,11 @@ export default function WaterPage() {
 
   /* Motivational message */
   const getMessage = () => {
-    if (pct >= 1)    return { msg: "Goal reached! You're glowing ✨", color: 'text-[#F9A8D4]' };
-    if (pct >= 0.75) return { msg: `Almost there! Just ${remaining} more glass${remaining !== 1 ? 'es' : ''} 💪`, color: 'text-[#C4B5FD]' };
-    if (pct >= 0.5)  return { msg: "Halfway there — keep going! ✨", color: 'text-[#C4B5FD]' };
-    if (pct >= 0.25) return { msg: "Good start! Stay hydrated 💧", color: 'text-[#F9A8D4]' };
-    if (glasses > 0) return { msg: "Great start! Keep sipping 😊", color: 'text-slate-500' };
+    if (pct >= 1)    return { msg: "Goal reached! You're glowing", color: 'text-[#F9A8D4]' };
+    if (pct >= 0.75) return { msg: `Almost there! Just ${remaining} more glass${remaining !== 1 ? 'es' : ''}`, color: 'text-[#C4B5FD]' };
+    if (pct >= 0.5)  return { msg: "Halfway there — keep going!", color: 'text-[#C4B5FD]' };
+    if (pct >= 0.25) return { msg: "Good start! Stay hydrated", color: 'text-[#F9A8D4]' };
+    if (glasses > 0) return { msg: "Great start! Keep sipping", color: 'text-slate-500' };
     return { msg: "Tap a glass to log your first drink!", color: darkMode ? 'text-slate-400' : 'text-slate-500' };
   };
   const { msg, color } = getMessage();
@@ -653,7 +659,10 @@ export default function WaterPage() {
             ${darkMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-purple-100'}`}
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>⚙️ Settings</h3>
+              <div className="flex items-center gap-2">
+                <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>Settings</h3>
+              </div>
               <button onClick={() => setShowSettings(false)}
                 className={`w-8 h-8 rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>✕</button>
             </div>
@@ -674,7 +683,7 @@ export default function WaterPage() {
               </h1>
               <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                {goalMet && ' · 🎉 Goal reached!'}
+                {goalMet && ' · Goal reached!'}
               </p>
             </div>
           </div>
@@ -765,9 +774,10 @@ export default function WaterPage() {
                       </button>
                       <button onClick={addGlass}
                         disabled={glasses >= goal}
-                        className="flex-1 py-3 rounded-2xl font-black text-sm text-white flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="flex-1 py-3 rounded-2xl font-black text-sm text-white flex items-center justify-center gap-1.5 transition-all hover:shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                         style={{ background: 'linear-gradient(135deg, #F9A8D4, #F472B6)', boxShadow: '0 4px 16px rgba(249,168,212,0.40)' }}>
-                        💧 Drink a glass
+                        <Droplet size={14} className="text-white fill-white/10" strokeWidth={1.5} />
+                        <span>Drink a glass</span>
                       </button>
                       <button onClick={addGlass}
                         disabled={glasses >= goal}
@@ -817,9 +827,12 @@ export default function WaterPage() {
               {/* Weekly chart */}
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
-                <h3 className={`font-black text-base mb-5 ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
-                  📊 Weekly Intake
-                </h3>
+                <div className="flex items-center gap-2 mb-5">
+                  <BarChart2 size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+                    Weekly Intake
+                  </h3>
+                </div>
                 <WeeklyChart history={history} today={glasses} goal={goal} darkMode={darkMode} />
               </div>
             </div>
@@ -827,9 +840,12 @@ export default function WaterPage() {
             {/* ════ DESKTOP SETTINGS SIDEBAR ════ */}
             <div className={`hidden lg:block w-72 xl:w-80 flex-shrink-0 rounded-3xl p-6 sticky top-20 border shadow-sm
               ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
-              <h3 className={`font-black text-base mb-5 ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
-                ⚙️ Settings
-              </h3>
+              <div className="flex items-center gap-2 mb-5">
+                <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+                  Settings
+                </h3>
+              </div>
               <SettingsPanel
                 goal={goal}
                 mlPerGlass={mlPerGlass}
@@ -840,9 +856,12 @@ export default function WaterPage() {
 
               {/* Hydration tips */}
               <div className={`mt-6 p-4 rounded-2xl space-y-2 ${darkMode ? 'bg-slate-700/50' : 'bg-[#F5EEFF]/80'}`}>
-                <p className={`text-[11px] font-black uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-[#C4B5FD]'}`}>
-                  💡 Hydration Tips
-                </p>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Lightbulb size={13} className="text-amber-500 fill-amber-500/10" strokeWidth={1.5} />
+                  <p className={`text-[11px] font-black uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-[#C4B5FD]'}`}>
+                    Hydration Tips
+                  </p>
+                </div>
                 {[
                   'Drink a glass when you wake up',
                   'Sip water before every meal',

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { ChevronLeft, ChevronRight, Check, Calendar, Flame } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Calendar, Flame, FileText, Edit2, Save, BarChart2, List } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -690,8 +690,9 @@ export default function MoodPage() {
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                    📝 Mood Note
+                  <h3 className={`font-black text-base flex items-center gap-1.5 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                    <FileText size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                    <span>Mood Note</span>
                   </h3>
                   <span className={`text-xs font-bold ${charCount > 240 ? 'text-rose-400' : darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                     {charCount}/280
@@ -741,7 +742,17 @@ export default function MoodPage() {
                     boxShadow: selected ? `0 8px 24px ${sel?.glow}` : 'none',
                   }}
                 >
-                  {todayEntry ? '✏️ Update Today\'s Mood' : '💾 Save Mood'} {sel?.emoji || ''}
+                  {todayEntry ? (
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Edit2 size={15} strokeWidth={1.5} />
+                      <span>Update Today's Mood</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Save size={15} strokeWidth={1.5} />
+                      <span>Save Mood</span>
+                    </span>
+                  )}
                 </button>
               </div>
 
@@ -755,27 +766,36 @@ export default function MoodPage() {
               {/* 7-day chart */}
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
-                <h3 className={`font-black text-base mb-4 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  📊 Last 7 Days
-                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <BarChart2 size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                    Last 7 Days
+                  </h3>
+                </div>
                 <WeekChart history={history} darkMode={darkMode} />
               </div>
 
               {/* Monthly calendar */}
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
-                <h3 className={`font-black text-base mb-4 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  📅 Monthly View
-                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Calendar size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                    Monthly View
+                  </h3>
+                </div>
                 <MonthCalendar history={history} darkMode={darkMode} />
               </div>
 
               {/* Recent entries — horizontal scroll */}
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
-                <h3 className={`font-black text-base mb-4 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                  📋 Recent Entries
-                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <List size={16} className="text-[#9B8AAE]" strokeWidth={1.5} />
+                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
+                    Recent Entries
+                  </h3>
+                </div>
                 <RecentEntries history={history} darkMode={darkMode} />
               </div>
             </div>
