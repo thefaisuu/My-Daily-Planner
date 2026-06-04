@@ -421,7 +421,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
             <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               Choose Icon
             </label>
-            <div className="grid grid-cols-10 gap-1.5">
+            <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
               {EMOJI_OPTIONS.map(e => (
                 <button key={e} onClick={() => setIcon(e)}
                   className={`w-9 h-9 rounded-xl text-xl flex items-center justify-center transition-all duration-150 hover:scale-110
@@ -867,7 +867,7 @@ export default function HabitsPage() {
         </div>
 
         {/* ── Filter tabs ── */}
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-2 mb-5 flex-wrap">
           {[
             { id: 'all',     label: `All (${total})` },
             { id: 'pending', label: `Pending (${total - doneCount})` },

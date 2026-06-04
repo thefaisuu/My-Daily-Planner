@@ -452,7 +452,7 @@ export default function FocusTimerPage() {
           <div className="flex-1 flex flex-col items-center justify-center gap-6 py-4">
 
             {/* Mode tabs */}
-            <div className={`flex p-1.5 gap-1 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
+            <div className={`flex p-1.5 gap-1 rounded-2xl flex-wrap justify-center ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
               {Object.entries(MODES).map(([key, m]) => (
                 <button key={key}
                   onClick={() => switchMode(key)}

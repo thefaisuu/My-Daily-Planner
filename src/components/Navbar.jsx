@@ -388,9 +388,10 @@ export default function Navbar() {
 
       {/* Date pill – centered */}
       <div className="flex-1 flex justify-center">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold bg-indigo-50/80 text-slate-600">
+        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-indigo-50/80 text-slate-600">
           <span className="text-base">📅</span>
-          <span>{dateStr}</span>
+          <span className="hidden sm:inline">{dateStr}</span>
+          <span className="inline sm:hidden">{`${now.getDate()} ${MONTHS[now.getMonth()].slice(0,3)}`}</span>
         </div>
       </div>
 

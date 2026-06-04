@@ -926,7 +926,7 @@ Instructions:
     <div className="card space-y-4 shadow-sm border border-indigo-50/50 relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #EEF2FF 0%, #FAF5FF 100%)' }}>
       
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2.5">
           <span className="text-xl text-indigo-500">✦</span>
           <div>
