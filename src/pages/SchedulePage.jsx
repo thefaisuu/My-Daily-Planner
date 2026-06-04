@@ -818,7 +818,7 @@ export default function SchedulePage() {
   /* Modal state */
   const [modal, setModal]       = useState(null); // { slot } or null
   const [deleteTarget, setDel]  = useState(null); // slot to delete
-  const [activeFilter, setFilt] = useState('all');
+  const [activeFilter, setFilt] = useState('filled');
 
   const syncSlotToDB = async (hour, task, cat, date, startTime, endTime, note, done, prevSlotData) => {
     if (!supabase || !user) {
@@ -1000,7 +1000,6 @@ export default function SchedulePage() {
               {/* Filter + category strip */}
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
-                  { id: 'all',       label: `All (${SLOTS.length})`         },
                   { id: 'filled',    label: `Events (${filledSlots.length})` },
                   { id: 'empty',     label: `Free (${SLOTS.length - filledSlots.length})` },
                   { id: 'completed', label: `Done (${doneSlots.length})`     },
