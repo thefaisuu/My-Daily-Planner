@@ -35,13 +35,13 @@ function NavLink({ item }) {
           name={iconInfo.name}
           colorType={iconInfo.colorType}
           circleSize="w-8 h-8"
-          className={isActive ? 'bg-white/80 text-[#3B1F5E] shadow-sm' : ''}
+          className={isActive ? 'bg-white/80 text-[#1E293B] shadow-sm' : ''}
         />
       </span>
       <span>{item.label}</span>
       {isActive && (
         <span className="ml-auto w-1.5 h-1.5 rounded-full animate-pulse"
-          style={{ background: '#3B1F5E' }} />
+          style={{ background: '#1E293B' }} />
       )}
     </button>
   );
@@ -79,8 +79,8 @@ export default function Sidebar() {
           w-[260px] transition-transform duration-300 ease-in-out
           backdrop-blur-xl border-r shadow-2xl
           ${darkMode
-            ? 'bg-slate-900/95 border-slate-700/60 shadow-indigo-950/40'
-            : 'bg-[#F5EEFF]/95 border-purple-100/60 shadow-purple-100/20'
+            ? 'bg-slate-900/95 border-slate-700/60 shadow-slate-900/40'
+            : 'bg-[#F0F4FF]/95 border-sky-100/60 shadow-purple-100/20'
           }
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static lg:z-auto lg:shadow-none
@@ -90,7 +90,7 @@ export default function Sidebar() {
         {/* Logo & App Name */}
         <div className={`flex items-center gap-3 px-6 py-6 border-b ${darkMode ? 'border-slate-700/60' : 'border-indigo-100/60'}`}>
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md text-white"
-            style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+            style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
             <Sparkles size={20} strokeWidth={1.5} className="animate-pulse" />
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function Sidebar() {
         {/* Nav items */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           <p className={`px-4 mb-3 text-xs font-bold uppercase tracking-widest
-            ${darkMode ? 'text-slate-500' : 'text-purple-400'}`}>
+            ${darkMode ? 'text-slate-500' : 'text-[#7DD3FC]'}`}>
             Menu
           </p>
           {NAV_ITEMS.map((item) => (
@@ -128,10 +128,10 @@ export default function Sidebar() {
           <div 
             onClick={() => setActiveNav('Settings')}
             className={`flex items-center gap-3 px-3 py-3 rounded-2xl transition-colors cursor-pointer group
-              ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-purple-100/40'}`}
+              ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-sky-100/40'}`}
           >
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-sm shadow-md bg-gradient-to-tr from-[#F9A8D4] via-[#F5EEFF] to-[#C4B5FD]">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-sm shadow-md bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (

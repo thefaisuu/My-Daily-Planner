@@ -5,28 +5,28 @@
 
 @theme {
   /* ── Premium Pastel Palette ── */
-  --color-primary:     #F9A8D4;   /* Premium Pink */
-  --color-secondary:   #C4B5FD;   /* Premium Lavender */
-  --color-accent:      #C4B5FD;   /* Premium Lavender */
-  --color-success:     #86EFAC;   /* Mint Green (Habit complete) */
+  --color-primary:     #4F7CFF;   /* Premium Pink */
+  --color-secondary:   #7DD3FC;   /* Premium Lavender */
+  --color-accent:      #7DD3FC;   /* Premium Lavender */
+  --color-success:     #34D399;   /* Mint Green (Habit complete) */
   --color-warning:     #FDE68A;   /* Streak Yellow */
   --color-danger:      #FCA5A5;   /* Soft Red (Delete) */
-  --color-bg:          #FDF4FF;   /* Soft Pink/Purple page bg */
-  --color-sidebar:     #F5EEFF;   /* Lavender Sidebar background */
+  --color-bg:          #F7F9FF;   /* Soft Pink/Purple page bg */
+  --color-sidebar:     #F0F4FF;   /* Lavender Sidebar background */
   --color-surface:     rgba(255, 255, 255, 0.65); /* Glass surface */
-  --color-text:        #3B1F5E;   /* Deep Purple Heading text */
-  --color-text-body:   rgba(59, 31, 94, 0.80); /* 80% opacity body text */
+  --color-text:        #1E293B;   /* Deep Purple Heading text */
+  --color-text-body:   rgba(30, 41, 59, 0.80); /* 80% opacity body text */
   --color-muted:       #9B8AAE;   /* Muted text */
 
   /* Kept for component backward compat */
-  --color-lavender-pastel:       #C4B5FD;
-  --color-lavender-pastel-light: #F5EEFF;
-  --color-mint-pastel:           #86EFAC;
+  --color-lavender-pastel:       #7DD3FC;
+  --color-lavender-pastel-light: #F0F4FF;
+  --color-mint-pastel:           #34D399;
   --color-mint-pastel-light:     #E8FDF0;
   --color-peach-pastel:          #FCA5A5;
   --color-peach-pastel-light:    #FFF0F0;
-  --color-baby-blue:             #C4B5FD;
-  --color-baby-blue-light:       #F5EEFF;
+  --color-baby-blue:             #7DD3FC;
+  --color-baby-blue-light:       #F0F4FF;
 }
 
 /* ============================================================
@@ -41,26 +41,26 @@ html {
 }
 
 body {
-  background-color: #FDF4FF;
+  background-color: #F7F9FF;
   background-image: 
-    radial-gradient(ellipse at top left, #FDF4FF 0%, #F5EEFF 40%, #FDF4FF 70%, #FFF0F5 100%),
-    radial-gradient(rgba(59, 31, 94, 0.03) 1.5px, transparent 1.5px);
+    radial-gradient(ellipse at top left, #F7F9FF 0%, #F0F4FF 40%, #F7F9FF 70%, #FFF0F5 100%),
+    radial-gradient(rgba(30, 41, 59, 0.03) 1.5px, transparent 1.5px);
   background-size: 100% 100%, 24px 24px;
   background-attachment: fixed;
   min-height: 100vh;
-  color: rgba(59, 31, 94, 0.80);
+  color: rgba(30, 41, 59, 0.80);
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #3B1F5E;
+  color: #1E293B;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #F5EEFF; border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: #C4B5FD; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #F9A8D4; }
+::-webkit-scrollbar-track { background: #F0F4FF; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #7DD3FC; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #4F7CFF; }
 
 /* ============================================================
    REUSABLE COMPONENT CLASSES
@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: 1rem;
-  color: rgba(59, 31, 94, 0.70);
+  color: rgba(30, 41, 59, 0.70);
   font-weight: 600;
   font-size: 0.875rem;
   transition: all 0.2s ease;
@@ -84,13 +84,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .sidebar-link:hover {
   background: rgba(196, 181, 253, 0.15);
-  color: #3B1F5E;
+  color: #1E293B;
   transform: translateX(4px);
 }
 
 .sidebar-link.active {
-  background: #C4B5FD;
-  color: #3B1F5E;
+  background: #7DD3FC;
+  color: #1E293B;
   box-shadow: 0 4px 12px rgba(196, 181, 253, 0.35);
   font-weight: 800;
 }
@@ -100,7 +100,7 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(20px);
   border-radius: 1.5rem;
-  box-shadow: 0 4px 20px rgba(59, 31, 94, 0.04);
+  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.04);
   border: 1px solid rgba(196, 181, 253, 0.25);
   padding: 1.5rem;
   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -108,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(59, 31, 94, 0.08);
+  box-shadow: 0 12px 28px rgba(30, 41, 59, 0.08);
   border-color: rgba(249, 168, 212, 0.45);
 }
 
@@ -124,7 +124,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Primary button: Premium Pink ── */
 .btn-primary {
-  background: linear-gradient(135deg, #F9A8D4, #F472B6);
+  background: linear-gradient(135deg, #4F7CFF, #3B66E8);
   color: white;
   font-weight: 800;
   padding: 0.625rem 1.25rem;
@@ -149,7 +149,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Secondary button ── */
 .btn-secondary {
   background: rgba(255, 255, 255, 0.70);
-  color: #3B1F5E;
+  color: #1E293B;
   font-weight: 700;
   padding: 0.625rem 1.25rem;
   border-radius: 1rem;
@@ -161,14 +161,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-secondary:hover {
-  background: #F5EEFF;
-  border-color: #C4B5FD;
-  color: #3B1F5E;
+  background: #F0F4FF;
+  border-color: #7DD3FC;
+  color: #1E293B;
 }
 
 /* ── Text gradient (pink → lavender) ── */
 .text-gradient-primary {
-  background: linear-gradient(to right, #F9A8D4, #C4B5FD);
+  background: linear-gradient(to right, #4F7CFF, #7DD3FC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -176,7 +176,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* kept alias */
 .text-gradient-pink {
-  background: linear-gradient(to right, #F9A8D4, #C4B5FD);
+  background: linear-gradient(to right, #4F7CFF, #7DD3FC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -224,7 +224,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Accessibility Focus States ── */
 *:focus-visible {
-  outline: 3px solid #C4B5FD !important;
+  outline: 3px solid #7DD3FC !important;
   outline-offset: 2px !important;
 }
 

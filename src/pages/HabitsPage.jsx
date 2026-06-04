@@ -3,13 +3,14 @@ import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
 import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles, Trophy, Calendar, Leaf, Moon, Clock } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & DEFAULTS
-═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════ */
 const PASTEL_THEMES = [
-  { id: 'pink',   bg: '#fce7f3', ring: '#f9a8d4', badge: '#fbcfe8', text: '#be185d', accent: '#f472b6', icon_bg: '#fda4af' },
-  { id: 'purple', bg: '#f3e8ff', ring: '#d8b4fe', badge: '#e9d5ff', text: '#7e22ce', accent: '#c084fc', icon_bg: '#c4b5fd' },
+  { id: 'pink',   bg: '#fce7f3', ring: '#4F7CFF', badge: '#fbcfe8', text: '#be185d', accent: '#3B66E8', icon_bg: '#fda4af' },
+  { id: 'purple', bg: '#f3e8ff', ring: '#d8b4fe', badge: '#e9d5ff', text: '#7e22ce', accent: '#c084fc', icon_bg: '#7DD3FC' },
   { id: 'blue',   bg: '#eff6ff', ring: '#93c5fd', badge: '#bfdbfe', text: '#1d4ed8', accent: '#60a5fa', icon_bg: '#93c5fd' },
   { id: 'mint',   bg: '#ecfdf5', ring: '#6ee7b7', badge: '#a7f3d0', text: '#065f46', accent: '#34d399', icon_bg: '#6ee7b7' },
   { id: 'peach',  bg: '#fff7ed', ring: '#fdba74', badge: '#fed7aa', text: '#9a3412', accent: '#fb923c', icon_bg: '#fdba74' },
@@ -18,21 +19,21 @@ const PASTEL_THEMES = [
   { id: 'cyan',   bg: '#ecfeff', ring: '#67e8f9', badge: '#a5f3fc', text: '#155e75', accent: '#22d3ee', icon_bg: '#67e8f9' },
 ];
 
-const EMOJI_OPTIONS = [
-  '🧘','🏃','📚','💊','💧','😴','🥗','🧹','✍️','🎵',
-  '🏋️','🚴','🌿','☕','🛁','🎨','📝','🌅','🙏','🥤',
-  '🍎','🧠','💪','🤸','🎯','📖','🌙','⭐','💻'
+const ICON_OPTIONS = [
+  'Brain', 'Activity', 'BookOpen', 'Pills', 'Droplet', 'Moon', 'Apple', 'PenTool', 'Smile',
+  'Target', 'Heart', 'Flame', 'Sparkles', 'Trophy', 'Calendar', 'Clock', 'Coffee', 'Music',
+  'Sun', 'Briefcase', 'GraduationCap', 'Home', 'Lock', 'Mail', 'MapPin', 'Bell', 'Settings'
 ];
 
 const DEFAULT_HABITS = [
-  { id: 1,  name: 'Morning Meditation', icon: '🧘', theme: 'purple', streak: 12, bestStreak: 21, doneToday: true,  createdAt: Date.now() },
-  { id: 2,  name: 'Exercise 30 min',    icon: '🏃', theme: 'pink',   streak: 7,  bestStreak: 14, doneToday: true,  createdAt: Date.now() },
-  { id: 3,  name: 'Read 20 pages',      icon: '📚', theme: 'blue',   streak: 4,  bestStreak: 10, doneToday: false, createdAt: Date.now() },
-  { id: 4,  name: 'Take vitamins',      icon: '💊', theme: 'mint',   streak: 21, bestStreak: 30, doneToday: false, createdAt: Date.now() },
-  { id: 5,  name: 'Drink 8 glasses',    icon: '💧', theme: 'cyan',   streak: 5,  bestStreak: 8,  doneToday: false, createdAt: Date.now() },
-  { id: 6,  name: 'Sleep by 11 PM',     icon: '😴', theme: 'lemon',  streak: 3,  bestStreak: 7,  doneToday: false, createdAt: Date.now() },
-  { id: 7,  name: 'Healthy eating',     icon: '🥗', theme: 'peach',  streak: 9,  bestStreak: 15, doneToday: true,  createdAt: Date.now() },
-  { id: 8,  name: 'Evening journaling', icon: '✍️', theme: 'rose',   streak: 2,  bestStreak: 6,  doneToday: false, createdAt: Date.now() },
+  { id: 1,  name: 'Morning Meditation', icon: 'Brain', theme: 'purple', streak: 12, bestStreak: 21, doneToday: true,  createdAt: Date.now() },
+  { id: 2,  name: 'Exercise 30 min',    icon: 'Activity', theme: 'pink',   streak: 7,  bestStreak: 14, doneToday: true,  createdAt: Date.now() },
+  { id: 3,  name: 'Read 20 pages',      icon: 'BookOpen', theme: 'blue',   streak: 4,  bestStreak: 10, doneToday: false, createdAt: Date.now() },
+  { id: 4,  name: 'Take vitamins',      icon: 'Pills', theme: 'mint',   streak: 21, bestStreak: 30, doneToday: false, createdAt: Date.now() },
+  { id: 5,  name: 'Drink 8 glasses',    icon: 'Droplet', theme: 'cyan',   streak: 5,  bestStreak: 8,  doneToday: false, createdAt: Date.now() },
+  { id: 6,  name: 'Sleep by 11 PM',     icon: 'Moon', theme: 'lemon',  streak: 3,  bestStreak: 7,  doneToday: false, createdAt: Date.now() },
+  { id: 7,  name: 'Healthy eating',     icon: 'Apple', theme: 'peach',  streak: 9,  bestStreak: 15, doneToday: true,  createdAt: Date.now() },
+  { id: 8,  name: 'Evening journaling', icon: 'PenTool', theme: 'rose',   streak: 2,  bestStreak: 6,  doneToday: false, createdAt: Date.now() },
 ];
 
 function todayKey() {
@@ -73,7 +74,7 @@ function parseHabitsFromDB(dbHabits, dbLogs) {
     return {
       id: h.id,
       name: h.name,
-      icon: h.icon || '⭐',
+      icon: h.icon || 'Target',
       theme: h.color || 'pink',
       streak,
       bestStreak,
@@ -122,7 +123,7 @@ function BigProgressRing({ done, total, darkMode }) {
       <div className="relative" style={{ width: size, height: size }}>
         {/* Glow ring */}
         <div className="absolute inset-0 rounded-full"
-          style={{ background: `conic-gradient(from 0deg, #f9a8d4, #c4b5fd, #93c5fd, #6ee7b7, #f9a8d4)`, opacity: 0.15, filter: 'blur(8px)' }} />
+          style={{ background: `conic-gradient(from 0deg, #4F7CFF, #7DD3FC, #93c5fd, #6ee7b7, #4F7CFF)`, opacity: 0.15, filter: 'blur(8px)' }} />
         <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
           {/* Track */}
           <circle cx={size/2} cy={size/2} r={r} fill="none"
@@ -135,8 +136,8 @@ function BigProgressRing({ done, total, darkMode }) {
           />
           <defs>
             <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stopColor="#f9a8d4" />
-              <stop offset="50%"  stopColor="#c4b5fd" />
+              <stop offset="0%"   stopColor="#4F7CFF" />
+              <stop offset="50%"  stopColor="#7DD3FC" />
               <stop offset="100%" stopColor="#93c5fd" />
             </linearGradient>
           </defs>
@@ -171,20 +172,23 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       className={`relative rounded-3xl border p-5 transition-all duration-300 group backdrop-blur-md
         ${habit.doneToday
           ? 'border-transparent shadow-lg scale-[1.01]'
-          : darkMode ? 'border-slate-700/60 hover:border-slate-600' : 'border-[#C4B5FD]/25 hover:border-[#F9A8D4]/45 hover:shadow-lg'
+          : darkMode ? 'border-slate-700/60 hover:border-slate-600' : 'border-[#7DD3FC]/25 hover:border-[#4F7CFF]/45 hover:shadow-lg'
         }`}
       style={{
         background: 'rgba(255, 255, 255, 0.65)',
         boxShadow: habit.doneToday
           ? `0 8px 32px rgba(134, 239, 172, 0.25)`
-          : '0 4px 20px rgba(59, 31, 94, 0.04)',
+          : '0 4px 20px rgba(30, 41, 59, 0.04)',
       }}
     >
       {/* Icon + Actions row */}
       <div className="flex items-start justify-between mb-4">
         {/* Icon blob */}
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm flex-shrink-0 bg-gradient-to-tr from-[#F9A8D4]/30 to-[#C4B5FD]/30">
-          {habit.icon}
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm flex-shrink-0 bg-gradient-to-tr from-[#4F7CFF]/30 to-[#7DD3FC]/30 text-slate-700">
+          {(() => {
+            const Icon = Icons[habit.icon] || Icons.CheckSquare;
+            return <Icon className="w-5 h-5" strokeWidth={1.5} />;
+          })()}
         </div>
 
         {/* Actions layout: Edit pencil, Delete trash, Complete checkbox */}
@@ -192,7 +196,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
           {/* Edit button */}
           <button
             onClick={() => onEditClick(habit)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#C4B5FD]/15 text-[#3B1F5E] hover:bg-[#C4B5FD] hover:text-white cursor-pointer"
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#7DD3FC]/15 text-[#1E293B] hover:bg-[#7DD3FC] hover:text-white cursor-pointer"
             title="Edit habit"
           >
             <Edit2 className="w-4 h-4" strokeWidth={1.5} />
@@ -214,8 +218,8 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
               ${pressing ? 'scale-90' : habit.doneToday ? 'scale-105' : 'hover:scale-110'}
               ${habit.doneToday ? 'border-transparent shadow-md' : ''}`}
             style={habit.doneToday
-              ? { background: `#86EFAC`, boxShadow: `0 4px 12px rgba(134, 239, 172, 0.50)` }
-              : { borderColor: '#C4B5FD' }
+              ? { background: `#34D399`, boxShadow: `0 4px 12px rgba(134, 239, 172, 0.50)` }
+              : { borderColor: '#7DD3FC' }
             }
             aria-label={habit.doneToday ? 'Mark incomplete' : 'Mark complete'}
           >
@@ -230,7 +234,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       <p className={`font-black text-base mb-1 leading-snug transition-all ${
         habit.doneToday
           ? 'line-through opacity-60'
-          : darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'
+          : darkMode ? 'text-slate-100' : 'text-[#1E293B]'
       }`}>
         {habit.name}
       </p>
@@ -252,7 +256,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
 
         {/* Done badge */}
         {habit.doneToday && (
-          <span className="ml-auto text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#86EFAC]/25 text-[#065f46]">
+          <span className="ml-auto text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#34D399]/25 text-[#065f46]">
             Done ✓
           </span>
         )}
@@ -264,7 +268,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: habit.doneToday ? '100%' : '0%',
-            background: `linear-gradient(to right, #F9A8D4, #C4B5FD)`
+            background: `linear-gradient(to right, #4F7CFF, #7DD3FC)`
           }}
         />
       </div>
@@ -273,7 +277,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       {showConfirm && (
         <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-3 z-20"
           style={{ background: darkMode ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.96)', backdropFilter: 'blur(4px)' }}>
-          <p className={`text-sm font-black text-center px-4 ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+          <p className={`text-sm font-black text-center px-4 ${darkMode ? 'text-slate-100' : 'text-[#1E293B]'}`}>
             Delete "{habit.name}"?
           </p>
           <p className={`text-xs text-center px-4 ${darkMode ? 'text-slate-400' : 'text-[#9B8AAE]'}`}>
@@ -283,7 +287,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
             <button
               onClick={() => setShowConfirm(false)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#3B1F5E] hover:bg-slate-200'
+                darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#1E293B] hover:bg-slate-200'
               }`}
             >Cancel</button>
             <button
@@ -302,7 +306,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
 ═══════════════════════════════════════════════════════ */
 function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
   const [name, setName]     = useState(habitToEdit?.name || '');
-  const [icon, setIcon]     = useState(habitToEdit?.icon || '⭐');
+  const [icon, setIcon]     = useState(habitToEdit?.icon || 'Target');
   const [theme, setTheme]   = useState(habitToEdit?.theme || 'pink');
   const [step, setStep]     = useState(1); // 1=name, 2=icon, 3=theme
   const [showCustomInput, setShowCustomInput] = useState(false);
@@ -337,7 +341,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
     >
       <div
         className={`w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-bounce-in
-          ${darkMode ? 'bg-slate-900 border border-slate-700' : 'bg-white border border-pink-100'}`}
+          ${darkMode ? 'bg-slate-900 border border-slate-700' : 'bg-white border border-blue-100'}`}
         onClick={e => e.stopPropagation()}
       >
         {/* Modal header */}
@@ -365,9 +369,12 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
           {/* Preview card */}
           <div className="rounded-2xl p-4 flex items-center gap-3 border"
             style={{ background: selectedTheme.bg, borderColor: selectedTheme.ring + '60' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-700"
               style={{ background: `linear-gradient(135deg, ${selectedTheme.ring}, ${selectedTheme.icon_bg})` }}>
-              {icon}
+              {(() => {
+                const Icon = Icons[icon] || Icons.CheckSquare;
+                return <Icon className="w-5 h-5" strokeWidth={1.5} />;
+              })()}
             </div>
             <div>
               <p className="font-black text-slate-700" style={{ color: selectedTheme.text }}>
@@ -401,50 +408,52 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
             />
           </div>
 
-          {/* Emoji picker */}
+          {/* Icon picker */}
           <div>
             <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               Choose Icon
             </label>
             <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
-              {EMOJI_OPTIONS.map(e => (
-                <button key={e} onClick={() => setIcon(e)}
-                  className={`w-9 h-9 rounded-xl text-xl flex items-center justify-center transition-all duration-150 hover:scale-110
-                    ${icon === e
-                      ? 'scale-110 shadow-md ring-2'
-                      : darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-100'
-                    }`}
-                  style={icon === e ? { background: selectedTheme.bg, ringColor: selectedTheme.ring } : {}}
-                >
-                  {e}
-                </button>
-              ))}
-              {/* Plus Button to add custom emojis */}
+              {ICON_OPTIONS.map(name => {
+                const Icon = Icons[name] || Icons.CheckSquare;
+                return (
+                  <button key={name} onClick={() => setIcon(name)}
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 hover:scale-110
+                      ${icon === name
+                        ? 'scale-110 shadow-md ring-2'
+                        : darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
+                      }`}
+                    style={icon === name ? { background: selectedTheme.bg, color: selectedTheme.text, ringColor: selectedTheme.ring } : {}}
+                  >
+                    <Icon className="w-5 h-5" strokeWidth={1.5} />
+                  </button>
+                );
+              })}
+              {/* Plus Button to add custom icon names */}
               <button
                 onClick={() => setShowCustomInput(prev => !prev)}
-                className={`w-9 h-9 rounded-xl text-xl flex items-center justify-center transition-all duration-150 hover:scale-110 border-2 border-dashed
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 hover:scale-110 border-2 border-dashed
                   ${showCustomInput 
-                    ? 'border-pink-500 text-pink-500 scale-110' 
+                    ? 'border-pink-500 text-[#4F7CFF] scale-110' 
                     : darkMode ? 'border-slate-700 hover:bg-slate-700 text-slate-400' : 'border-slate-300 hover:bg-slate-100 text-slate-500'}`}
-                title="Choose custom emoji"
+                title="Choose custom icon name"
               >
-                ➕
+                <Plus size={18} strokeWidth={1.5} />
               </button>
             </div>
 
-            {/* Custom Emoji input panel */}
+            {/* Custom Icon input panel */}
             {showCustomInput && (
               <div className="mt-3 flex items-center gap-2 animate-bounce-in">
                 <input
                   type="text"
-                  maxLength={5}
                   value={customEmoji}
                   onChange={(e) => {
                     const val = e.target.value;
                     setCustomEmoji(val);
                     if (val.trim()) setIcon(val.trim());
                   }}
-                  placeholder="Paste or type any emoji here…"
+                  placeholder="Type any Lucide icon name (e.g. Heart)..."
                   className={`flex-1 px-4 py-2 rounded-2xl text-sm font-semibold outline-none border-2 transition-all
                     ${darkMode
                       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-pink-400'
@@ -452,7 +461,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                     }`}
                 />
                 <span className="text-[10px] font-bold text-slate-400 max-w-28 leading-tight">
-                  Press Win+. or Cmd+Ctrl+Space
+                  Enter any valid Lucide icon name
                 </span>
               </div>
             )}
@@ -490,7 +499,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                 }`}
               style={{ background: name.trim() ? `linear-gradient(135deg, ${selectedTheme.accent}, ${selectedTheme.ring})` : '#94a3b8' }}
             >
-              {habitToEdit ? 'Save Changes ✓' : 'Add Habit ✨'}
+              {habitToEdit ? 'Save Changes' : 'Add Habit'}
             </button>
           </div>
         </div>
@@ -722,7 +731,7 @@ export default function HabitsPage() {
         const savedHabit = {
           id: data.id,
           name: data.name,
-          icon: data.icon || '⭐',
+          icon: data.icon || 'Target',
           theme: data.color || 'pink',
           streak: 0,
           bestStreak: 0,
@@ -830,7 +839,7 @@ export default function HabitsPage() {
           <div className={`rounded-3xl p-6 flex flex-col items-center gap-1
             ${darkMode
               ? 'bg-slate-800/60 border border-slate-700/50'
-              : 'bg-white/80 border border-pink-100/80'
+              : 'bg-white/80 border border-blue-100/80'
             } shadow-sm`}>
             <BigProgressRing done={doneCount} total={total} darkMode={darkMode} />
           </div>
@@ -870,10 +879,10 @@ export default function HabitsPage() {
             <button key={f.id} onClick={() => setFilter(f.id)}
               className={`px-4 py-2 rounded-2xl text-sm font-bold transition-all duration-200
                 ${filter === f.id
-                  ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-md shadow-pink-200/50'
+                  ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-md shadow-blue-200/50'
                   : darkMode
                     ? 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-                    : 'bg-white text-slate-500 hover:bg-pink-50 hover:text-pink-600 border border-slate-100'
+                    : 'bg-white text-slate-500 hover:bg-blue-50 hover:text-[#4F7CFF] border border-slate-100'
                 }`}
             >
               {f.label}
@@ -946,7 +955,7 @@ export default function HabitsPage() {
       {/* Floating Action Button (FAB) to Add Habit */}
       <button
         onClick={() => { setHabitToEdit(null); setShowModal(true); }}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#F9A8D4] to-[#C4B5FD] text-[#3B1F5E] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#4F7CFF] to-[#7DD3FC] text-[#1E293B] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label="Add new habit"
         title="Add new habit"
       >

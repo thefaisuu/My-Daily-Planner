@@ -2,17 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { ChevronLeft, ChevronRight, Check, Calendar, Flame, FileText, Edit2, Save, BarChart2, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Calendar, Flame, FileText, Edit2, Save, BarChart2, List, Frown, Meh, Smile, Laugh } from 'lucide-react';
+
+const ICON_MAP = { Frown, Meh, Smile, Laugh };
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════════ */
 const MOODS = [
-  { id: 1, emoji: '😔', label: 'Rough',    color: '#818cf8', bg: '#eef2ff', darkBg: '#1e1b4b', glow: '#818cf830', ring: '#818cf8' },
-  { id: 2, emoji: '😐', label: 'Neutral',  color: '#60a5fa', bg: '#eff6ff', darkBg: '#1e3a5f', glow: '#60a5fa30', ring: '#60a5fa' },
-  { id: 3, emoji: '🙂', label: 'Okay',     color: '#34d399', bg: '#ecfdf5', darkBg: '#064e3b', glow: '#34d39930', ring: '#34d399' },
-  { id: 4, emoji: '😊', label: 'Good',     color: '#f472b6', bg: '#fdf2f8', darkBg: '#4a0e2b', glow: '#f472b630', ring: '#f472b6' },
-  { id: 5, emoji: '🤩', label: 'Amazing',  color: '#fbbf24', bg: '#fffbeb', darkBg: '#451a03', glow: '#fbbf2430', ring: '#fbbf24' },
+  { id: 1, iconName: 'Frown', label: 'Rough',    color: '#818cf8', bg: '#eef2ff', darkBg: '#1e1b4b', glow: '#818cf830', ring: '#818cf8' },
+  { id: 2, iconName: 'Meh',   label: 'Neutral',  color: '#60a5fa', bg: '#eff6ff', darkBg: '#1e3a5f', glow: '#60a5fa30', ring: '#60a5fa' },
+  { id: 3, iconName: 'Smile', label: 'Okay',     color: '#34d399', bg: '#ecfdf5', darkBg: '#064e3b', glow: '#34d39930', ring: '#34d399' },
+  { id: 4, iconName: 'Smile', label: 'Good',     color: '#3B66E8', bg: '#fdf2f8', darkBg: '#4a0e2b', glow: '#3B66E830', ring: '#3B66E8' },
+  { id: 5, iconName: 'Laugh', label: 'Amazing',  color: '#fbbf24', bg: '#fffbeb', darkBg: '#451a03', glow: '#fbbf2430', ring: '#fbbf24' },
 ];
 const MOOD_MAP = Object.fromEntries(MOODS.map(m => [m.id, m]));
 
@@ -42,9 +44,9 @@ function seedData() {
     'Productive work day.',
     'Bit stressed about deadlines.',
     'Great workout session!',
-    'Feeling grateful today 🌸',
-    'Rough commute but otherwise fine.',
-    'Amazing sunset walk 🌅',
+    'Feeling grateful today',
+    'Rough commute but otherwise fine',
+    'Amazing sunset walk',
     'Low energy, need rest.',
     'Accomplished a lot today!',
   ];
@@ -107,11 +109,17 @@ function MoodSelector({ selected, onSelect, darkMode }) {
                   : 'none',
               }}
             >
-              <span className={`leading-none select-none transition-all duration-300
-                ${isSelected ? 'text-2xl sm:text-[44px]' : 'text-xl sm:text-[34px]'}
-              `}>
-                {m.emoji}
-              </span>
+              {(() => {
+                const IconComp = ICON_MAP[m.iconName] || Smile;
+                return (
+                  <IconComp
+                    size={isSelected ? 36 : 28}
+                    strokeWidth={1.5}
+                    style={{ color: isSelected ? m.color : (darkMode ? '#94a3b8' : '#64748b') }}
+                    className="transition-all duration-300"
+                  />
+                );
+              })()}
               {/* Glow ring */}
               {isSelected && (
                 <div className="absolute inset-0 rounded-3xl animate-ping opacity-20"
@@ -157,7 +165,14 @@ function WeekChart({ history, darkMode }) {
             <div key={key} className="flex-1 flex flex-col items-center gap-2">
               {/* Emoji */}
               <div className="text-xl leading-none h-8 flex items-center">
-                {mood ? mood.emoji : <span className={`text-sm ${darkMode ? 'text-slate-700' : 'text-slate-200'}`}>·</span>}
+                {mood ? (
+                  (() => {
+                    const Icon = ICON_MAP[mood.iconName] || Smile;
+                    return <Icon size={18} style={{ color: mood.color }} strokeWidth={1.5} />;
+                  })()
+                ) : (
+                  <span className={`text-sm ${darkMode ? 'text-slate-700' : 'text-slate-200'}`}>·</span>
+                )}
               </div>
 
               {/* Bar */}
@@ -181,7 +196,7 @@ function WeekChart({ history, darkMode }) {
               {/* Day label */}
               <div className="text-center">
                 <p className={`text-[10px] font-black uppercase tracking-wider
-                  ${isToday ? 'text-pink-500' : darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                  ${isToday ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                   {DAYS_SHORT[d.getDay()]}
                 </p>
                 <p className={`text-[9px] font-semibold ${darkMode ? 'text-slate-600' : 'text-slate-300'}`}>
@@ -241,7 +256,7 @@ function MonthCalendar({ history, darkMode }) {
       <div className="flex items-center justify-between">
         <button onClick={prevMonth}
           className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110 cursor-pointer
-            ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'}`}>
+            ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-blue-100 hover:text-[#4F7CFF]'}`}>
           <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
         </button>
 
@@ -250,15 +265,18 @@ function MonthCalendar({ history, darkMode }) {
             {MONTHS[month]} {year}
           </p>
           {monthAvgMood && (
-            <p className="text-xs font-bold" style={{ color: monthAvgMood.color }}>
-              avg {monthAvgMood.emoji} {monthAvgMood.label}
+            <p className="text-xs font-bold flex items-center justify-center gap-1" style={{ color: monthAvgMood.color }}>
+              avg {(() => {
+                const Icon = ICON_MAP[monthAvgMood.iconName] || Smile;
+                return <Icon size={12} strokeWidth={2} className="inline-block" />;
+              })()} {monthAvgMood.label}
             </p>
           )}
         </div>
 
         <button onClick={nextMonth}
           className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110 cursor-pointer
-            ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'}`}>
+            ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-blue-100 hover:text-[#4F7CFF]'}`}>
           <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
         </button>
       </div>
@@ -292,10 +310,15 @@ function MonthCalendar({ history, darkMode }) {
               title={entry ? `${mood?.label}${entry.note ? ` · ${entry.note.slice(0, 40)}` : ''}` : ''}
             >
               <span className={`text-[10px] font-black leading-none mb-0.5
-                ${isToday ? 'text-pink-500' : darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                ${isToday ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                 {day}
               </span>
-              {mood && <span className="text-base leading-none">{mood.emoji}</span>}
+              {mood && (
+                (() => {
+                  const Icon = ICON_MAP[mood.iconName] || Smile;
+                  return <Icon size={14} style={{ color: mood.color }} strokeWidth={2} />;
+                })()
+              )}
               {!mood && <span className={`text-xs ${darkMode ? 'text-slate-700' : 'text-slate-200'}`}>·</span>}
 
               {/* Tooltip */}
@@ -342,7 +365,12 @@ function RecentEntries({ history, darkMode }) {
             className="flex-shrink-0 w-32 rounded-2xl p-3 snap-start transition-all hover:scale-105 cursor-default"
             style={{ background: `linear-gradient(135deg, ${mood.color}22, ${mood.color}0a)`, border: `1.5px solid ${mood.color}40` }}
           >
-            <div className="text-3xl mb-2 text-center">{mood.emoji}</div>
+            <div className="flex justify-center mb-2">
+              {(() => {
+                const Icon = ICON_MAP[mood.iconName] || Smile;
+                return <Icon size={24} style={{ color: mood.color }} strokeWidth={1.5} />;
+              })()}
+            </div>
             <p className="text-xs font-black text-center" style={{ color: mood.color }}>{mood.label}</p>
             <p className={`text-[10px] text-center font-semibold mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
             {entry.note && (
@@ -389,16 +417,14 @@ function StatsStrip({ history, darkMode }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {[
-        { isMood: true, emoji: topMood.emoji, label: 'Most frequent', val: topMood.label, color: topMood.color, bg: `${topMood.color}15` },
-        { isMood: true, emoji: avgMood.emoji, label: 'Average mood',  val: avgMood.label, color: avgMood.color, bg: `${avgMood.color}15` },
+        { isMood: true, iconName: topMood.iconName, label: 'Most frequent', val: topMood.label, color: topMood.color, bg: `${topMood.color}15` },
+        { isMood: true, iconName: avgMood.iconName, label: 'Average mood',  val: avgMood.label, color: avgMood.color, bg: `${avgMood.color}15` },
         { iconName: 'Calendar', colorType: 'notes',          label: 'Total entries', val: total },
         { iconName: 'Flame',    colorType: 'schedule',       label: 'Day streak',    val: `${streak} days` },
       ].map((s, i) => (
         <div key={i} className={`rounded-2xl p-4 flex flex-col gap-1.5 ${darkMode ? 'bg-slate-800/70 border border-slate-700/50' : 'bg-white/80 border border-slate-100'} shadow-sm`}>
           {s.isMood ? (
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-base shadow-sm" style={{ background: s.bg }}>
-              {s.emoji}
-            </div>
+            <PastelIcon name={s.iconName} colorType="mood" circleSize="w-8 h-8" size={16} />
           ) : (
             <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={16} />
           )}
@@ -420,19 +446,22 @@ function Toast({ mood, visible, darkMode }) {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-bounce-in pointer-events-none">
       <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl
-        ${darkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-pink-100'}`}
-        style={{ boxShadow: `0 8px 32px ${mood?.glow || '#f472b630'}` }}
+        ${darkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-blue-100'}`}
+        style={{ boxShadow: `0 8px 32px ${mood?.glow || '#3B66E830'}` }}
       >
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xl"
           style={{ background: `linear-gradient(135deg, ${mood?.color}40, ${mood?.color}20)` }}>
-          {mood?.emoji}
+          {(() => {
+            const Icon = ICON_MAP[mood?.iconName] || Smile;
+            return <Icon size={18} style={{ color: mood?.color }} strokeWidth={1.5} />;
+          })()}
         </div>
         <div>
           <p className={`text-sm font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-            Mood saved! {mood?.emoji}
+            Mood saved!
           </p>
           <p className={`text-xs font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Feeling <span className="font-black" style={{ color: mood?.color }}>{mood?.label}</span> today ✨
+            Feeling <span className="font-black" style={{ color: mood?.color }}>{mood?.label}</span> today
           </p>
         </div>
         <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
@@ -636,7 +665,14 @@ export default function MoodPage() {
             </h1>
             <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}
-              {todayMood && <span className="ml-2">· Today: {todayMood.emoji} {todayMood.label}</span>}
+              {todayMood && (
+                <span className="ml-2 inline-flex items-center gap-1">
+                  · Today: {(() => {
+                    const Icon = ICON_MAP[todayMood.iconName] || Smile;
+                    return <Icon size={12} className="inline-block" style={{ color: todayMood.color }} strokeWidth={2.5} />;
+                  })()} {todayMood.label}
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -662,7 +698,7 @@ export default function MoodPage() {
                     How are you feeling today?
                   </h2>
                   <p className={`text-sm font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {sel ? `You selected: ${sel.emoji} ${sel.label}` : 'Tap an emoji to log your mood'}
+                    {sel ? `You selected: ${sel.label}` : 'Tap an icon to log your mood'}
                   </p>
                 </div>
 
@@ -673,13 +709,16 @@ export default function MoodPage() {
                 {sel && (
                   <div className="mt-8 py-3 px-5 rounded-2xl text-center animate-fade-in"
                     style={{ background: `linear-gradient(135deg, ${sel.color}22, ${sel.color}0a)`, border: `1px solid ${sel.color}30` }}>
-                    <p className="text-sm font-black" style={{ color: sel.color }}>
-                      {sel.emoji} {
-                        sel.id === 1 ? "It's okay to not be okay 💙"
-                        : sel.id === 2 ? "A quiet day is still a good day 🌿"
-                        : sel.id === 3 ? "You're doing just fine 🌼"
-                        : sel.id === 4 ? "Glad you're feeling good! 🌸"
-                        : "What an amazing day! 🌟"
+                    <p className="text-sm font-black flex items-center justify-center gap-1.5" style={{ color: sel.color }}>
+                      {(() => {
+                        const Icon = ICON_MAP[sel.iconName] || Smile;
+                        return <Icon size={16} strokeWidth={2} />;
+                      })()} {
+                        sel.id === 1 ? "It's okay to not be okay"
+                        : sel.id === 2 ? "A quiet day is still a good day"
+                        : sel.id === 3 ? "You're doing just fine"
+                        : sel.id === 4 ? "Glad you're feeling good!"
+                        : "What an amazing day!"
                       }
                     </p>
                   </div>
@@ -691,7 +730,7 @@ export default function MoodPage() {
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className={`font-black text-base flex items-center gap-1.5 ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-                    <FileText size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                    <FileText size={16} className="text-[#4F7CFF]" strokeWidth={1.5} />
                     <span>Mood Note</span>
                   </h3>
                   <span className={`text-xs font-bold ${charCount > 240 ? 'text-rose-400' : darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -720,7 +759,7 @@ export default function MoodPage() {
                     <button key={p}
                       onClick={() => handleNote(note ? `${note} ${p}` : p)}
                       className={`text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105
-                        ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'}`}>
+                        ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-blue-100 hover:text-[#4F7CFF]'}`}>
                       {p}
                     </button>
                   ))}
@@ -767,7 +806,7 @@ export default function MoodPage() {
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
                 <div className="flex items-center gap-2 mb-4">
-                  <BarChart2 size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                  <BarChart2 size={16} className="text-[#7DD3FC]" strokeWidth={1.5} />
                   <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                     Last 7 Days
                   </h3>
@@ -779,7 +818,7 @@ export default function MoodPage() {
               <div className={`rounded-3xl p-6 border shadow-sm
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-white/90'}`}>
                 <div className="flex items-center gap-2 mb-4">
-                  <Calendar size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                  <Calendar size={16} className="text-[#4F7CFF]" strokeWidth={1.5} />
                   <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                     Monthly View
                   </h3>

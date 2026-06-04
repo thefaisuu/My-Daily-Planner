@@ -149,13 +149,13 @@ export default function NotificationsPage() {
             id: `focus-${fc.id || fidx}`,
             iconName: 'Timer',
             colorType: 'timer',
-            text: 'Focus session completed! 🏆',
+            text: 'Focus session completed!',
             sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
             page: 'Focus Timer',
             time: fc.timestamp,
             color: '#a78bfa',
             bg: 'bg-purple-50/50',
-            badge: 'bg-purple-100 text-purple-700'
+            badge: 'bg-sky-100 text-purple-700'
           });
         });
       }
@@ -167,7 +167,7 @@ export default function NotificationsPage() {
         iconName: 'CheckSquare',
         colorType: 'habits',
         text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
-        sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
+        sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak!' : 'Keep the streak going',
         page: 'Habits',
         time: timeHabit || new Date().toISOString(),
         color: '#A78BFA',
@@ -182,7 +182,7 @@ export default function NotificationsPage() {
         id: idx++,
         iconName: 'Droplet',
         colorType: 'water',
-        text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
+        text: goalReached ? 'Water goal reached!' : 'Hydration logged',
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
         time: timeWater || new Date().toISOString(),
@@ -198,7 +198,7 @@ export default function NotificationsPage() {
         id: idx++,
         iconName: 'Calendar',
         colorType: 'schedule',
-        text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
+        text: allDone ? 'All events completed!' : `${tasksDone}/${tasksTotal} tasks completed`,
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
         time: timeSchedule || new Date().toISOString(),
@@ -232,9 +232,9 @@ export default function NotificationsPage() {
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
         time: timeNotes || new Date().toISOString(),
-        color: '#f472b6',
+        color: '#3B66E8',
         bg: 'bg-pink-50',
-        badge: 'bg-pink-100 text-pink-700'
+        badge: 'bg-blue-100 text-pink-700'
       });
     }
 

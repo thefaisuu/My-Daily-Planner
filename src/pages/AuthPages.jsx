@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack }) {
   const [view, setView] = useState(initialView); // 'login' | 'signup' | 'forgot-password'
@@ -148,16 +149,16 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         </button>
       )}
       {/* Container holding form and pastel gradient backdrop card */}
-      <div className="w-full max-w-md rounded-3xl p-0.5 bg-gradient-to-tr from-[#F9A8D4] via-[#FDF4FF] to-[#C4B5FD] shadow-2xl hover:shadow-pink-100 dark:hover:shadow-none transition-all duration-300">
+      <div className="w-full max-w-md rounded-3xl p-0.5 bg-gradient-to-tr from-[#4F7CFF] via-[#F7F9FF] to-[#7DD3FC] shadow-2xl hover:shadow-blue-100 dark:hover:shadow-none transition-all duration-300">
         
         <div className="bg-white/65 dark:bg-slate-800/95 backdrop-blur-md rounded-[23px] px-6 py-8 sm:px-8">
           
           {/* Logo / Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#F9A8D4] to-[#C4B5FD] text-white text-2xl font-black shadow-md mb-2">
-              ✨
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4F7CFF] to-[#7DD3FC] text-white shadow-md mb-2">
+              <Sparkles size={20} strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-black text-[#3B1F5E] dark:text-slate-100 tracking-tight">
+            <h2 className="text-2xl font-black text-[#1E293B] dark:text-slate-100 tracking-tight">
               My Daily Planner
             </h2>
             <p className="text-xs font-semibold text-[#9B8AAE] dark:text-slate-400 mt-1 uppercase tracking-widest">
@@ -168,13 +169,13 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
           {/* User Messages */}
           {errorMsg && (
             <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-100 text-xs font-bold text-rose-600 flex items-center gap-2">
-              <span>⚠️</span>
+              <AlertCircle size={14} className="text-rose-500 flex-shrink-0" strokeWidth={2} />
               <span className="flex-1">{errorMsg}</span>
             </div>
           )}
           {successMsg && (
             <div className="mb-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-xs font-bold text-emerald-600 flex items-center gap-2">
-              <span>✓</span>
+              <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" strokeWidth={2} />
               <span className="flex-1">{successMsg}</span>
             </div>
           )}
@@ -192,7 +193,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                   placeholder="Enter your name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#1E293B] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#7DD3FC] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                 />
               </div>
             )}
@@ -207,7 +208,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#1E293B] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#7DD3FC] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
               />
             </div>
 
@@ -234,7 +235,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
+                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#1E293B] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#7DD3FC] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                   />
                   <button
                     type="button"
@@ -268,7 +269,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#3B1F5E] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#C4B5FD] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
+                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-sm text-[#1E293B] dark:text-slate-100 font-semibold focus:outline-none focus:border-[#7DD3FC] focus:ring-2 focus:ring-purple-100 dark:focus:ring-indigo-950 transition-all"
                   />
                   <button
                     type="button"
@@ -294,7 +295,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-[#F9A8D4] to-[#F472B6] hover:from-[#F472B6] hover:to-[#ec4899] text-white font-extrabold text-sm shadow-lg shadow-pink-100/50 dark:shadow-none hover:shadow-pink-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-[#4F7CFF] to-[#3B66E8] hover:from-[#3B66E8] hover:to-[#ec4899] text-white font-extrabold text-sm shadow-lg shadow-blue-100/50 dark:shadow-none hover:shadow-blue-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

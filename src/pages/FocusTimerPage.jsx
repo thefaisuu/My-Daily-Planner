@@ -7,9 +7,9 @@ import { Settings, X, RotateCcw, Play, Pause, SkipForward, Timer, Brain, Coffee,
    CONSTANTS
 ═══════════════════════════════════════════════════════ */
 const MODES = {
-  focus:       { label: 'Focus',       iconName: 'Brain',       defaultMin: 25, color: '#C4B5FD', track: '#F5EEFF', darkTrack: '#2d1a24' },
-  short_break: { label: 'Short Break', iconName: 'Coffee',      defaultMin: 5,  color: '#86EFAC', track: '#E8FDF0', darkTrack: '#0d2318' },
-  long_break:  { label: 'Long Break',  iconName: 'Moon',        defaultMin: 15, color: '#F9A8D4', track: '#FFF0F5', darkTrack: '#1a1a3e' },
+  focus:       { label: 'Focus',       iconName: 'Brain',       defaultMin: 25, color: '#7DD3FC', track: '#F0F4FF', darkTrack: '#2d1a24' },
+  short_break: { label: 'Short Break', iconName: 'Coffee',      defaultMin: 5,  color: '#34D399', track: '#E8FDF0', darkTrack: '#0d2318' },
+  long_break:  { label: 'Long Break',  iconName: 'Moon',        defaultMin: 15, color: '#4F7CFF', track: '#FFF0F5', darkTrack: '#1a1a3e' },
 };
 
 const PRESETS = [
@@ -188,7 +188,7 @@ function SettingsPanel({ settings, setSettings, onPreset, darkMode }) {
             <button key={p.label}
               onClick={() => onPreset(p)}
               className={`py-2 px-3 rounded-xl text-xs font-bold text-left transition-all hover:scale-105
-                ${darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-100 hover:bg-pink-100 text-slate-600 hover:text-pink-700'}`}
+                ${darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-pink-700'}`}
             >
               <span className="block font-black">{p.label}</span>
               <span className="opacity-70">{p.focus}m / {p.short}m</span>
@@ -201,21 +201,21 @@ function SettingsPanel({ settings, setSettings, onPreset, darkMode }) {
       <div className="space-y-4">
         {input(
           <span className="flex items-center gap-1.5">
-            <Brain size={12} strokeWidth={1.5} className="text-[#C4B5FD]" />
+            <Brain size={12} strokeWidth={1.5} className="text-[#7DD3FC]" />
             <span>Focus Duration</span>
           </span>,
           'focusMin', 5, 120
         )}
         {input(
           <span className="flex items-center gap-1.5">
-            <Coffee size={12} strokeWidth={1.5} className="text-[#86EFAC]" />
+            <Coffee size={12} strokeWidth={1.5} className="text-[#34D399]" />
             <span>Short Break</span>
           </span>,
           'shortMin', 1, 30
         )}
         {input(
           <span className="flex items-center gap-1.5">
-            <Moon size={12} strokeWidth={1.5} className="text-[#F9A8D4]" />
+            <Moon size={12} strokeWidth={1.5} className="text-[#4F7CFF]" />
             <span>Long Break</span>
           </span>,
           'longMin', 5, 60
@@ -268,7 +268,7 @@ function BottomDrawer({ open, onClose, children, darkMode }) {
       )}
       <div className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden rounded-t-3xl transition-transform duration-400 ease-out
         ${open ? 'translate-y-0' : 'translate-y-full'}
-        ${darkMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-pink-100'}
+        ${darkMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-blue-100'}
         shadow-2xl`}
         style={{ maxHeight: '85vh', overflowY: 'auto' }}
       >
@@ -448,32 +448,32 @@ export default function FocusTimerPage() {
     const currentSessionsComp = sessionsCompRef.current;
     const currentSettings = settingsRef.current;
 
-    if (currentMode === 'focus') {
-      const next = (currentSessionsComp + 1) % currentSettings.sessions === 0 ? 'long_break' : 'short_break';
-      const newCount = currentSessionsComp + 1;
-      setSessionsComp(newCount);
-      triggerNotification('Focus Session Complete! 🎉', `Great job! Session #${newCount} completed.`);
-      
-      try {
-        const raw = localStorage.getItem('planner_focus_completions');
-        const list = raw ? JSON.parse(raw) : [];
-        list.push({
-          id: Date.now(),
-          sessionNumber: newCount,
-          timestamp: new Date().toISOString(),
-          duration: currentSettings.focusMin,
-        });
-        localStorage.setItem('planner_focus_completions', JSON.stringify(list));
-        window.dispatchEvent(new Event('planner-data-changed'));
-      } catch (e) {
-        console.warn('Failed to save focus completion:', e);
-      }
+      if (currentMode === 'focus') {
+        const next = (currentSessionsComp + 1) % currentSettings.sessions === 0 ? 'long_break' : 'short_break';
+        const newCount = currentSessionsComp + 1;
+        setSessionsComp(newCount);
+        triggerNotification('Focus Session Complete!', `Great job! Session #${newCount} completed.`);
+        
+        try {
+          const raw = localStorage.getItem('planner_focus_completions');
+          const list = raw ? JSON.parse(raw) : [];
+          list.push({
+            id: Date.now(),
+            sessionNumber: newCount,
+            timestamp: new Date().toISOString(),
+            duration: currentSettings.focusMin,
+          });
+          localStorage.setItem('planner_focus_completions', JSON.stringify(list));
+          window.dispatchEvent(new Event('planner-data-changed'));
+        } catch (e) {
+          console.warn('Failed to save focus completion:', e);
+        }
 
-      if (currentSettings.autoStart) { switchMode(next, true); }
-    } else {
-      triggerNotification('Break Over! ⚡', 'Ready to focus again? Let\'s get back to work!');
-      if (currentSettings.autoStart) { switchMode('focus', true); }
-    }
+        if (currentSettings.autoStart) { switchMode(next, true); }
+      } else {
+        triggerNotification('Break Over!', 'Ready to focus again? Let\'s get back to work!');
+        if (currentSettings.autoStart) { switchMode('focus', true); }
+      }
   }, [completed, triggerNotification, switchMode]);
 
 
@@ -565,7 +565,7 @@ export default function FocusTimerPage() {
           <button
             onClick={() => setDrawerOpen(true)}
             className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all cursor-pointer
-              ${darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-600 hover:bg-pink-50 border border-slate-100'}`}
+              ${darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-600 hover:bg-blue-50 border border-slate-100'}`}
           >
             <Settings className="w-4 h-4" strokeWidth={1.5} />
             Settings
@@ -630,7 +630,7 @@ export default function FocusTimerPage() {
               <div className="animate-bounce-in text-center px-6 py-3 rounded-2xl"
                 style={{ background: `linear-gradient(135deg, ${cfg.color}22, ${cfg.color}11)`, border: `1px solid ${cfg.color}40` }}>
                 <p className="text-base font-black" style={{ color: cfg.color }}>
-                  {mode === 'focus' ? '🎉 Focus session complete!' : '✨ Break time over!'}
+                  {mode === 'focus' ? 'Focus session complete!' : 'Break time over!'}
                 </p>
                 <p className={`text-xs font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   {mode === 'focus' ? `Great work! Session #${sessionsComp} done.` : 'Ready to focus again?'}
@@ -709,9 +709,9 @@ export default function FocusTimerPage() {
 
           {/* ════ DESKTOP SETTINGS SIDEBAR ════ */}
           <div className={`hidden lg:block w-80 xl:w-96 flex-shrink-0 rounded-3xl p-6 sticky top-20 border
-            ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-pink-100/80'} shadow-sm backdrop-blur-sm`}>
+            ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-blue-100/80'} shadow-sm backdrop-blur-sm`}>
             <div className="flex items-center gap-2 mb-5">
-              <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+              <Settings size={16} className="text-[#7DD3FC]" strokeWidth={1.5} />
               <h3 className={`text-base font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
                 Timer Settings
               </h3>

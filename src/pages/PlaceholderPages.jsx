@@ -18,33 +18,33 @@ function PlaceholderPage({ icon, title, subtitle, accentColor }) {
 }
 
 export function SchedulePage() {
-  return <PlaceholderPage icon="📅" title="Schedule" subtitle="Plan your day, week and month with beautiful calendar views." accentColor="bg-pink-100" />;
+  return <PlaceholderPage icon="S" title="Schedule" subtitle="Plan your day, week and month with beautiful calendar views." accentColor="bg-blue-100" />;
 }
 
 export function HabitsPage() {
-  return <PlaceholderPage icon="✅" title="Habit Tracker" subtitle="Build powerful habits and track your streaks over time." accentColor="bg-purple-100" />;
+  return <PlaceholderPage icon="H" title="Habit Tracker" subtitle="Build powerful habits and track your streaks over time." accentColor="bg-sky-100" />;
 }
 
 export function FocusTimerPage() {
-  return <PlaceholderPage icon="⏱️" title="Focus Timer" subtitle="Pomodoro-style focus sessions to supercharge your productivity." accentColor="bg-lavender-100" />;
+  return <PlaceholderPage icon="F" title="Focus Timer" subtitle="Pomodoro-style focus sessions to supercharge your productivity." accentColor="bg-lavender-100" />;
 }
 
 export function MoodPage() {
-  return <PlaceholderPage icon="😊" title="Mood Journal" subtitle="Track your emotional wellbeing and identify patterns." accentColor="bg-yellow-100" />;
+  return <PlaceholderPage icon="M" title="Mood Journal" subtitle="Track your emotional wellbeing and identify patterns." accentColor="bg-yellow-100" />;
 }
 
 export function NotesPage() {
-  return <PlaceholderPage icon="📝" title="Notes" subtitle="Capture ideas, thoughts and plans in your personal notebook." accentColor="bg-emerald-100" />;
+  return <PlaceholderPage icon="N" title="Notes" subtitle="Capture ideas, thoughts and plans in your personal notebook." accentColor="bg-emerald-100" />;
 }
 
 export function WaterPage() {
-  return <PlaceholderPage icon="💧" title="Water Tracker" subtitle="Stay hydrated by tracking your daily water intake." accentColor="bg-blue-100" />;
+  return <PlaceholderPage icon="W" title="Water Tracker" subtitle="Stay hydrated by tracking your daily water intake." accentColor="bg-blue-100" />;
 }
 
 export function AIAssistantPage() {
-  return <PlaceholderPage icon="🤖" title="AI Assistant" subtitle="Your personal AI coach for planning, motivation and advice." accentColor="bg-pink-100" />;
+  return <PlaceholderPage icon="A" title="AI Assistant" subtitle="Your personal AI coach for planning, motivation and advice." accentColor="bg-blue-100" />;
 }
 
 export function SettingsPage() {
-  return <PlaceholderPage icon="⚙️" title="Settings" subtitle="Customize your planner experience to fit your lifestyle." accentColor="bg-slate-100" />;
+  return <PlaceholderPage icon="S" title="Settings" subtitle="Customize your planner experience to fit your lifestyle." accentColor="bg-slate-100" />;
 }

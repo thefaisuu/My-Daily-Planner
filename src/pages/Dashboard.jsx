@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
 import { Sparkles, Calendar, CheckSquare, Droplets, Smile, FileText } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    HELPERS
@@ -11,11 +12,11 @@ const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Sat
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const MOOD_MAP = {
-  1: { emoji: '😔', label: 'Rough',   color: '#818cf8' },
-  2: { emoji: '😐', label: 'Neutral', color: '#60a5fa' },
-  3: { emoji: '🙂', label: 'Okay',    color: '#34d399' },
-  4: { emoji: '😊', label: 'Good',    color: '#f472b6' },
-  5: { emoji: '🤩', label: 'Amazing', color: '#fbbf24' },
+  1: { iconName: 'Frown', label: 'Rough',   color: '#818cf8' },
+  2: { iconName: 'Meh',   label: 'Neutral', color: '#60a5fa' },
+  3: { iconName: 'Smile', label: 'Okay',    color: '#34d399' },
+  4: { iconName: 'Smile', label: 'Good',    color: '#3B66E8' },
+  5: { iconName: 'Laugh', label: 'Amazing', color: '#fbbf24' },
 };
 
 function todayKey() {
@@ -96,7 +97,7 @@ function loadAllData() {
 ═══════════════════════════════════════════════════════ */
 
 /* ── Progress Ring ── */
-function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#F9A8D4','#C4B5FD'] }) {
+function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#4F7CFF','#7DD3FC'] }) {
   const r    = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const dash = circ * Math.min(pct, 1);
@@ -117,7 +118,7 @@ function ProgressRing({ pct, size = 110, stroke = 11, gradient = ['#F9A8D4','#C4
           style={{ transition: 'stroke-dasharray 1.2s cubic-bezier(0.34,1.56,0.64,1)' }} />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-xl font-black text-[#3B1F5E] dark:text-slate-100">{Math.round(pct * 100)}%</span>
+        <span className="text-xl font-black text-[#1E293B] dark:text-slate-100">{Math.round(pct * 100)}%</span>
       </div>
     </div>
   );
@@ -151,9 +152,7 @@ function GreetingBanner({ now, habits, water, mood }) {
     },
     {
       icon: mood ? (
-        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FFF1F2] text-base shadow-sm">
-          {mood.emoji}
-        </div>
+        <PastelIcon name={mood.iconName} colorType="mood" circleSize="w-8 h-8" size={16} />
       ) : (
         <PastelIcon name="Smile" colorType="mood" circleSize="w-8 h-8" size={16} />
       ),
@@ -164,15 +163,15 @@ function GreetingBanner({ now, habits, water, mood }) {
 
   return (
     <div className="card col-span-full relative overflow-hidden !p-0"
-      style={{ background: 'linear-gradient(120deg, #F9A8D4 0%, #F5EEFF 55%, #C4B5FD 100%)' }}>
+      style={{ background: 'linear-gradient(120deg, #4F7CFF 0%, #F0F4FF 55%, #7DD3FC 100%)' }}>
       <div className="relative p-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <div className="text-[#3B1F5E]/80 text-sm font-bold flex items-center gap-2">
+          <div className="text-[#1E293B]/80 text-sm font-bold flex items-center gap-2">
             <PastelIcon name={iconName} colorType={iconColorType} circleSize="w-7 h-7" size={14} />
             <span>{text}</span>
           </div>
-          <h2 className="text-[#3B1F5E] text-3xl sm:text-4xl font-black mt-2 tracking-tight">Hello, {displayName}!</h2>
-          <p className="text-[#3B1F5E]/70 text-sm mt-2 font-semibold flex items-center flex-wrap gap-1">
+          <h2 className="text-[#1E293B] text-3xl sm:text-4xl font-black mt-2 tracking-tight">Hello, {displayName}!</h2>
+          <p className="text-[#1E293B]/70 text-sm mt-2 font-semibold flex items-center flex-wrap gap-1">
             <span>{DAYS[now.getDay()]}, {MONTHS[now.getMonth()]} {now.getDate()} · Let's make today count</span>
             <Sparkles size={14} className="text-yellow-600 fill-yellow-600/30 ml-0.5" strokeWidth={1.5} />
           </p>
@@ -182,8 +181,8 @@ function GreetingBanner({ now, habits, water, mood }) {
             <div key={i} className="px-4 py-2.5 rounded-2xl bg-white/40 backdrop-blur-sm flex items-center gap-2.5 border border-white/50 shadow-sm min-w-[110px]">
               {s.icon}
               <div className="text-left">
-                <p className="text-[#3B1F5E] font-black text-sm leading-none">{s.v}</p>
-                <p className="text-[#3B1F5E]/70 text-[9px] font-bold uppercase tracking-wider mt-1">{s.l}</p>
+                <p className="text-[#1E293B] font-black text-sm leading-none">{s.v}</p>
+                <p className="text-[#1E293B]/70 text-[9px] font-bold uppercase tracking-wider mt-1">{s.l}</p>
               </div>
             </div>
           ))}
@@ -204,20 +203,18 @@ function DailySummary({ habits, water, mood, sessions }) {
           { iconName: 'CheckSquare', colorType: 'habits', label: 'Habits',  value: totalHabits ? `${doneHabits} / ${totalHabits}` : 'No habits' },
           { iconName: 'Droplet',     colorType: 'water',  label: 'Water',   value: `${water.glasses} / ${water.goal} glasses` },
           { iconName: 'Timer',       colorType: 'timer',  label: 'Focus',   value: `${sessions} session${sessions !== 1 ? 's' : ''}` },
-          { iconName: 'Smile',       colorType: 'mood',   label: 'Mood',    value: mood ? mood.label : 'Not logged', moodEmoji: mood?.emoji },
+          { iconName: 'Smile',       colorType: 'mood',   label: 'Mood',    value: mood ? mood.label : 'Not logged', moodIcon: mood?.iconName },
           { iconName: 'FileText',    colorType: 'notes',  label: 'Notes',   value: `${JSON.parse(localStorage.getItem('planner_notes') || '[]').length} notes` },
         ].map((p, i) => (
-          <div key={i} className="flex items-center gap-2.5 px-4 py-3 bg-white/70 backdrop-blur-md rounded-2xl flex-shrink-0 snap-start border border-purple-100/40 shadow-sm">
-            {p.moodEmoji ? (
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FFF1F2] text-base shadow-sm">
-                {p.moodEmoji}
-              </div>
+          <div key={i} className="flex items-center gap-2.5 px-4 py-3 bg-white/70 backdrop-blur-md rounded-2xl flex-shrink-0 snap-start border border-sky-100/40 shadow-sm">
+            {p.moodIcon ? (
+              <PastelIcon name={p.moodIcon} colorType="mood" circleSize="w-8 h-8" size={16} />
             ) : (
               <PastelIcon name={p.iconName} colorType={p.colorType} circleSize="w-8 h-8" size={16} />
             )}
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wide text-[#3B1F5E]/60">{p.label}</p>
-              <p className="text-sm font-black text-[#3B1F5E]">{p.value}</p>
+              <p className="text-[10px] font-black uppercase tracking-wide text-[#1E293B]/60">{p.label}</p>
+              <p className="text-sm font-black text-[#1E293B]">{p.value}</p>
             </div>
           </div>
         ))}
@@ -231,7 +228,7 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
   const done  = habits.filter(h => h.doneToday).length;
   const total = habits.length;
   const pct   = total ? done / total : 0;
-  const ringColors = ['#f472b6','#c084fc','#60a5fa','#34d399','#fb923c'];
+  const ringColors = ['#3B66E8','#c084fc','#60a5fa','#34d399','#fb923c'];
 
   if (!total) return (
     <div className="card flex flex-col items-center justify-center gap-3 min-h-48">
@@ -248,22 +245,26 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-8 h-8" size={16} />
-          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Habit Progress</h3>
+          <h3 className="font-black text-[#1E293B] dark:text-slate-100 text-base">Habit Progress</h3>
         </div>
-        <span className="badge bg-pink-100 text-pink-700">{done}/{total} done</span>
+        <span className="badge bg-blue-100 text-pink-700">{done}/{total} done</span>
       </div>
       <div className="flex items-center gap-5">
-        <ProgressRing pct={pct} gradient={['#F9A8D4','#C4B5FD']} />
+        <ProgressRing pct={pct} gradient={['#4F7CFF','#7DD3FC']} />
         <div className="flex-1 space-y-2 min-w-0">
           {habits.slice(0, 5).map((h, i) => (
             <div key={h.id} className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ background: h.doneToday ? ringColors[i % ringColors.length] : '#e2e8f0' }} />
-              <span className={`text-xs font-semibold truncate flex-1 ${h.doneToday ? 'text-[#3B1F5E]/60 dark:text-slate-300 line-through opacity-60' : 'text-[#3B1F5E]/80 dark:text-slate-300'}`}>
-                {h.emoji} {h.name}
+              {(() => {
+                const Icon = Icons[h.icon] || Icons.CheckSquare;
+                return <Icon className="w-3.5 h-3.5 flex-shrink-0 mr-1 text-slate-500" strokeWidth={1.5} />;
+              })()}
+              <span className={`text-xs font-semibold truncate flex-1 ${h.doneToday ? 'text-[#1E293B]/60 dark:text-slate-300 line-through opacity-60' : 'text-[#1E293B]/80 dark:text-slate-300'}`}>
+                {h.name}
               </span>
               <span className="text-[10px] font-black flex-shrink-0"
-                style={{ color: h.doneToday ? '#86EFAC' : '#cbd5e1' }}>
+                style={{ color: h.doneToday ? '#34D399' : '#cbd5e1' }}>
                 {h.doneToday ? '✓' : '—'}
               </span>
             </div>
@@ -278,12 +279,12 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
         <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
           <span>Today's progress</span><span>{Math.round(pct*100)}%</span>
         </div>
-        <div className="h-2 bg-pink-100 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-2 bg-blue-100 dark:bg-slate-700 rounded-full overflow-hidden">
           <div className="h-full rounded-full transition-all duration-1000 ease-out"
-            style={{ width: `${pct*100}%`, background: 'linear-gradient(to right,#f472b6,#c084fc)' }} />
+            style={{ width: `${pct*100}%`, background: 'linear-gradient(to right,#3B66E8,#c084fc)' }} />
         </div>
       </div>
-      <button onClick={() => navigate('Habits')} className="text-xs font-bold text-pink-500 hover:text-pink-700 transition-colors text-left">
+      <button onClick={() => navigate('Habits')} className="text-xs font-bold text-[#4F7CFF] hover:text-pink-700 transition-colors text-left">
         View all habits →
       </button>
     </div>
@@ -299,7 +300,7 @@ function WaterCard({ water, navigate, darkMode }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PastelIcon name="Droplets" colorType="water" circleSize="w-8 h-8" size={16} />
-          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Water Intake</h3>
+          <h3 className="font-black text-[#1E293B] dark:text-slate-100 text-base">Water Intake</h3>
         </div>
         <span className="text-sm font-black text-blue-500">{glasses}/{goal} glasses</span>
       </div>
@@ -330,13 +331,13 @@ function MoodCard({ mood, navigate }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PastelIcon name="Smile" colorType="mood" circleSize="w-8 h-8" size={16} />
-          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Today's Mood</h3>
+          <h3 className="font-black text-[#1E293B] dark:text-slate-100 text-base">Today's Mood</h3>
         </div>
         {mood && <span className="text-xs font-bold text-slate-400">{timeAgo(new Date(mood.savedAt).getTime())}</span>}
       </div>
       {mood ? (
         <div className="flex flex-col items-center gap-3 py-4">
-          <span className="text-6xl">{mood.emoji}</span>
+          <PastelIcon name={mood.iconName} colorType="mood" circleSize="w-20 h-20" size={40} />
           <p className="font-black text-lg" style={{ color: mood.color }}>{mood.label}</p>
           {mood.note && (
             <p className="text-xs text-slate-500 dark:text-slate-400 italic text-center px-2 line-clamp-2">
@@ -353,7 +354,7 @@ function MoodCard({ mood, navigate }) {
           </button>
         </div>
       )}
-      <button onClick={() => navigate('Mood')} className="text-xs font-bold text-pink-500 hover:text-pink-700 transition-colors">
+      <button onClick={() => navigate('Mood')} className="text-xs font-bold text-[#4F7CFF] hover:text-pink-700 transition-colors">
         Open Mood Journal →
       </button>
     </div>
@@ -362,8 +363,8 @@ function MoodCard({ mood, navigate }) {
 
 /* ── Notes Card ── */
 const NOTE_COLORS = {
-  pink:   { bg: '#fdf2f8', border: '#f9a8d4', text: '#831843', accent: '#f472b6' },
-  purple: { bg: '#f5f3ff', border: '#c4b5fd', text: '#4c1d95', accent: '#a78bfa' },
+  pink:   { bg: '#fdf2f8', border: '#4F7CFF', text: '#831843', accent: '#3B66E8' },
+  purple: { bg: '#f5f3ff', border: '#7DD3FC', text: '#4c1d95', accent: '#a78bfa' },
   blue:   { bg: '#eff6ff', border: '#93c5fd', text: '#1e3a8a', accent: '#60a5fa' },
   mint:   { bg: '#ecfdf5', border: '#6ee7b7', text: '#064e3b', accent: '#34d399' },
   peach:  { bg: '#fff7ed', border: '#fdba74', text: '#7c2d12', accent: '#fb923c' },
@@ -382,7 +383,7 @@ function NotesCard({ notes, navigate, darkMode }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PastelIcon name="FileText" colorType="notes" circleSize="w-8 h-8" size={16} />
-          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Recent Notes</h3>
+          <h3 className="font-black text-[#1E293B] dark:text-slate-100 text-base">Recent Notes</h3>
         </div>
       </div>
 
@@ -403,7 +404,7 @@ function NotesCard({ notes, navigate, darkMode }) {
                 onClick={() => navigate('Notes')}
                 className="p-3.5 rounded-2xl border cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5"
                 style={{ background: darkMode ? `${c.accent}12` : c.bg, borderColor: darkMode ? `${c.accent}30` : c.border }}>
-                {note.pinned && <span className="text-xs">📌 </span>}
+                {note.pinned && <Icons.Pin size={12} className="inline-block mr-1 text-slate-500 fill-slate-500" strokeWidth={1.5} />}
                 {note.title && (
                   <p className="font-black text-sm leading-snug mb-1 truncate"
                     style={{ color: darkMode ? '#f1f5f9' : c.text }}>
@@ -423,7 +424,7 @@ function NotesCard({ notes, navigate, darkMode }) {
         </div>
       )}
 
-      <button onClick={() => navigate('Notes')} className="text-xs font-bold text-pink-500 hover:text-pink-700 transition-colors text-center">
+      <button onClick={() => navigate('Notes')} className="text-xs font-bold text-[#4F7CFF] hover:text-pink-700 transition-colors text-center">
         View all notes →
       </button>
     </div>
@@ -433,10 +434,10 @@ function NotesCard({ notes, navigate, darkMode }) {
 /* ── Schedule-driven Today's Tasks card ── */
 const SLOT_HOURS = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 const CAT_COLORS = {
-  work:     { dot: '#F9A8D4', bg: 'bg-pink-100/55',   text: 'text-pink-800'  },
-  personal: { dot: '#C4B5FD', bg: 'bg-purple-100/55', text: 'text-[#3B1F5E]' },
-  health:   { dot: '#86EFAC', bg: 'bg-emerald-100/55',text: 'text-emerald-800' },
-  focus:    { dot: '#C4B5FD', bg: 'bg-purple-100/55', text: 'text-[#3B1F5E]' },
+  work:     { dot: '#4F7CFF', bg: 'bg-blue-100/55',   text: 'text-blue-800'  },
+  personal: { dot: '#7DD3FC', bg: 'bg-sky-100/55', text: 'text-[#1E293B]' },
+  health:   { dot: '#34D399', bg: 'bg-emerald-100/55',text: 'text-emerald-800' },
+  focus:    { dot: '#7DD3FC', bg: 'bg-sky-100/55', text: 'text-[#1E293B]' },
   break:    { dot: '#FDE68A', bg: 'bg-yellow-100/55', text: 'text-yellow-800' },
 };
 
@@ -600,7 +601,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PastelIcon name="Calendar" colorType="schedule" circleSize="w-8 h-8" size={16} />
-          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Today's Schedule</h3>
+          <h3 className="font-black text-[#1E293B] dark:text-slate-100 text-base">Today's Schedule</h3>
         </div>
         <span className="badge bg-indigo-100 text-indigo-600">
           {doneCount}/{totalCount} done
@@ -636,14 +637,14 @@ function PriorityTasksCard({ navigate, darkMode }) {
                 {/* Current indicator pulse */}
                 {slot.isCurrent && (
                   <span className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse"
-                    style={{ background: '#C4B5FD' }} />
+                    style={{ background: '#7DD3FC' }} />
                 )}
 
                 {/* Done tick */}
                 {!slot.isCurrent && (
                   <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center flex-shrink-0
                     ${slot.done ? 'border-transparent' : 'border-purple-200 dark:border-slate-600'}`}
-                    style={slot.done ? { background: 'linear-gradient(135deg,#F9A8D4,#C4B5FD)' } : {}}>
+                    style={slot.done ? { background: 'linear-gradient(135deg,#4F7CFF,#7DD3FC)' } : {}}>
                     {slot.done && (
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -949,10 +950,10 @@ Instructions:
   }, [loadBriefing]);
 
   const periodConfig = {
-    Morning: { icon: '🌅', label: 'Morning Briefing', badge: 'bg-amber-100 text-amber-700' },
-    Afternoon: { icon: '☀️', label: 'Afternoon Briefing', badge: 'bg-sky-100 text-sky-700' },
-    Evening: { icon: '🌙', label: 'Evening Briefing', badge: 'bg-indigo-100 text-indigo-700' },
-    Night: { icon: '✨', label: 'Night Briefing', badge: 'bg-violet-100 text-violet-700' }
+    Morning: { iconName: 'Sunrise', label: 'Morning Briefing', badge: 'bg-amber-100 text-amber-700' },
+    Afternoon: { iconName: 'Sun', label: 'Afternoon Briefing', badge: 'bg-sky-100 text-sky-700' },
+    Evening: { iconName: 'Moon', label: 'Evening Briefing', badge: 'bg-indigo-100 text-indigo-700' },
+    Night: { iconName: 'Sparkles', label: 'Night Briefing', badge: 'bg-violet-100 text-violet-700' }
   };
 
   const currentConfig = periodConfig[period] || periodConfig.Morning;
@@ -963,12 +964,15 @@ Instructions:
         <div className="flex items-center gap-2.5">
           <PastelIcon name="Sparkles" colorType="default" circleSize="w-8 h-8" size={16} />
           <div>
-            <h3 className="font-black text-[#3B1F5E] text-base leading-none">Planner Buddy Insights</h3>
+            <h3 className="font-black text-[#1E293B] text-base leading-none">Planner Buddy Insights</h3>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-[10px] font-black px-2.5 py-1.5 rounded-full flex items-center gap-1.5 ${currentConfig.badge}`}>
-            <span>{currentConfig.icon}</span> {currentConfig.label}
+            {(() => {
+              const Icon = Icons[currentConfig.iconName] || Icons.Sparkles;
+              return <Icon className="w-3.5 h-3.5" strokeWidth={2} />;
+            })()} {currentConfig.label}
           </span>
         </div>
       </div>

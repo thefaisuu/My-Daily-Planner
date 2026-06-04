@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Camera, Settings, Download, Trash2, Heart, Loader2 } from 'lucide-react';
+import { Camera, Settings, Download, Trash2, Heart, Loader2, Check, X, Info } from 'lucide-react';
 
 /* ── Toast ── */
 function Toast({ message, type = 'success', onDone }) {
@@ -10,7 +10,11 @@ function Toast({ message, type = 'success', onDone }) {
   return (
     <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-black animate-bounce-in
       ${type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-indigo-500 text-white'}`}>
-      <span>{type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+      <span className="flex-shrink-0">
+        {type === 'success' ? <Check className="w-4 h-4" strokeWidth={3} />
+         : type === 'error' ? <X className="w-4 h-4" strokeWidth={3} />
+         : <Info className="w-4 h-4" strokeWidth={3} />}
+      </span>
       {message}
     </div>
   );
@@ -361,7 +365,7 @@ export default function SettingsPage() {
       <div className="mb-8">
         <div className="flex items-center gap-3">
           <PastelIcon name="Settings" colorType="settings" circleSize="w-12 h-12" size={22} />
-          <h1 className="text-2xl font-black text-[#3B1F5E]">Settings</h1>
+          <h1 className="text-2xl font-black text-[#1E293B]">Settings</h1>
         </div>
         <p className="text-sm font-semibold text-slate-500 mt-0.5">Customize your Planner AI experience</p>
       </div>
@@ -382,7 +386,7 @@ export default function SettingsPage() {
                   )}
                 </div>
                 
-                <label className="absolute -bottom-1 -right-1 w-7 h-7 bg-pink-500 hover:bg-pink-600 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white transition-all transform hover:scale-110" title="Upload avatar">
+                <label className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#4F7CFF] hover:bg-[#3B66E8] text-white rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white transition-all transform hover:scale-110" title="Upload avatar">
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={updatingProfile} />
                   <Camera className="w-3.5 h-3.5" strokeWidth={1.5} />
                 </label>
@@ -413,7 +417,7 @@ export default function SettingsPage() {
                 <button
                   type="submit"
                   disabled={updatingProfile}
-                  className="btn-primary text-xs py-2 px-4 shadow-pink-100 hover:shadow-pink-200"
+                  className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
                 >
                   {updatingProfile ? 'Saving...' : 'Save Name ✓'}
                 </button>
@@ -468,7 +472,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={updatingPassword}
-                className="btn-primary text-xs py-2 px-4 shadow-pink-100 hover:shadow-pink-200"
+                className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
               >
                 {updatingPassword ? 'Updating...' : 'Change Password ✓'}
               </button>

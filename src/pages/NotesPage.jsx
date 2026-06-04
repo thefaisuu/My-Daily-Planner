@@ -8,8 +8,8 @@ import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText } from
    CONSTANTS
 ═══════════════════════════════════════════════════════ */
 const COLORS = [
-  { id: 'pink',   bg: '#fdf2f8', border: '#f9a8d4', text: '#831843', accent: '#f472b6', dark: { bg: '#2d1121', border: '#9d174d' } },
-  { id: 'purple', bg: '#f5f3ff', border: '#c4b5fd', text: '#4c1d95', accent: '#a78bfa', dark: { bg: '#1e1b3a', border: '#6d28d9' } },
+  { id: 'pink',   bg: '#fdf2f8', border: '#4F7CFF', text: '#831843', accent: '#3B66E8', dark: { bg: '#2d1121', border: '#9d174d' } },
+  { id: 'purple', bg: '#f5f3ff', border: '#7DD3FC', text: '#4c1d95', accent: '#a78bfa', dark: { bg: '#1e1b3a', border: '#6d28d9' } },
   { id: 'blue',   bg: '#eff6ff', border: '#93c5fd', text: '#1e3a8a', accent: '#60a5fa', dark: { bg: '#0f1e3d', border: '#1d4ed8' } },
   { id: 'mint',   bg: '#ecfdf5', border: '#6ee7b7', text: '#064e3b', accent: '#34d399', dark: { bg: '#0a2e20', border: '#065f46' } },
   { id: 'peach',  bg: '#fff7ed', border: '#fdba74', text: '#7c2d12', accent: '#fb923c', dark: { bg: '#2d150a', border: '#9a3412' } },
@@ -780,9 +780,9 @@ export default function NotesPage() {
             <div className={`w-20 h-20 rounded-3xl flex items-center justify-center
               ${darkMode ? 'bg-slate-800' : 'bg-pink-50'}`}>
               {search ? (
-                <Search size={36} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                <Search size={36} className="text-[#7DD3FC]" strokeWidth={1.5} />
               ) : (
-                <FileText size={36} className="text-[#F9A8D4]" strokeWidth={1.5} />
+                <FileText size={36} className="text-[#4F7CFF]" strokeWidth={1.5} />
               )}
             </div>
             <p className={`text-lg font-black ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -854,7 +854,7 @@ export default function NotesPage() {
       {/* Floating Action Button (FAB) to Add Note */}
       <button
         onClick={() => setModal({})}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#F9A8D4] to-[#C4B5FD] text-[#3B1F5E] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#4F7CFF] to-[#7DD3FC] text-[#1E293B] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label="Add new note"
         title="Add new note"
       >

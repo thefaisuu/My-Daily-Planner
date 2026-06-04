@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Heart, Mail, Users, CheckCircle, AlertTriangle, Hammer, Lock, Palette, Gift, CheckSquare, Droplet, Smile, Timer, Zap, Shield, TrendingUp, Calendar, FileText } from 'lucide-react';
+import { Heart, Mail, Users, CheckCircle, AlertTriangle, Hammer, Lock, Palette, Gift, CheckSquare, Droplet, Smile, Timer, Zap, Shield, TrendingUp, Calendar, FileText, Star } from 'lucide-react';
 
 /* ── Feature cards data ── */
 const FEATURES = [
@@ -9,7 +9,7 @@ const FEATURES = [
     desc: 'Build powerful daily routines with streak tracking, custom theme tags, and progress rings. Turn small habits into life-changing wins.',
     gradient: 'from-pink-400 to-rose-500',
     bg: 'bg-pink-50',
-    border: 'border-pink-100',
+    border: 'border-blue-100',
   },
   {
     iconName: 'Calendar',
@@ -49,7 +49,7 @@ const FEATURES = [
     desc: 'Deep work sessions using the Pomodoro technique with customizable intervals, ambient sounds, and session tracking.',
     gradient: 'from-purple-400 to-violet-500',
     bg: 'bg-purple-50',
-    border: 'border-purple-100',
+    border: 'border-sky-100',
   },
 ];
 
@@ -159,7 +159,7 @@ function FloatingOrbs() {
       <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full opacity-15 animate-pulse"
         style={{ background: 'radial-gradient(circle, #60a5fa, transparent)', animationDuration: '6s', animationDelay: '2s' }} />
       <div className="absolute top-1/2 left-1/4 w-64 h-64 rounded-full opacity-10 animate-pulse"
-        style={{ background: 'radial-gradient(circle, #f472b6, transparent)', animationDuration: '5s', animationDelay: '1s' }} />
+        style={{ background: 'radial-gradient(circle, #3B66E8, transparent)', animationDuration: '5s', animationDelay: '1s' }} />
     </div>
   );
 }
@@ -198,7 +198,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               <span className="text-white text-base font-black">✦</span>
             </div>
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
@@ -208,7 +208,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="hidden md:flex items-center gap-6">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="text-sm font-semibold text-slate-600 hover:text-[#C4B5FD] transition-colors">
+                className="text-sm font-semibold text-slate-600 hover:text-[#7DD3FC] transition-colors">
                 {label}
               </button>
             ))}
@@ -217,12 +217,12 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <button onClick={onLogin}
-              className="px-5 py-2 rounded-2xl text-sm font-bold text-[#3B1F5E] hover:bg-[#F5EEFF]/80 transition-colors">
+              className="px-5 py-2 rounded-2xl text-sm font-bold text-[#1E293B] hover:bg-[#F0F4FF]/80 transition-colors">
               Log In
             </button>
             <button onClick={onSignup}
-              className="px-5 py-2 rounded-2xl text-sm font-bold text-white shadow-lg hover:shadow-pink-100 hover:-translate-y-0.5 transition-all"
-              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+              className="px-5 py-2 rounded-2xl text-sm font-bold text-white shadow-lg hover:shadow-blue-100 hover:-translate-y-0.5 transition-all"
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               Get Started Free →
             </button>
           </div>
@@ -247,7 +247,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 shadow-xl">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-[#C4B5FD]">
+                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-[#7DD3FC]">
                 {label}
               </button>
             ))}
@@ -256,7 +256,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                 Log In
               </button>
               <button onClick={onSignup} className="w-full py-2.5 rounded-2xl font-bold text-white text-center shadow-md"
-                style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+                style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
                 Get Started Free →
               </button>
             </div>
@@ -282,15 +282,15 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-200 bg-white/80 backdrop-blur-sm shadow-sm mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Personal Productivity Suite</span>
+            <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Personal Productivity Suite</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#3B1F5E] leading-[1.08] tracking-tight mb-6">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#1E293B] leading-[1.08] tracking-tight mb-6">
             Your entire life,{' '}
             <span className="relative inline-block">
               <span className="relative z-10 text-transparent bg-clip-text"
-                style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD, #FDF4FF)' }}>
+                style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC, #F7F9FF)' }}>
                 beautifully organized
               </span>
             </span>
@@ -304,16 +304,16 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14">
             <button onClick={onSignup}
-              className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-pink-100 hover:-translate-y-1 active:translate-y-0 transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+              className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-blue-100 hover:-translate-y-1 active:translate-y-0 transition-all duration-200"
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               <span>Start for Free</span>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </button>
             <button onClick={onLogin}
-              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-[#3B1F5E] font-bold text-base border-2 border-slate-200 bg-white/80 hover:border-purple-300 hover:bg-[#F5EEFF]/80 transition-all duration-200">
-              <svg className="w-5 h-5 text-[#C4B5FD]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-[#1E293B] font-bold text-base border-2 border-slate-200 bg-white/80 hover:border-blue-300 hover:bg-[#F0F4FF]/80 transition-all duration-200">
+              <svg className="w-5 h-5 text-[#7DD3FC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In to Dashboard
@@ -324,7 +324,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="relative max-w-3xl mx-auto">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { iconName: 'CheckSquare', label: 'Habits', value: '5/7 done', color: '#f472b6', bg: '#fdf2f8' },
+                { iconName: 'CheckSquare', label: 'Habits', value: '5/7 done', color: '#3B66E8', bg: '#fdf2f8' },
                 { iconName: 'Droplet', label: 'Water', value: '6/8 glasses', color: '#60a5fa', bg: '#eff6ff' },
                 { iconName: 'Smile', label: 'Mood', value: 'Feeling Good', color: '#34d399', bg: '#ecfdf5' },
                 { iconName: 'Timer', label: 'Focus', value: '3 sessions', color: '#a78bfa', bg: '#f5f3ff' },
@@ -353,7 +353,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       </section>
 
       {/* ── Stats Section ── */}
-      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #F9A8D4, #F5EEFF, #C4B5FD)' }}>
+      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #4F7CFF, #F0F4FF, #7DD3FC)' }}>
         <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8">
           {STATS.map((stat, i) => (
             <AnimatedStat key={i} {...stat} delay={i * 100} />
@@ -365,11 +365,11 @@ export default function LandingPage({ onLogin, onSignup }) {
       <section id="features" className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-100 mb-4">
-              <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Everything You Need</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-sky-100 mb-4">
+              <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Everything You Need</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-[#3B1F5E] mb-4">6 powerful tools,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+            <h2 className="text-4xl sm:text-5xl font-black text-[#1E293B] mb-4">6 powerful tools,{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
                 one beautiful app
               </span>
             </h2>
@@ -390,11 +390,11 @@ export default function LandingPage({ onLogin, onSignup }) {
         style={{ background: 'linear-gradient(135deg, #f8f7ff 0%, #eef2ff 50%, #fdf2f8 100%)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-purple-100 shadow-sm mb-4">
-              <span className="text-xs font-bold text-[#C4B5FD] uppercase tracking-widest">Simple Setup</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-sky-100 shadow-sm mb-4">
+              <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Simple Setup</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-[#3B1F5E] mb-4">Up and running in{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #c4b5fd)' }}>
+            <h2 className="text-4xl sm:text-5xl font-black text-[#1E293B] mb-4">Up and running in{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
                 60 seconds
               </span>
             </h2>
@@ -420,8 +420,8 @@ export default function LandingPage({ onLogin, onSignup }) {
                 step: '03',
                 title: 'Track your progress',
                 desc: 'View your completion charts, keep streaks alive, and review mood logs to see how you grow.',
-                icon: <TrendingUp size={20} className="text-[#f472b6]" strokeWidth={1.5} />,
-                color: '#f472b6',
+                icon: <TrendingUp size={20} className="text-[#3B66E8]" strokeWidth={1.5} />,
+                color: '#3B66E8',
               },
             ].map((step, i) => (
               <div key={i} className="flex gap-5 p-6 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
@@ -447,10 +447,11 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-100 mb-4">
-              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">⭐ Loved by users</span>
+              <Star className="w-3 h-3 text-amber-500 fill-amber-500" strokeWidth={2} />
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">Loved by users</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-slate-800">People who{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #f472b6, #a78bfa)' }}>
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B66E8, #a78bfa)' }}>
                 love their days
               </span>
             </h2>
@@ -481,7 +482,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* ── Final CTA Section ── */}
       <section className="py-24 px-4 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #F9A8D4 0%, #F5EEFF 40%, #C4B5FD 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #4F7CFF 0%, #F0F4FF 40%, #7DD3FC 100%)' }}>
         <FloatingOrbs />
         <div className="relative max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-5xl mx-auto mb-8 shadow-xl">
@@ -497,7 +498,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={onSignup}
-              className="group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-white text-[#3B1F5E] font-bold text-lg shadow-2xl hover:shadow-white/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+              className="group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-white text-[#1E293B] font-bold text-lg shadow-2xl hover:shadow-white/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
               <span>Create Free Account</span>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -517,7 +518,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               <span className="text-white text-sm font-black">✦</span>
             </div>
             <span className="font-black text-white text-sm">My Daily Planner</span>
@@ -565,7 +566,7 @@ function LegalPageLayout({ title, children, onBack }) {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               <span className="text-white text-base font-black">✦</span>
             </div>
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
@@ -584,7 +585,7 @@ function LegalPageLayout({ title, children, onBack }) {
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 relative z-10">
         <div className="bg-white/75 backdrop-blur-md border border-slate-100 shadow-xl rounded-[2.5rem] p-8 sm:p-12">
           <h1 className="text-3xl sm:text-4xl font-black text-slate-800 mb-8 tracking-tight">
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
+            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
               {title}
             </span>
           </h1>
@@ -773,8 +774,8 @@ function ContactPage({ onBack }) {
             <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">Direct Contact Info</h3>
             
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Mail size={14} className="text-[#C4B5FD]" strokeWidth={1.5} />
+              <div className="w-8 h-8 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+                <Mail size={14} className="text-[#7DD3FC]" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="font-bold text-slate-800 text-sm">Email Address</p>
@@ -788,8 +789,8 @@ function ContactPage({ onBack }) {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
-                <Users size={14} className="text-[#F9A8D4]" strokeWidth={1.5} />
+              <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <Users size={14} className="text-[#4F7CFF]" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="font-bold text-slate-800 text-sm">Co-Founders</p>
@@ -883,8 +884,8 @@ function ContactPage({ onBack }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-pink-100 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}
+                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-blue-100 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}
               >
                 {loading ? (
                   <>

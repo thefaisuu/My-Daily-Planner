@@ -17,11 +17,11 @@ const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Sat
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const MOOD_MAP = {
-  1: { emoji: '😔', label: 'Rough' },
-  2: { emoji: '😐', label: 'Neutral' },
-  3: { emoji: '🙂', label: 'Okay' },
-  4: { emoji: '😊', label: 'Good' },
-  5: { emoji: '🤩', label: 'Amazing' },
+  1: { iconName: 'Frown', label: 'Rough' },
+  2: { iconName: 'Meh',   label: 'Neutral' },
+  3: { iconName: 'Smile', label: 'Okay' },
+  4: { iconName: 'Smile', label: 'Good' },
+  5: { iconName: 'Laugh', label: 'Amazing' },
 };
 
 function todayKey() {
@@ -164,13 +164,13 @@ export function NotificationBell() {
             id: `focus-${fc.id || fidx}`,
             iconName: 'Timer',
             colorType: 'timer',
-            text: 'Focus session completed! 🏆',
+            text: 'Focus session completed!',
             sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
             page: 'Focus Timer',
             time: fc.timestamp,
-            color: '#C4B5FD',
+            color: '#7DD3FC',
             bg: 'bg-purple-50/20',
-            badge: 'bg-[#C4B5FD]/20 text-[#3B1F5E]'
+            badge: 'bg-[#7DD3FC]/20 text-[#1E293B]'
           });
         });
       }
@@ -182,12 +182,12 @@ export function NotificationBell() {
         iconName: 'CheckSquare',
         colorType: 'habits',
         text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
-        sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
+        sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak!' : 'Keep the streak going',
         page: 'Habits',
         time: timeHabit || new Date().toISOString(),
-        color: '#C4B5FD',
-        bg: 'bg-[#F5EEFF]/50',
-        badge: 'bg-[#C4B5FD]/20 text-[#3B1F5E]'
+        color: '#7DD3FC',
+        bg: 'bg-[#F0F4FF]/50',
+        badge: 'bg-[#7DD3FC]/20 text-[#1E293B]'
       });
     }
 
@@ -197,13 +197,13 @@ export function NotificationBell() {
         id: idx++,
         iconName: 'Droplet',
         colorType: 'water',
-        text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
+        text: goalReached ? 'Water goal reached!' : 'Hydration logged',
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
         time: timeWater || new Date().toISOString(),
-        color: '#F9A8D4',
+        color: '#4F7CFF',
         bg: 'bg-pink-50/30',
-        badge: 'bg-pink-100 text-pink-700'
+        badge: 'bg-blue-100 text-pink-700'
       });
     }
 
@@ -213,7 +213,7 @@ export function NotificationBell() {
         id: idx++,
         iconName: 'Calendar',
         colorType: 'schedule',
-        text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
+        text: allDone ? 'All events completed!' : `${tasksDone}/${tasksTotal} tasks completed`,
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
         time: timeSchedule || new Date().toISOString(),
@@ -232,7 +232,7 @@ export function NotificationBell() {
         sub: `You are feeling "${moodLabel}" today.`,
         page: 'Mood',
         time: timeMood || new Date().toISOString(),
-        color: '#86EFAC',
+        color: '#34D399',
         bg: 'bg-emerald-50/30',
         badge: 'bg-emerald-100 text-emerald-800'
       });
@@ -247,9 +247,9 @@ export function NotificationBell() {
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
         time: timeNotes || new Date().toISOString(),
-        color: '#F9A8D4',
+        color: '#4F7CFF',
         bg: 'bg-pink-50/30',
-        badge: 'bg-pink-100 text-pink-700'
+        badge: 'bg-blue-100 text-pink-700'
       });
     }
 
@@ -284,16 +284,16 @@ export function NotificationBell() {
         <PastelIcon name="Bell" colorType="default" circleSize="w-10 h-10" />
         {notifications.length > 0 && (
           <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white animate-pulse"
-            style={{ background: '#F9A8D4' }} />
+            style={{ background: '#4F7CFF' }} />
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-3xl shadow-2xl shadow-[#C4B5FD]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-purple-100">
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-3xl shadow-2xl shadow-[#7DD3FC]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-sky-100">
           {/* Header */}
           <div className="px-5 py-4 border-b border-purple-50 flex items-center justify-between">
-            <p className="font-black text-sm text-[#3B1F5E]">Notifications</p>
-            <span className="badge bg-[#C4B5FD]/20 text-[#3B1F5E]">{notifications.length} new</span>
+            <p className="font-black text-sm text-[#1E293B]">Notifications</p>
+            <span className="badge bg-[#7DD3FC]/20 text-[#1E293B]">{notifications.length} new</span>
           </div>
 
           {/* List — max 3 in dropdown */}
@@ -307,10 +307,10 @@ export function NotificationBell() {
               notifications.slice(0, 3).map(n => (
                 <button key={n.id}
                   onClick={() => handleNotifClick(n.page)}
-                  className="w-full text-left px-5 py-3.5 hover:bg-[#F5EEFF]/60 transition-colors flex items-center gap-3 cursor-pointer">
+                  className="w-full text-left px-5 py-3.5 hover:bg-[#F0F4FF]/60 transition-colors flex items-center gap-3 cursor-pointer">
                   <PastelIcon name={n.iconName} colorType={n.colorType} circleSize="w-9 h-9" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#3B1F5E] truncate">{n.text}</p>
+                    <p className="text-sm font-bold text-[#1E293B] truncate">{n.text}</p>
                     <p className="text-xs text-[#9B8AAE] mt-0.5">{n.sub}</p>
                   </div>
                   <span className="text-[10px] text-[#9B8AAE] font-semibold flex-shrink-0 mt-1">{timeAgo(n.time)}</span>
@@ -323,7 +323,7 @@ export function NotificationBell() {
           <div className="px-5 py-3 text-center border-t border-purple-50">
             <button
               onClick={() => { setActiveNav('Notifications'); setOpen(false); }}
-              className="text-xs font-black text-[#F9A8D4] hover:text-[#C4B5FD] transition-colors cursor-pointer">
+              className="text-xs font-black text-[#4F7CFF] hover:text-[#7DD3FC] transition-colors cursor-pointer">
               View all notifications →
             </button>
           </div>
@@ -383,7 +383,7 @@ function AvatarDropdown() {
         className="flex items-center gap-2 group cursor-pointer"
         aria-label="User menu"
       >
-        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#F9A8D4] via-[#F5EEFF] to-[#C4B5FD]">
+        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
@@ -391,21 +391,21 @@ function AvatarDropdown() {
           )}
         </div>
         <div className="hidden sm:flex items-center gap-1">
-          <span className="text-sm font-bold text-[#3B1F5E]">{firstName}</span>
+          <span className="text-sm font-bold text-[#1E293B]">{firstName}</span>
           <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-[#9B8AAE]`} strokeWidth={1.5} />
         </div>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 rounded-3xl shadow-2xl shadow-[#C4B5FD]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-purple-100">
+        <div className="absolute right-0 top-full mt-2 w-52 rounded-3xl shadow-2xl shadow-[#7DD3FC]/10 z-50 overflow-hidden animate-bounce-in bg-white/95 backdrop-blur-md border border-sky-100">
           <div className="px-5 py-4 border-b border-purple-50">
-            <p className="font-bold text-sm text-[#3B1F5E] truncate">{displayName}</p>
+            <p className="font-bold text-sm text-[#1E293B] truncate">{displayName}</p>
             <p className="text-xs text-[#9B8AAE] truncate">{email}</p>
           </div>
           <div className="py-2">
             {menuItems.map(item => (
               <button key={item.label} id={`menu-${item.label}`}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F5EEFF]/65 text-[#3B1F5E] cursor-pointer"
+                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F0F4FF]/65 text-[#1E293B] cursor-pointer"
                 onClick={() => { item.action(); setOpen(false); }}>
                 <PastelIcon name={item.iconName} colorType={item.colorType} circleSize="w-7 h-7" size={13} />
                 {item.label}
@@ -426,7 +426,7 @@ export default function Navbar() {
   const dateStr   = `${dayName}, ${monthName} ${now.getDate()}`;
 
   return (
-    <header className="sticky top-0 z-20 flex items-center px-4 sm:px-6 h-16 gap-3 border-b transition-colors duration-300 bg-white/60 backdrop-blur-xl border-purple-100/40">
+    <header className="sticky top-0 z-20 flex items-center px-4 sm:px-6 h-16 gap-3 border-b transition-colors duration-300 bg-white/60 backdrop-blur-xl border-sky-100/40">
       {/* Hamburger – mobile only */}
       <button
         id="hamburger-btn"
@@ -439,7 +439,7 @@ export default function Navbar() {
 
       {/* Date pill – centered */}
       <div className="flex-1 flex justify-center">
-        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-[#F5EEFF]/80 text-[#3B1F5E]">
+        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-[#F0F4FF]/80 text-[#1E293B]">
           <PastelIcon name="Calendar" colorType="schedule" circleSize="w-6 h-6" size={12} />
           <span className="hidden sm:inline">{dateStr}</span>
           <span className="inline sm:hidden">{`${now.getDate()} ${MONTHS[now.getMonth()].slice(0,3)}`}</span>

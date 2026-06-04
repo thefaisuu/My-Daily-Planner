@@ -36,10 +36,10 @@ function generateSlots(startH = 6, endH = 23) {
 const SLOTS = generateSlots(6, 23);
 
 const CATEGORIES = [
-  { id: 'work',     label: 'Work',     color: '#F9A8D4', bg: 'bg-pink-100/55',    text: 'text-pink-800'    },
-  { id: 'personal', label: 'Personal', color: '#C4B5FD', bg: 'bg-purple-100/55',  text: 'text-[#3B1F5E]'  },
-  { id: 'health',   label: 'Health',   color: '#86EFAC', bg: 'bg-emerald-100/55', text: 'text-emerald-800' },
-  { id: 'focus',    label: 'Focus',    color: '#C4B5FD', bg: 'bg-purple-100/55',  text: 'text-[#3B1F5E]'  },
+  { id: 'work',     label: 'Work',     color: '#4F7CFF', bg: 'bg-blue-100/55',    text: 'text-blue-800'    },
+  { id: 'personal', label: 'Personal', color: '#7DD3FC', bg: 'bg-sky-100/55',  text: 'text-[#1E293B]'  },
+  { id: 'health',   label: 'Health',   color: '#34D399', bg: 'bg-emerald-100/55', text: 'text-emerald-800' },
+  { id: 'focus',    label: 'Focus',    color: '#7DD3FC', bg: 'bg-sky-100/55',  text: 'text-[#1E293B]'  },
   { id: 'break',    label: 'Break',    color: '#FDE68A', bg: 'bg-yellow-100/55',  text: 'text-yellow-800'   },
 ];
 const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
@@ -209,7 +209,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
                     className={`px-3 py-1 rounded-xl text-xs font-bold transition-all hover:scale-105
                       ${active
                         ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-sm'
-                        : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-slate-500 hover:bg-pink-50 hover:text-pink-600'
+                        : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-[#4F7CFF]'
                       }`}>
                     {label}
                   </button>
@@ -261,7 +261,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               <div className={`-mt-2 flex items-center gap-2 px-3 py-1.5 rounded-xl w-fit
                 ${darkMode ? 'bg-slate-800' : 'bg-pink-50'}`}>
                 <span className="text-sm">⏱️</span>
-                <span className={`text-xs font-black ${darkMode ? 'text-slate-300' : 'text-pink-600'}`}>
+                <span className={`text-xs font-black ${darkMode ? 'text-slate-300' : 'text-[#4F7CFF]'}`}>
                   {timeLabel(startTime)} → {timeLabel(endTime)} · {dur}
                 </span>
               </div>
@@ -288,7 +288,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
                     setEndTime(`${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`);
                   }}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition-all hover:scale-105
-                    ${darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-purple-300' : 'bg-slate-100 text-slate-500 hover:bg-purple-100 hover:text-purple-600'}`}>
+                    ${darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-purple-300' : 'bg-slate-100 text-slate-500 hover:bg-sky-100 hover:text-[#3B66E8]'}`}>
                   {label}
                 </button>
               ))}
@@ -359,7 +359,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
             <button onClick={handleSave} disabled={!task.trim()}
               className={`flex-1 py-3 rounded-2xl text-sm font-black text-white transition-all
                 ${task.trim() ? 'hover:shadow-lg hover:-translate-y-0.5 active:scale-95' : 'opacity-40 cursor-not-allowed'}`}
-              style={{ background: task.trim() ? 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' : '#9B8AAE' }}>
+              style={{ background: task.trim() ? 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' : '#9B8AAE' }}>
               {isEdit ? 'Save Changes' : 'Add Event'}
             </button>
           </div>
@@ -379,7 +379,7 @@ function DeleteConfirm({ slot, onConfirm, onCancel, darkMode }) {
         ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-rose-100'}`}>
         <Trash2 size={16} className="text-rose-500" strokeWidth={1.5} />
         <p className={`text-sm font-bold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
-          Delete event at <span className="text-pink-500">{slot.label}</span>?
+          Delete event at <span className="text-[#4F7CFF]">{slot.label}</span>?
         </p>
         <button onClick={onCancel}
           className={`px-3 py-1 rounded-xl text-xs font-bold ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
@@ -426,15 +426,15 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
       onMouseLeave={() => setHovered(false)}
       className={`relative flex rounded-2xl border overflow-hidden transition-all duration-200 group
         ${cardBg} ${borderCls}
-        ${isCurrent ? 'shadow-lg shadow-pink-100/80 dark:shadow-pink-900/30 scale-[1.01]' : 'hover:shadow-md hover:scale-[1.005]'}`}
+        ${isCurrent ? 'shadow-lg shadow-blue-100/80 dark:shadow-pink-900/30 scale-[1.01]' : 'hover:shadow-md hover:scale-[1.005]'}`}
     >
       {/* Left colour bar */}
       <div className={`w-1.5 flex-shrink-0 ${
-        isCompleted ? 'bg-gradient-to-b from-[#86EFAC] to-[#6ee7b7]' :
-        isCurrent   ? 'bg-gradient-to-b from-[#F9A8D4] to-[#C4B5FD]'   :
+        isCompleted ? 'bg-gradient-to-b from-[#34D399] to-[#6ee7b7]' :
+        isCurrent   ? 'bg-gradient-to-b from-[#4F7CFF] to-[#7DD3FC]'   :
         isEmpty     ? darkMode ? 'bg-slate-700' : 'bg-slate-200'     :
         isPast      ? 'bg-slate-300 dark:bg-slate-600'               :
-        'bg-gradient-to-b from-[#F5EEFF] to-[#FFF0F5]'
+        'bg-gradient-to-b from-[#F0F4FF] to-[#FFF0F5]'
       }`} />
 
       <div className="flex-1 px-4 py-3 min-w-0">
@@ -442,15 +442,15 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
         <div className="flex items-center gap-2 mb-1.5">
           {/* Time badge */}
           <span className={`text-xs font-black flex-shrink-0 px-2.5 py-1 rounded-xl
-            ${isCurrent   ? 'bg-[#F9A8D4] text-[#3B1F5E] shadow-sm'
-            : isCompleted ? 'bg-[#86EFAC] text-emerald-800'
+            ${isCurrent   ? 'bg-[#4F7CFF] text-[#1E293B] shadow-sm'
+            : isCompleted ? 'bg-[#34D399] text-emerald-800'
             : darkMode    ? 'bg-slate-700 text-slate-300'
             :               'bg-slate-100 text-slate-500'}`}>
             {data?.startTime ? timeLabel(data.startTime) : slot.label}
           </span>
 
           {isCurrent && (
-            <span className="flex items-center gap-1 text-[10px] font-black text-pink-500 uppercase tracking-widest">
+            <span className="flex items-center gap-1 text-[10px] font-black text-[#4F7CFF] uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />Now
             </span>
           )}
@@ -488,8 +488,8 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
               title={isEmpty ? 'Add event' : 'Edit event'}
               className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all hover:scale-110
                 ${isEmpty
-                  ? 'bg-gradient-to-br from-[#F9A8D4] to-[#C4B5FD] text-white shadow-sm'
-                  : darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-pink-300' : 'bg-slate-100 text-slate-500 hover:bg-purple-100 hover:text-[#3B1F5E]'
+                  ? 'bg-gradient-to-br from-[#4F7CFF] to-[#7DD3FC] text-white shadow-sm'
+                  : darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-pink-300' : 'bg-slate-100 text-slate-500 hover:bg-sky-100 hover:text-[#1E293B]'
                 }`}
             >
               {isEmpty ? (
@@ -518,8 +518,8 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
                 title={isCompleted ? 'Mark incomplete' : 'Mark done'}
                 className={`w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer
                   ${isCompleted
-                    ? 'bg-gradient-to-br from-[#86EFAC] to-[#6ee7b7] border-transparent shadow-sm'
-                    : darkMode ? 'border-slate-600 hover:border-[#86EFAC]' : 'border-slate-200 hover:border-[#86EFAC]'
+                    ? 'bg-gradient-to-br from-[#34D399] to-[#6ee7b7] border-transparent shadow-sm'
+                    : darkMode ? 'border-slate-600 hover:border-[#34D399]' : 'border-slate-200 hover:border-[#34D399]'
                   }`}
               >
                 {isCompleted && (
@@ -636,12 +636,12 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
 
   return (
     <div className={`sticky top-16 z-10 rounded-3xl border shadow-lg backdrop-blur-xl
-      ${darkMode ? 'bg-slate-900/90 border-slate-700/60' : 'bg-white/90 border-pink-100/80'}`}>
+      ${darkMode ? 'bg-slate-900/90 border-slate-700/60' : 'bg-white/90 border-blue-100/80'}`}>
       <div className="p-5 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F9A8D4] to-[#C4B5FD] flex items-center justify-center shadow-md flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4F7CFF] to-[#7DD3FC] flex items-center justify-center shadow-md flex-shrink-0">
               <Target size={16} className="text-white" strokeWidth={1.5} />
             </div>
             <div>
@@ -652,13 +652,13 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
             </div>
           </div>
           {/* Progress ring */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F0F4FF]/80'}`}>
             <svg viewBox="0 0 24 24" className="w-6 h-6 -rotate-90">
-              <circle cx="12" cy="12" r="9" fill="none" stroke={darkMode ? '#334155' : '#F5EEFF'} strokeWidth="3" />
-              <circle cx="12" cy="12" r="9" fill="none" stroke="#F9A8D4" strokeWidth="3"
+              <circle cx="12" cy="12" r="9" fill="none" stroke={darkMode ? '#334155' : '#F0F4FF'} strokeWidth="3" />
+              <circle cx="12" cy="12" r="9" fill="none" stroke="#4F7CFF" strokeWidth="3"
                 strokeDasharray={`${pct * 0.565} 56.5`} strokeLinecap="round" />
             </svg>
-            <span className={`text-xs font-black ${darkMode ? 'text-slate-200' : 'text-[#3B1F5E]'}`}>{pct}%</span>
+            <span className={`text-xs font-black ${darkMode ? 'text-slate-200' : 'text-[#1E293B]'}`}>{pct}%</span>
           </div>
         </div>
 
@@ -669,7 +669,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
             { iconName: 'Clock',       colorType: 'timer',  val: filled - done,        label: 'Remaining' },
             { iconName: 'Flame',       colorType: 'schedule', val: String(streak),       label: 'Streak'    },
           ].map((s, i) => (
-            <div key={i} className={`flex flex-col items-center justify-center py-2.5 rounded-xl border border-purple-100/40 shadow-sm ${darkMode ? 'bg-slate-800' : 'bg-white/70'}`}>
+            <div key={i} className={`flex flex-col items-center justify-center py-2.5 rounded-xl border border-sky-100/40 shadow-sm ${darkMode ? 'bg-slate-800' : 'bg-white/70'}`}>
               <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-7 h-7" size={14} />
               <p className={`text-sm font-black mt-1.5 ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>{s.val}</p>
               <p className={`text-[9px] font-bold uppercase tracking-wider mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>{s.label}</p>
@@ -679,13 +679,13 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
 
         {/* Current Event */}
         {currentEvent && (
-          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-pink-500/10 border border-pink-400/20'}`}>
+          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#4F7CFF]/10 border border-pink-400/20'}`}>
             <PastelIcon name="Zap" colorType="danger" circleSize="w-8 h-8" size={14} />
             <div className="min-w-0 flex-1">
-              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-pink-400' : 'text-pink-600'}`}>Current Event</p>
+              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-pink-400' : 'text-[#4F7CFF]'}`}>Current Event</p>
               <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{currentEvent.task}</p>
             </div>
-            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-pink-600'}`}>
+            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-[#4F7CFF]'}`}>
               {formatTimeRange(currentEvent.startTime, currentEvent.endTime)}
             </span>
           </div>
@@ -693,13 +693,13 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
 
         {/* Next Event */}
         {nextEvent && (
-          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-purple-50 border border-purple-100'}`}>
+          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-purple-50 border border-sky-100'}`}>
             <PastelIcon name="SkipForward" colorType="timer" circleSize="w-8 h-8" size={14} />
             <div className="min-w-0 flex-1">
-              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>Next Event</p>
+              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-[#7DD3FC]' : 'text-[#3B66E8]'}`}>Next Event</p>
               <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{nextEvent.task}</p>
             </div>
-            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-purple-600'}`}>
+            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-[#3B66E8]'}`}>
               {formatTimeRange(nextEvent.startTime, nextEvent.endTime)}
             </span>
           </div>
@@ -709,7 +709,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         <button
           onClick={() => onAddSlot()}
           className="w-full py-2.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
-          style={{ background: 'linear-gradient(135deg, #f9a8d4, #c4b5fd)', color: 'white' }}
+          style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)', color: 'white' }}
         >
           <Plus className="w-4 h-4" strokeWidth={1.5} />
           Add New Event
@@ -727,8 +727,8 @@ function CurrentTimeBar({ darkMode }) {
   const time = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2,'0')} ${now.getHours() < 12 ? 'AM' : 'PM'}`;
   return (
     <div className="relative flex items-center gap-2 my-1 z-10">
-      <div className="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-md shadow-pink-200 flex-shrink-0" />
-      <span className="text-[10px] font-black text-pink-500 bg-pink-50 dark:bg-slate-900 px-1.5 py-0.5 rounded-lg flex-shrink-0">
+      <div className="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-md shadow-blue-200 flex-shrink-0" />
+      <span className="text-[10px] font-black text-[#4F7CFF] bg-pink-50 dark:bg-slate-900 px-1.5 py-0.5 rounded-lg flex-shrink-0">
         {time}
       </span>
       <div className={`flex-1 h-px ${darkMode ? 'bg-pink-400/40' : 'bg-pink-300'}`} />
@@ -1304,7 +1304,7 @@ export default function SchedulePage() {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200
                       ${activeFilter === f.id
                         ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-md'
-                        : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-white text-slate-500 hover:bg-pink-50 border border-slate-100'
+                        : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-white text-slate-500 hover:bg-blue-50 border border-slate-100'
                       }`}>
                     {f.label}
                   </button>

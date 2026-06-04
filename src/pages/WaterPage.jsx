@@ -70,7 +70,7 @@ function GlassIcon({ filled, partial, onClick, index, animating, darkMode }) {
               ? '#FFF0F5'
               : darkMode ? '#1e293b' : '#f8fafc'}
             stroke={filled
-              ? '#F9A8D4'
+              ? '#4F7CFF'
               : darkMode ? '#334155' : '#cbd5e1'}
             strokeWidth="2"
             strokeLinejoin="round"
@@ -88,7 +88,7 @@ function GlassIcon({ filled, partial, onClick, index, animating, darkMode }) {
               <rect
                 x="0" y={68 - (68 * fillPct / 100)}
                 width="52" height={68 * fillPct / 100}
-                fill={filled ? '#FBCFE8' : '#F5EEFF'}
+                fill={filled ? '#FBCFE8' : '#F0F4FF'}
                 className={animating === index ? 'animate-pulse' : ''}
               />
               {/* Wave top */}
@@ -98,14 +98,14 @@ function GlassIcon({ filled, partial, onClick, index, animating, darkMode }) {
                   26 ${68 - (68 * fillPct / 100) + 2}
                   Q39 ${68 - (68 * fillPct / 100) + 7}
                   52 ${68 - (68 * fillPct / 100) + 2} Z`}
-                fill={filled ? '#F9A8D4' : '#FBCFE8'}
+                fill={filled ? '#4F7CFF' : '#FBCFE8'}
               />
               {/* Bubbles */}
               {filled && (
                 <>
-                  <circle cx="18" cy={68 - (68 * fillPct / 100) + 14} r="2.5" fill="#F9A8D460" />
-                  <circle cx="30" cy={68 - (68 * fillPct / 100) + 22} r="1.8" fill="#F9A8D450" />
-                  <circle cx="24" cy={68 - (68 * fillPct / 100) + 34} r="3" fill="#F9A8D440" />
+                  <circle cx="18" cy={68 - (68 * fillPct / 100) + 14} r="2.5" fill="#4F7CFF60" />
+                  <circle cx="30" cy={68 - (68 * fillPct / 100) + 22} r="1.8" fill="#4F7CFF50" />
+                  <circle cx="24" cy={68 - (68 * fillPct / 100) + 34} r="3" fill="#4F7CFF40" />
                 </>
               )}
             </g>
@@ -124,7 +124,7 @@ function GlassIcon({ filled, partial, onClick, index, animating, darkMode }) {
           {/* Checkmark when full */}
           {filled && (
             <g transform="translate(30, 18)">
-              <circle cx="8" cy="8" r="9" fill="#F472B6" />
+              <circle cx="8" cy="8" r="9" fill="#3B66E8" />
               <path d="M4 8 L7 11 L13 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
             </g>
           )}
@@ -133,13 +133,13 @@ function GlassIcon({ filled, partial, onClick, index, animating, darkMode }) {
         {/* Ripple animation on fill */}
         {animating === index && (
           <div className="absolute inset-0 rounded-full animate-ping opacity-30"
-            style={{ background: '#F9A8D4', borderRadius: '30%' }} />
+            style={{ background: '#4F7CFF', borderRadius: '30%' }} />
         )}
       </div>
 
       {/* Glass number */}
       <span className={`text-[11px] font-black transition-colors
-        ${filled ? 'text-[#F9A8D4]' : darkMode ? 'text-slate-600' : 'text-slate-300'}`}>
+        ${filled ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-600' : 'text-slate-300'}`}>
         {index + 1}
       </span>
     </button>
@@ -157,19 +157,19 @@ function WaterBottle({ pct, darkMode }) {
       <svg viewBox="0 0 120 260" width="110" height="250" className="drop-shadow-lg">
         {/* Bottle cap */}
         <rect x="42" y="8" width="36" height="22" rx="6"
-          fill={pct > 0 ? '#F9A8D4' : darkMode ? '#334155' : '#e2e8f0'} />
+          fill={pct > 0 ? '#4F7CFF' : darkMode ? '#334155' : '#e2e8f0'} />
         <rect x="46" y="2" width="28" height="12" rx="4"
-          fill={pct > 0 ? '#F472B6' : darkMode ? '#475569' : '#cbd5e1'} />
+          fill={pct > 0 ? '#3B66E8' : darkMode ? '#475569' : '#cbd5e1'} />
 
         {/* Bottle neck */}
         <path d="M42 30 L36 55 L84 55 L78 30 Z"
           fill={darkMode ? '#1e293b' : '#f0f9ff'}
-          stroke={pct > 0 ? '#C4B5FD' : darkMode ? '#334155' : '#e2e8f0'} strokeWidth="2" />
+          stroke={pct > 0 ? '#7DD3FC' : darkMode ? '#334155' : '#e2e8f0'} strokeWidth="2" />
 
         {/* Bottle body outline */}
         <rect x="18" y="55" width="84" height="185" rx="18"
           fill={darkMode ? '#1e293b' : '#f0f9ff'}
-          stroke={pct > 0 ? '#C4B5FD' : darkMode ? '#334155' : '#e2e8f0'}
+          stroke={pct > 0 ? '#7DD3FC' : darkMode ? '#334155' : '#e2e8f0'}
           strokeWidth="2.5" />
 
         {/* Water fill */}
@@ -184,12 +184,12 @@ function WaterBottle({ pct, darkMode }) {
                 fill="#FBCFE8" />
               {/* Wave */}
               <path d={`M18 ${fillY + 4} Q36 ${fillY - 6} 60 ${fillY + 4} Q84 ${fillY + 14} 102 ${fillY + 4} L102 ${fillY} Q84 ${fillY - 10} 60 ${fillY} Q36 ${fillY + 10} 18 ${fillY} Z`}
-                fill="#F9A8D4" />
+                fill="#4F7CFF" />
               {/* Bubbles */}
-              <circle cx="50" cy={fillY + 30} r="5" fill="#F9A8D440" />
-              <circle cx="72" cy={fillY + 55} r="3.5" fill="#F9A8D435" />
-              <circle cx="38" cy={fillY + 70} r="4" fill="#F9A8D430" />
-              <circle cx="80" cy={fillY + 90} r="2.5" fill="#F9A8D425" />
+              <circle cx="50" cy={fillY + 30} r="5" fill="#4F7CFF40" />
+              <circle cx="72" cy={fillY + 55} r="3.5" fill="#4F7CFF35" />
+              <circle cx="38" cy={fillY + 70} r="4" fill="#4F7CFF30" />
+              <circle cx="80" cy={fillY + 90} r="2.5" fill="#4F7CFF25" />
             </>
           )}
         </g>
@@ -212,7 +212,7 @@ function WaterBottle({ pct, darkMode }) {
       {/* Pct label in center */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="text-center mt-16">
-          <p className="text-2xl font-black text-[#F9A8D4] drop-shadow">{Math.round(pct * 100)}%</p>
+          <p className="text-2xl font-black text-[#4F7CFF] drop-shadow">{Math.round(pct * 100)}%</p>
         </div>
       </div>
     </div>
@@ -246,7 +246,7 @@ function WeeklyChart({ history, today, goal, darkMode }) {
               {/* Value label */}
               <p className={`text-[10px] font-black transition-all
                 ${glasses === 0 ? 'opacity-0' : ''}
-                ${met ? 'text-[#F9A8D4]' : darkMode ? 'text-slate-400' : 'text-[#3B1F5E]/70'}`}>
+                ${met ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-400' : 'text-[#1E293B]/70'}`}>
                 {glasses}
               </p>
               {/* Bar */}
@@ -254,10 +254,10 @@ function WeeklyChart({ history, today, goal, darkMode }) {
                 style={{
                   height: `${Math.max(pct * 100, 4)}%`,
                   background: met
-                    ? 'linear-gradient(to top, #C4B5FD, #F9A8D4)'
+                    ? 'linear-gradient(to top, #7DD3FC, #4F7CFF)'
                     : isToday
-                    ? 'linear-gradient(to top, #F9A8D4, #FDF4FF)'
-                    : darkMode ? '#1e3a5f' : '#F5EEFF',
+                    ? 'linear-gradient(to top, #4F7CFF, #F7F9FF)'
+                    : darkMode ? '#1e3a5f' : '#F0F4FF',
                   boxShadow: met ? '0 4px 12px rgba(249,168,212,0.40)' : isToday ? '0 4px 8px rgba(196,181,253,0.30)' : 'none',
                 }}
               >
@@ -269,7 +269,7 @@ function WeeklyChart({ history, today, goal, darkMode }) {
               </div>
               {/* Day label */}
               <p className={`text-[10px] font-black uppercase tracking-wider
-                ${isToday ? 'text-[#F9A8D4]' : darkMode ? 'text-slate-500' : 'text-[#3B1F5E]/70'}`}>
+                ${isToday ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-500' : 'text-[#1E293B]/70'}`}>
                 {DAYS_SHORT[d.getDay()]}
               </p>
             </div>
@@ -281,7 +281,7 @@ function WeeklyChart({ history, today, goal, darkMode }) {
       <div className="flex items-center gap-2">
         <div className="flex-1 h-px border-t border-dashed border-purple-200 dark:border-purple-800" />
         <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg
-          ${darkMode ? 'bg-blue-900/40 text-blue-400' : 'bg-[#F5EEFF] text-[#3B1F5E]'}`}>
+          ${darkMode ? 'bg-blue-900/40 text-blue-400' : 'bg-[#F0F4FF] text-[#1E293B]'}`}>
           Goal: {goal} glasses
         </span>
         <div className="flex-1 h-px border-t border-dashed border-purple-200 dark:border-purple-800" />
@@ -294,8 +294,8 @@ function WeeklyChart({ history, today, goal, darkMode }) {
           { label: 'Goals met',    val: `${days.filter(d=>d.glasses>=goal).length}/7` },
           { label: 'Total glasses',val: days.reduce((s,d)=>s+d.glasses,0) },
         ].map((s, i) => (
-          <div key={i} className={`text-center py-2 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
-            <p className={`text-sm font-black ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>{s.val}</p>
+          <div key={i} className={`text-center py-2 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F0F4FF]/80'}`}>
+            <p className={`text-sm font-black ${darkMode ? 'text-slate-100' : 'text-[#1E293B]'}`}>{s.val}</p>
             <p className={`text-[10px] font-bold ${darkMode ? 'text-slate-500' : 'text-[#9B8AAE]'}`}>{s.label}</p>
           </div>
         ))}
@@ -311,7 +311,7 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
   const inputCls = `w-full px-4 py-2.5 rounded-2xl text-sm font-bold outline-none border-2 transition-all tabular-nums
     ${darkMode
       ? 'bg-slate-800 border-slate-700 text-slate-100 focus:border-purple-400'
-      : 'bg-white border-slate-200 text-slate-700 focus:border-[#C4B5FD]'
+      : 'bg-white border-slate-200 text-slate-700 focus:border-[#7DD3FC]'
     }`;
 
   return (
@@ -320,13 +320,13 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
       <div>
         <label className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider mb-2
           ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-          <Target size={12} className="text-[#F9A8D4]" strokeWidth={1.5} />
+          <Target size={12} className="text-[#4F7CFF]" strokeWidth={1.5} />
           <span>Daily Goal (glasses)</span>
         </label>
         <div className="flex items-center gap-3">
           <button onClick={() => onGoalChange(Math.max(1, goal - 1))}
             className={`w-10 h-10 rounded-xl font-black text-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95
-              ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#3B1F5E] hover:bg-purple-100 hover:text-[#3B1F5E]'}`}>
+              ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#1E293B] hover:bg-sky-100 hover:text-[#1E293B]'}`}>
             −
           </button>
           <div className="relative flex-1">
@@ -336,7 +336,7 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
           </div>
           <button onClick={() => onGoalChange(Math.min(20, goal + 1))}
             className={`w-10 h-10 rounded-xl font-black text-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95
-              ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#3B1F5E] hover:bg-purple-100 hover:text-[#3B1F5E]'}`}>
+              ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-[#1E293B] hover:bg-sky-100 hover:text-[#1E293B]'}`}>
             +
           </button>
         </div>
@@ -346,8 +346,8 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
             <button key={g} onClick={() => onGoalChange(g)}
               className={`px-3 py-1 rounded-xl text-xs font-black transition-all hover:scale-105
                 ${goal === g
-                  ? 'bg-[#F9A8D4] text-white shadow-md shadow-pink-200/50'
-                  : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-[#3B1F5E] hover:bg-purple-100 hover:text-[#3B1F5E]'
+                  ? 'bg-[#4F7CFF] text-white shadow-md shadow-blue-200/50'
+                  : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-[#1E293B] hover:bg-sky-100 hover:text-[#1E293B]'
                 }`}>
               {g} glasses
             </button>
@@ -368,8 +368,8 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
             <button key={ml} onClick={() => onMlChange(ml)}
               className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all hover:scale-105
                 ${mlPerGlass === ml
-                  ? 'bg-[#F9A8D4] text-white shadow-md shadow-pink-200/50'
-                  : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-[#3B1F5E] hover:bg-purple-100 hover:text-[#3B1F5E]'
+                  ? 'bg-[#4F7CFF] text-white shadow-md shadow-blue-200/50'
+                  : darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-slate-100 text-[#1E293B] hover:bg-sky-100 hover:text-[#1E293B]'
                 }`}>
               {ml} ml
             </button>
@@ -378,11 +378,11 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
       </div>
 
       {/* Total volume */}
-      <div className={`rounded-2xl p-4 ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
-        <p className={`text-[11px] font-black uppercase tracking-wider mb-1 ${darkMode ? 'text-slate-400' : 'text-[#3B1F5E]/70'}`}>
+      <div className={`rounded-2xl p-4 ${darkMode ? 'bg-slate-800' : 'bg-[#F0F4FF]/80'}`}>
+        <p className={`text-[11px] font-black uppercase tracking-wider mb-1 ${darkMode ? 'text-slate-400' : 'text-[#1E293B]/70'}`}>
           Daily target volume
         </p>
-        <p className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+        <p className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-[#1E293B]'}`}>
           {(goal * mlPerGlass / 1000).toFixed(2)} L
         </p>
         <p className={`text-xs font-semibold mt-0.5 ${darkMode ? 'text-slate-500' : '#9B8AAE'}`}>
@@ -406,18 +406,18 @@ function GoalCelebration({ visible }) {
   if (!visible) return null;
   return (
     <div className="text-center py-5 px-6 rounded-3xl animate-bounce-in"
-      style={{ background: 'linear-gradient(135deg, #FDF4FF, #F5EEFF)' }}>
+      style={{ background: 'linear-gradient(135deg, #F7F9FF, #F0F4FF)' }}>
       <div className="flex justify-center mb-3">
         <Trophy size={48} className="text-amber-400 fill-amber-400/20 animate-bounce" strokeWidth={1.5} />
       </div>
-      <h3 className="text-xl font-black text-[#3B1F5E] mb-1">Daily goal reached!</h3>
-      <p className="text-sm font-semibold text-[#C4B5FD]">
+      <h3 className="text-xl font-black text-[#1E293B] mb-1">Daily goal reached!</h3>
+      <p className="text-sm font-semibold text-[#7DD3FC]">
         Amazing! You've hit your water target for today
       </p>
       <div className="flex justify-center gap-4 mt-4">
         {[Droplet, Waves, Sparkles, Heart].map((Icon, i) => (
           <span key={i} className="animate-bounce p-2 rounded-full bg-white/70 shadow-sm" style={{ animationDelay: `${i * 0.1}s` }}>
-            <Icon size={18} className="text-[#C4B5FD] fill-[#C4B5FD]/10" strokeWidth={1.5} />
+            <Icon size={18} className="text-[#7DD3FC] fill-[#7DD3FC]/10" strokeWidth={1.5} />
           </span>
         ))}
       </div>
@@ -638,10 +638,10 @@ export default function WaterPage() {
 
   /* Motivational message */
   const getMessage = () => {
-    if (pct >= 1)    return { msg: "Goal reached! You're glowing", color: 'text-[#F9A8D4]' };
-    if (pct >= 0.75) return { msg: `Almost there! Just ${remaining} more glass${remaining !== 1 ? 'es' : ''}`, color: 'text-[#C4B5FD]' };
-    if (pct >= 0.5)  return { msg: "Halfway there — keep going!", color: 'text-[#C4B5FD]' };
-    if (pct >= 0.25) return { msg: "Good start! Stay hydrated", color: 'text-[#F9A8D4]' };
+    if (pct >= 1)    return { msg: "Goal reached! You're glowing", color: 'text-[#4F7CFF]' };
+    if (pct >= 0.75) return { msg: `Almost there! Just ${remaining} more glass${remaining !== 1 ? 'es' : ''}`, color: 'text-[#7DD3FC]' };
+    if (pct >= 0.5)  return { msg: "Halfway there — keep going!", color: 'text-[#7DD3FC]' };
+    if (pct >= 0.25) return { msg: "Good start! Stay hydrated", color: 'text-[#4F7CFF]' };
     if (glasses > 0) return { msg: "Great start! Keep sipping", color: 'text-slate-500' };
     return { msg: "Tap a glass to log your first drink!", color: darkMode ? 'text-slate-400' : 'text-slate-500' };
   };
@@ -656,15 +656,17 @@ export default function WaterPage() {
         <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setShowSettings(false)}
           style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}>
           <div className={`absolute bottom-0 left-0 right-0 rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto
-            ${darkMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-purple-100'}`}
+            ${darkMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-sky-100'}`}
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
+                <Settings size={16} className="text-[#7DD3FC]" strokeWidth={1.5} />
                 <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>Settings</h3>
               </div>
               <button onClick={() => setShowSettings(false)}
-                className={`w-8 h-8 rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>✕</button>
+                className={`w-8 h-8 rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+                <X className="w-4 h-4" strokeWidth={1.5} />
+              </button>
             </div>
             <SettingsPanel goal={goal} mlPerGlass={mlPerGlass} onGoalChange={handleGoalChange} onMlChange={setMlPerGlass} darkMode={darkMode} />
           </div>
@@ -689,7 +691,7 @@ export default function WaterPage() {
           </div>
           <button onClick={() => setShowSettings(true)}
             className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all cursor-pointer
-              ${darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-200 text-slate-600 hover:bg-purple-100/50'}`}>
+              ${darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-200 text-slate-600 hover:bg-sky-100/50'}`}>
             <Settings className="w-4 h-4" strokeWidth={1.5} />
             Settings
           </button>
@@ -713,7 +715,7 @@ export default function WaterPage() {
                   { iconName: 'Hourglass',   colorType: 'warning', label: 'Remaining', val: remaining, sub: `${remaining * mlPerGlass} ml left` },
                 ].map((s, i) => (
                   <div key={i} className={`rounded-2xl p-4 border shadow-sm flex flex-col gap-1.5
-                    ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
+                    ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
                     <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={16} />
                     <div>
                       <p className={`text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
@@ -725,7 +727,7 @@ export default function WaterPage() {
 
               {/* Progress bar */}
               <div className={`rounded-3xl p-6 border shadow-sm
-                ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
+                ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
 
                 {/* Bar + bottle row */}
                 <div className="flex items-center gap-6 mb-6">
@@ -742,16 +744,16 @@ export default function WaterPage() {
                         <span className={`text-sm font-black ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                           {glasses} of {goal} glasses
                         </span>
-                        <span className={`text-sm font-black ${goalMet ? 'text-[#F9A8D4]' : darkMode ? 'text-slate-400' : 'text-[#3B1F5E]'}`}>
+                        <span className={`text-sm font-black ${goalMet ? 'text-[#4F7CFF]' : darkMode ? 'text-slate-400' : 'text-[#1E293B]'}`}>
                           {Math.round(pct * 100)}%
                         </span>
                       </div>
-                      <div className={`h-4 rounded-full overflow-hidden ${darkMode ? 'bg-slate-700' : 'bg-[#F5EEFF]/80'}`}>
+                      <div className={`h-4 rounded-full overflow-hidden ${darkMode ? 'bg-slate-700' : 'bg-[#F0F4FF]/80'}`}>
                         <div
                           className="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden"
                           style={{
                             width: `${pct * 100}%`,
-                            background: 'linear-gradient(to right, #F9A8D4, #C4B5FD)',
+                            background: 'linear-gradient(to right, #4F7CFF, #7DD3FC)',
                             boxShadow: '0 2px 8px rgba(249,168,212,0.40)',
                           }}
                         >
@@ -775,14 +777,14 @@ export default function WaterPage() {
                       <button onClick={addGlass}
                         disabled={glasses >= goal}
                         className="flex-1 py-3 rounded-2xl font-black text-sm text-white flex items-center justify-center gap-1.5 transition-all hover:shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ background: 'linear-gradient(135deg, #F9A8D4, #F472B6)', boxShadow: '0 4px 16px rgba(249,168,212,0.40)' }}>
+                        style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)', boxShadow: '0 4px 16px rgba(249,168,212,0.40)' }}>
                         <Droplet size={14} className="text-white fill-white/10" strokeWidth={1.5} />
                         <span>Drink a glass</span>
                       </button>
                       <button onClick={addGlass}
                         disabled={glasses >= goal}
                         className={`w-12 h-12 rounded-2xl font-black text-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed
-                          ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-[#F5EEFF] text-[#3B1F5E] hover:bg-[#C4B5FD]/20'}`}>
+                          ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-[#F0F4FF] text-[#1E293B] hover:bg-[#7DD3FC]/20'}`}>
                         +
                       </button>
                     </div>
@@ -826,10 +828,10 @@ export default function WaterPage() {
 
               {/* Weekly chart */}
               <div className={`rounded-3xl p-6 border shadow-sm
-                ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
+                ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
                 <div className="flex items-center gap-2 mb-5">
-                  <BarChart2 size={16} className="text-[#F9A8D4]" strokeWidth={1.5} />
-                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+                  <BarChart2 size={16} className="text-[#4F7CFF]" strokeWidth={1.5} />
+                  <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#1E293B]'}`}>
                     Weekly Intake
                   </h3>
                 </div>
@@ -839,10 +841,10 @@ export default function WaterPage() {
 
             {/* ════ DESKTOP SETTINGS SIDEBAR ════ */}
             <div className={`hidden lg:block w-72 xl:w-80 flex-shrink-0 rounded-3xl p-6 sticky top-20 border shadow-sm
-              ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
+              ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
               <div className="flex items-center gap-2 mb-5">
-                <Settings size={16} className="text-[#C4B5FD]" strokeWidth={1.5} />
-                <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#3B1F5E]'}`}>
+                <Settings size={16} className="text-[#7DD3FC]" strokeWidth={1.5} />
+                <h3 className={`font-black text-base ${darkMode ? 'text-slate-100' : 'text-[#1E293B]'}`}>
                   Settings
                 </h3>
               </div>
@@ -855,10 +857,10 @@ export default function WaterPage() {
               />
 
               {/* Hydration tips */}
-              <div className={`mt-6 p-4 rounded-2xl space-y-2 ${darkMode ? 'bg-slate-700/50' : 'bg-[#F5EEFF]/80'}`}>
+              <div className={`mt-6 p-4 rounded-2xl space-y-2 ${darkMode ? 'bg-slate-700/50' : 'bg-[#F0F4FF]/80'}`}>
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <Lightbulb size={13} className="text-amber-500 fill-amber-500/10" strokeWidth={1.5} />
-                  <p className={`text-[11px] font-black uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-[#C4B5FD]'}`}>
+                  <p className={`text-[11px] font-black uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-[#7DD3FC]'}`}>
                     Hydration Tips
                   </p>
                 </div>
@@ -868,7 +870,7 @@ export default function WaterPage() {
                   'Keep a bottle at your desk',
                   'Drink more on hot or active days',
                 ].map((tip, i) => (
-                  <p key={i} className={`text-xs font-semibold leading-relaxed ${darkMode ? 'text-slate-300' : 'text-[#3B1F5E]'}`}>
+                  <p key={i} className={`text-xs font-semibold leading-relaxed ${darkMode ? 'text-slate-300' : 'text-[#1E293B]'}`}>
                     · {tip}
                   </p>
                 ))}
