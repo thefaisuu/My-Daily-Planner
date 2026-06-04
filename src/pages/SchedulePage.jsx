@@ -183,6 +183,7 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               <input
                 type="date"
                 value={date}
+                min={todayISO()}
                 onChange={e => setDate(e.target.value)}
                 className={`${inputCls} pr-4`}
                 style={{ colorScheme: darkMode ? 'dark' : 'light' }}
@@ -1120,6 +1121,7 @@ export default function SchedulePage() {
   const eventsSlots = SLOTS.filter(s => {
     const data = slotData[s.hour];
     if (!data?.task?.trim()) return false;
+    if (data.done) return false;
     const currentH = now.getHours();
     const currentM = now.getMinutes();
     const currentMin = currentH * 60 + currentM;
@@ -1143,6 +1145,7 @@ export default function SchedulePage() {
     if (!data?.task?.trim()) return false; // never show empty slots
     if (activeFilter === 'completed') return data?.done;
     if (activeFilter === 'events') {
+      if (data?.done) return false;
       const currentH = now.getHours();
       const currentM = now.getMinutes();
       const currentMin = currentH * 60 + currentM;
