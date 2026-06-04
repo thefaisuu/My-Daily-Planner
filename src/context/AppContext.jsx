@@ -98,14 +98,13 @@ export function AppProvider({ children }) {
     initAuth();
 
     if (supabase) {
-      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
         const currentUser = session?.user || null;
         setUser(currentUser);
         setAuthLoading(false);
         if (currentUser) {
           await ensureUserProfile(currentUser);
         } else {
-          // Clear mock session if logged out
           localStorage.removeItem('planner_mock_session');
         }
       });

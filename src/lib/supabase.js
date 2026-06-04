@@ -7,9 +7,16 @@ let client = null;
 if (supabaseUrl && supabaseAnonKey) {
   try {
     if (supabaseUrl.startsWith('http://') || supabaseUrl.startsWith('https://')) {
-      client = createClient(supabaseUrl, supabaseAnonKey);
+      client = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+        }
+      });
     } else {
-      console.warn('Supabase URL must start with http:// or https://. Falling back to local storage.');
+      console.warn('Supabase URL must start with http:// or https://');
     }
   } catch (e) {
     console.error('Failed to initialize Supabase client:', e);
