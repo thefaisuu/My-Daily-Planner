@@ -36,26 +36,7 @@ const CATEGORIES = [
 ];
 const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
 
-const DEFAULT_SLOTS = {
-  6:  { task: '🧘 Morning meditation & stretching', done: true,  cat: 'health'   },
-  7:  { task: '🏃 Morning run (30 min)',            done: true,  cat: 'health'   },
-  8:  { task: '🥣 Breakfast + read news',           done: true,  cat: 'personal' },
-  9:  { task: '💼 Team standup meeting',            done: true,  cat: 'work'     },
-  10: { task: '🎨 Design review – Q2 mockups',     done: false, cat: 'work'     },
-  11: { task: '⏱️ Deep work session',              done: false, cat: 'focus'    },
-  12: { task: '🥗 Lunch break',                    done: false, cat: 'break'    },
-  13: { task: '📧 Emails & messages',              done: false, cat: 'work'     },
-  14: { task: '📞 Client call – project update',   done: false, cat: 'work'     },
-  15: { task: '', done: false, cat: 'work'     },
-  16: { task: '', done: false, cat: 'focus'    },
-  17: { task: '🚶 Evening walk',                   done: false, cat: 'health'   },
-  18: { task: '', done: false, cat: 'personal' },
-  19: { task: '🍳 Cook dinner',                    done: false, cat: 'personal' },
-  20: { task: '📚 Reading – 30 pages',             done: false, cat: 'personal' },
-  21: { task: '', done: false, cat: 'break'    },
-  22: { task: '🌙 Wind down – journaling',         done: false, cat: 'personal' },
-  23: { task: '😴 Bedtime',                        done: false, cat: 'break'    },
-};
+
 
 /* ═══════════════════════════════════════════════════════
    HELPERS — time utils
@@ -696,10 +677,6 @@ function CurrentTimeBar({ darkMode }) {
 }
 
 function loadSchedule() {
-  try {
-    const raw = localStorage.getItem('planner_schedule');
-    if (raw) return JSON.parse(raw);
-  } catch (_) {}
   const init = {};
   SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: todayISO() }; });
   return init;
@@ -818,7 +795,7 @@ export default function SchedulePage() {
   /* Modal state */
   const [modal, setModal]       = useState(null); // { slot } or null
   const [deleteTarget, setDel]  = useState(null); // slot to delete
-  const [activeFilter, setFilt] = useState('filled');
+  const [activeFilter, setFilt] = useState('all');
 
   const syncSlotToDB = async (hour, task, cat, date, startTime, endTime, note, done, prevSlotData) => {
     if (!supabase || !user) {
@@ -1000,6 +977,7 @@ export default function SchedulePage() {
               {/* Filter + category strip */}
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
+                  { id: 'all',       label: `All (${SLOTS.length})`           },
                   { id: 'filled',    label: `Events (${filledSlots.length})` },
                   { id: 'empty',     label: `Free (${SLOTS.length - filledSlots.length})` },
                   { id: 'completed', label: `Done (${doneSlots.length})`     },
