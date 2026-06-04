@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { Droplet, Droplets, Settings, Percent, Hourglass } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & STORAGE
@@ -356,7 +358,9 @@ function SettingsPanel({ goal, mlPerGlass, onGoalChange, onMlChange, darkMode })
       <div>
         <label className={`block text-[11px] font-black uppercase tracking-wider mb-2
           ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-          💧 ml per glass
+        <span className="inline-flex items-center gap-1.5">
+          <Droplet size={11} strokeWidth={1.5} /> ml per glass
+        </span>
         </label>
         <div className="flex gap-2 flex-wrap">
           {[150, 200, 250, 300, 350].map(ml => (
@@ -662,23 +666,22 @@ export default function WaterPage() {
 
         {/* ── Header ── */}
         <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
-          <div>
-            <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              💧 Water Tracker
-            </h1>
-            <p className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-              {goalMet && ' · 🎉 Goal reached!'}
-            </p>
+          <div className="flex items-center gap-3">
+            <PastelIcon name="Droplets" colorType="water" circleSize="w-12 h-12" size={22} />
+            <div>
+              <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>
+                Water Tracker
+              </h1>
+              <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                {goalMet && ' · 🎉 Goal reached!'}
+              </p>
+            </div>
           </div>
           <button onClick={() => setShowSettings(true)}
-            className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all
+            className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all cursor-pointer
               ${darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-200 text-slate-600 hover:bg-purple-100/50'}`}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <Settings className="w-4 h-4" strokeWidth={1.5} />
             Settings
           </button>
         </div>
@@ -695,16 +698,18 @@ export default function WaterPage() {
               {/* Top stat pills */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { icon: '💧', label: 'Drunk', val: `${glasses}/${goal}`, sub: 'glasses' },
-                  { icon: '📊', label: 'Progress', val: `${Math.round(pct * 100)}%`, sub: 'of goal' },
-                  { icon: '🫧', label: 'Volume', val: `${(totalMl / 1000).toFixed(2)}L`, sub: `${totalMl} ml` },
-                  { icon: '⏳', label: 'Remaining', val: remaining, sub: `${remaining * mlPerGlass} ml left` },
+                  { iconName: 'Droplet',    colorType: 'water', label: 'Drunk', val: `${glasses}/${goal}`, sub: 'glasses' },
+                  { iconName: 'Percent',    colorType: 'success', label: 'Progress', val: `${Math.round(pct * 100)}%`, sub: 'of goal' },
+                  { iconName: 'Droplets',   colorType: 'info', label: 'Volume', val: `${(totalMl / 1000).toFixed(2)}L`, sub: `${totalMl} ml` },
+                  { iconName: 'Hourglass',   colorType: 'warning', label: 'Remaining', val: remaining, sub: `${remaining * mlPerGlass} ml left` },
                 ].map((s, i) => (
-                  <div key={i} className={`rounded-2xl p-4 border shadow-sm
+                  <div key={i} className={`rounded-2xl p-4 border shadow-sm flex flex-col gap-1.5
                     ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-purple-100/40'}`}>
-                    <p className="text-xl mb-1">{s.icon}</p>
-                    <p className={`text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-                    <p className={`text-[10px] font-bold uppercase tracking-wide mt-0.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.sub}</p>
+                    <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={16} />
+                    <div>
+                      <p className={`text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
+                      <p className={`text-[10px] font-bold uppercase tracking-wide mt-0.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.sub}</p>
+                    </div>
                   </div>
                 ))}
               </div>

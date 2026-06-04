@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & DEFAULTS
@@ -190,29 +192,25 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
           {/* Edit button */}
           <button
             onClick={() => onEditClick(habit)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#C4B5FD]/15 text-[#3B1F5E] hover:bg-[#C4B5FD] hover:text-white"
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#C4B5FD]/15 text-[#3B1F5E] hover:bg-[#C4B5FD] hover:text-white cursor-pointer"
             title="Edit habit"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
+            <Edit2 className="w-4 h-4" strokeWidth={1.5} />
           </button>
 
           {/* Delete button */}
           <button
             onClick={() => setShowConfirm(true)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#FCA5A5]/20 text-[#9f1239] hover:bg-[#FCA5A5] hover:text-white"
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#FCA5A5]/20 text-[#9f1239] hover:bg-[#FCA5A5] hover:text-white cursor-pointer"
             title="Delete habit"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
           </button>
 
           {/* Complete checkbox */}
           <button
             onClick={handleCheck}
-            className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all duration-300
+            className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all duration-300 cursor-pointer
               ${pressing ? 'scale-90' : habit.doneToday ? 'scale-105' : 'hover:scale-110'}
               ${habit.doneToday ? 'border-transparent shadow-md' : ''}`}
             style={habit.doneToday
@@ -222,9 +220,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
             aria-label={habit.doneToday ? 'Mark incomplete' : 'Mark complete'}
           >
             {habit.doneToday && (
-              <svg className="w-4 h-4 text-[#065f46]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+              <Check className="w-4 h-4 text-[#065f46]" strokeWidth={2.5} />
             )}
           </button>
         </div>
@@ -347,20 +343,21 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
         {/* Modal header */}
         <div className="px-6 pt-6 pb-4 flex items-center justify-between"
           style={{ background: `linear-gradient(135deg, ${selectedTheme.bg}, white)` }}>
-          <div>
-            <h2 className={`text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              {habitToEdit ? '✏️ Edit Habit' : '✨ New Habit'}
-            </h2>
-            <p className={`text-xs font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              {habitToEdit ? 'Modify your daily habit settings' : 'Build a new daily habit'}
-            </p>
+          <div className="flex items-center gap-2.5">
+            <PastelIcon name={habitToEdit ? "Edit2" : "Sparkles"} colorType="habits" circleSize="w-9 h-9" size={16} />
+            <div>
+              <h2 className={`text-lg font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>
+                {habitToEdit ? 'Edit Habit' : 'New Habit'}
+              </h2>
+              <p className={`text-xs font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                {habitToEdit ? 'Modify your daily habit settings' : 'Build a new daily habit'}
+              </p>
+            </div>
           </div>
           <button onClick={onClose}
-            className={`w-9 h-9 rounded-2xl flex items-center justify-center transition-colors
+            className={`w-9 h-9 rounded-2xl flex items-center justify-center transition-colors cursor-pointer
               ${darkMode ? 'bg-slate-800 hover:bg-slate-700 text-slate-400' : 'bg-white hover:bg-slate-50 text-slate-400'}`}>
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X size={18} strokeWidth={1.5} />
           </button>
         </div>
 
@@ -377,7 +374,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                 {name || 'Your habit name'}
               </p>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-xs">🔥</span>
+                <Flame size={12} className="text-[#F59E0B]" fill="#F59E0B" />
                 <span className="text-xs font-bold" style={{ color: selectedTheme.text }}>
                   {habitToEdit ? `${habitToEdit.streak} day streak` : '0 day streak'}
                 </span>
@@ -812,16 +809,18 @@ export default function HabitsPage() {
 
         {/* ── Page header ── */}
         <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
-          <div>
-            <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              ✅ Habit Tracker
-            </h1>
-            <p className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' })}
-              &nbsp;·&nbsp;{doneCount}/{total} completed today
-            </p>
+          <div className="flex items-center gap-3">
+            <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-12 h-12" size={22} />
+            <div>
+              <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>
+                Habit Tracker
+              </h1>
+              <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' })}
+                &nbsp;·&nbsp;{doneCount}/{total} completed today
+              </p>
+            </div>
           </div>
-
         </div>
 
         {/* ── Top summary row ── */}
@@ -940,15 +939,10 @@ export default function HabitsPage() {
         aria-label="Add new habit"
         title="Add new habit"
       >
-        <svg
+        <Plus
           className="w-7 h-7 transition-transform group-hover:rotate-90 duration-300"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
+          strokeWidth={1.5}
+        />
       </button>
     </>
   );

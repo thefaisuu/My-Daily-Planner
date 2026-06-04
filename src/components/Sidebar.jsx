@@ -1,5 +1,18 @@
 import { useApp } from '../context/AppContext';
 import NAV_ITEMS from '../constants/navItems';
+import PastelIcon from './PastelIcon';
+import { Sparkles, X, LogOut } from 'lucide-react';
+
+const ICON_MAP = {
+  'Dashboard':   { name: 'Home',         colorType: 'dashboard' },
+  'Schedule':    { name: 'Calendar',     colorType: 'schedule' },
+  'Habits':      { name: 'CheckSquare',  colorType: 'habits' },
+  'Focus Timer': { name: 'Timer',        colorType: 'timer' },
+  'Mood':        { name: 'Smile',        colorType: 'mood' },
+  'Notes':       { name: 'FileText',     colorType: 'notes' },
+  'Water':       { name: 'Droplet',      colorType: 'water' },
+  'Settings':    { name: 'Settings',     colorType: 'settings' },
+};
 
 function NavLink({ item }) {
   const { activeNav, setActiveNav, closeSidebar } = useApp();
@@ -10,13 +23,20 @@ function NavLink({ item }) {
     closeSidebar();
   };
 
+  const iconInfo = ICON_MAP[item.id] || { name: 'HelpCircle', colorType: 'default' };
+
   return (
     <button
       onClick={handleClick}
       className={`sidebar-link w-full text-left group ${isActive ? 'active' : ''}`}
     >
-      <span className="text-lg leading-none group-hover:scale-110 transition-transform duration-200 inline-block">
-        {item.icon}
+      <span className="group-hover:scale-110 transition-transform duration-200 inline-block">
+        <PastelIcon
+          name={iconInfo.name}
+          colorType={iconInfo.colorType}
+          circleSize="w-8 h-8"
+          className={isActive ? 'bg-white/80 text-[#3B1F5E] shadow-sm' : ''}
+        />
       </span>
       <span>{item.label}</span>
       {isActive && (
@@ -69,9 +89,9 @@ export default function Sidebar() {
       >
         {/* Logo & App Name */}
         <div className={`flex items-center gap-3 px-6 py-6 border-b ${darkMode ? 'border-slate-700/60' : 'border-indigo-100/60'}`}>
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md"
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md text-white"
             style={{ background: 'linear-gradient(135deg, #F9A8D4, #C4B5FD)' }}>
-            <span className="text-xl leading-none text-white">✦</span>
+            <Sparkles size={20} strokeWidth={1.5} className="animate-pulse" />
           </div>
           <div>
             <h1 className="font-black text-base leading-tight text-gradient-primary">
@@ -85,13 +105,10 @@ export default function Sidebar() {
           {/* Close button – mobile only */}
           <button
             onClick={closeSidebar}
-            className={`ml-auto p-1.5 rounded-xl transition-colors lg:hidden
-              ${darkMode ? 'hover:bg-slate-800 text-slate-400 hover:text-indigo-400' : 'hover:bg-purple-100/50 text-slate-400 hover:text-purple-600'}`}
+            className="ml-auto lg:hidden cursor-pointer"
             aria-label="Close sidebar"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <PastelIcon name="X" colorType="default" circleSize="w-8 h-8" />
           </button>
         </div>
 
@@ -142,12 +159,10 @@ export default function Sidebar() {
                   onConfirm: logout
                 });
               }}
-              className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-slate-700/50 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
+              className="cursor-pointer"
               title="Logout"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              <PastelIcon name="LogOut" colorType="danger" circleSize="w-8 h-8" />
             </button>
           </div>
         </div>

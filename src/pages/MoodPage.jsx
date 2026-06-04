@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -238,11 +240,9 @@ function MonthCalendar({ history, darkMode }) {
       {/* Month nav */}
       <div className="flex items-center justify-between">
         <button onClick={prevMonth}
-          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110
+          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110 cursor-pointer
             ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'}`}>
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
         </button>
 
         <div className="text-center">
@@ -257,11 +257,9 @@ function MonthCalendar({ history, darkMode }) {
         </div>
 
         <button onClick={nextMonth}
-          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110
+          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:scale-110 cursor-pointer
             ${darkMode ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-500 hover:bg-pink-100 hover:text-pink-600'}`}>
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
         </button>
       </div>
 
@@ -431,9 +429,7 @@ function Toast({ mood, visible, darkMode }) {
         </div>
         <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
           style={{ background: mood?.color }}>
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
+          <Check className="w-3 h-3 text-white" strokeWidth={3} />
         </div>
       </div>
     </div>
@@ -624,14 +620,17 @@ export default function MoodPage() {
       <div className="min-h-screen animate-fade-in p-4 sm:p-6 lg:p-8">
 
         {/* ── Page header ── */}
-        <div className="mb-6">
-          <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-            😊 Mood Journal
-          </h1>
-          <p className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}
-            {todayMood && <span className="ml-2">· Today: {todayMood.emoji} {todayMood.label}</span>}
-          </p>
+        <div className="flex items-center gap-3 mb-6">
+          <PastelIcon name="Smile" colorType="mood" circleSize="w-12 h-12" size={22} />
+          <div>
+            <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>
+              Mood Journal
+            </h1>
+            <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              {new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}
+              {todayMood && <span className="ml-2">· Today: {todayMood.emoji} {todayMood.label}</span>}
+            </p>
+          </div>
         </div>
 
         {/* ── Desktop: 2-col, Mobile: 1-col ── */}

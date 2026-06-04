@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { Pin, Palette, Trash2, X, Search, Plus } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -128,9 +130,9 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
     >
       {/* Pin badge */}
       {note.pinned && (
-        <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-sm shadow-md z-10"
+        <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-md z-10"
           style={{ background: c.accent }}>
-          📌
+          <Pin className="w-3.5 h-3.5 text-white" strokeWidth={2.5} fill="white" style={{ transform: 'rotate(45deg)' }} />
         </div>
       )}
 
@@ -144,19 +146,19 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
         <button
           onClick={() => onPin(note.id)}
           title={note.pinned ? 'Unpin' : 'Pin to top'}
-          className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110
+          className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 cursor-pointer
             ${note.pinned ? 'bg-amber-100 dark:bg-amber-900/40' : 'bg-white/70 dark:bg-slate-700/70'}`}
         >
-          {note.pinned ? '📌' : '📍'}
+          <Pin className={`w-3.5 h-3.5 ${note.pinned ? 'text-amber-600 fill-amber-600' : 'text-slate-500'}`} strokeWidth={1.5} style={{ transform: note.pinned ? 'none' : 'rotate(45deg)' }} />
         </button>
 
         {/* Color picker */}
         <div className="relative group/color">
           <button
-            className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70"
+            className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70 cursor-pointer"
             title="Change color"
           >
-            🎨
+            <Palette className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
           </button>
           {/* Color palette popup */}
           <div className="absolute right-0 top-9 hidden group-hover/color:flex flex-wrap gap-1.5 p-2.5 rounded-2xl shadow-xl border z-20 w-32
@@ -181,17 +183,17 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
               Delete
             </button>
             <button onClick={() => setConfirmDel(false)}
-              className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold bg-white/70 dark:bg-slate-700/70 text-slate-500 hover:bg-slate-100">
-              ✕
+              className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold bg-white/70 dark:bg-slate-700/70 text-slate-500 hover:bg-slate-100 cursor-pointer">
+              <X size={12} strokeWidth={1.5} />
             </button>
           </>
         ) : (
           <button
             onClick={() => setConfirmDel(true)}
             title="Delete note"
-            className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+            className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70 hover:bg-rose-100 dark:hover:bg-rose-900/40 cursor-pointer"
           >
-            🗑️
+            <Trash2 className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
           </button>
         )}
       </div>
@@ -307,7 +309,7 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
             <button onClick={handleClose}
               className="w-8 h-8 rounded-xl flex items-center justify-center text-lg transition-all hover:scale-110 cursor-pointer"
               style={{ background: `${c.accent}22`, color: c.accent }}>
-              ✕
+              <X size={16} strokeWidth={1.5} />
             </button>
           </div>
         </div>
@@ -701,23 +703,22 @@ export default function NotesPage() {
 
         {/* ── Header ── */}
         <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
-          <div>
-            <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>
-              📝 Notes
-            </h1>
-            <p className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              {notes.length} notes · {pinnedCount} pinned
-            </p>
+          <div className="flex items-center gap-3">
+            <PastelIcon name="FileText" colorType="notes" circleSize="w-12 h-12" size={22} />
+            <div>
+              <h1 className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>
+                Notes
+              </h1>
+              <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                {notes.length} notes · {pinnedCount} pinned
+              </p>
+            </div>
           </div>
-
         </div>
 
         {/* ── Search ── */}
         <div className="relative mb-4">
-          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" strokeWidth={1.5} />
           <input
             type="text"
             value={search}
@@ -848,15 +849,10 @@ export default function NotesPage() {
         aria-label="Add new note"
         title="Add new note"
       >
-        <svg
+        <Plus
           className="w-7 h-7 transition-transform group-hover:rotate-90 duration-300"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
+          strokeWidth={1.5}
+        />
       </button>
     </>
   );

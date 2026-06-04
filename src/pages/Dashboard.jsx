@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { Sparkles, Calendar, CheckSquare, Droplets, Smile, FileText } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    HELPERS
@@ -174,17 +176,23 @@ function DailySummary({ habits, water, mood, sessions }) {
     <div className="col-span-full">
       <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none snap-x">
         {[
-          { icon: '✅', label: 'Habits',  value: totalHabits ? `${doneHabits} / ${totalHabits}` : 'No habits',   bg: 'bg-pink-100',   tc: 'text-pink-700'   },
-          { icon: '💧', label: 'Water',   value: `${water.glasses} / ${water.goal} glasses`,                       bg: 'bg-blue-100',   tc: 'text-blue-700'   },
-          { icon: '⏱️', label: 'Focus',   value: `${sessions} session${sessions !== 1 ? 's' : ''}`,               bg: 'bg-purple-100', tc: 'text-purple-700' },
-          { icon: '😊', label: 'Mood',    value: mood ? `${mood.emoji} ${mood.label}` : 'Not logged',             bg: 'bg-yellow-100', tc: 'text-yellow-700' },
-          { icon: '📝', label: 'Notes',   value: `${JSON.parse(localStorage.getItem('planner_notes') || '[]').length} notes`, bg: 'bg-emerald-100', tc: 'text-emerald-700' },
+          { iconName: 'CheckSquare', colorType: 'habits', label: 'Habits',  value: totalHabits ? `${doneHabits} / ${totalHabits}` : 'No habits' },
+          { iconName: 'Droplet',     colorType: 'water',  label: 'Water',   value: `${water.glasses} / ${water.goal} glasses` },
+          { iconName: 'Timer',       colorType: 'timer',  label: 'Focus',   value: `${sessions} session${sessions !== 1 ? 's' : ''}` },
+          { iconName: 'Smile',       colorType: 'mood',   label: 'Mood',    value: mood ? mood.label : 'Not logged', moodEmoji: mood?.emoji },
+          { iconName: 'FileText',    colorType: 'notes',  label: 'Notes',   value: `${JSON.parse(localStorage.getItem('planner_notes') || '[]').length} notes` },
         ].map((p, i) => (
-          <div key={i} className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl ${p.bg} flex-shrink-0 snap-start`}>
-            <span className="text-xl leading-none">{p.icon}</span>
+          <div key={i} className="flex items-center gap-2.5 px-4 py-3 bg-white/70 backdrop-blur-md rounded-2xl flex-shrink-0 snap-start border border-purple-100/40 shadow-sm">
+            {p.moodEmoji ? (
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FFF1F2] text-base shadow-sm">
+                {p.moodEmoji}
+              </div>
+            ) : (
+              <PastelIcon name={p.iconName} colorType={p.colorType} circleSize="w-8 h-8" size={16} />
+            )}
             <div>
-              <p className={`text-[10px] font-black uppercase tracking-wide ${p.tc} opacity-70`}>{p.label}</p>
-              <p className={`text-sm font-black ${p.tc}`}>{p.value}</p>
+              <p className="text-[10px] font-black uppercase tracking-wide text-[#3B1F5E]/60">{p.label}</p>
+              <p className="text-sm font-black text-[#3B1F5E]">{p.value}</p>
             </div>
           </div>
         ))}
@@ -201,9 +209,9 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
   const ringColors = ['#f472b6','#c084fc','#60a5fa','#34d399','#fb923c'];
 
   if (!total) return (
-    <div className={`card flex flex-col items-center justify-center gap-3 min-h-48`}>
-      <span className="text-4xl">🌱</span>
-      <p className={`font-black text-slate-600 dark:text-slate-300`}>No habits yet</p>
+    <div className="card flex flex-col items-center justify-center gap-3 min-h-48">
+      <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-12 h-12" size={24} />
+      <p className="font-black text-slate-600 dark:text-slate-300">No habits yet</p>
       <button onClick={() => navigate('Habits')} className="btn-primary text-xs py-2 px-4">
         + Add your first habit
       </button>
@@ -213,7 +221,10 @@ function HabitProgressCard({ habits, navigate, darkMode }) {
   return (
     <div className="card flex flex-col gap-4 h-full">
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">✅ Habit Progress</h3>
+        <div className="flex items-center gap-2">
+          <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-8 h-8" size={16} />
+          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Habit Progress</h3>
+        </div>
         <span className="badge bg-pink-100 text-pink-700">{done}/{total} done</span>
       </div>
       <div className="flex items-center gap-5">
@@ -261,7 +272,10 @@ function WaterCard({ water, navigate, darkMode }) {
   return (
     <div className="card space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">💧 Water Intake</h3>
+        <div className="flex items-center gap-2">
+          <PastelIcon name="Droplets" colorType="water" circleSize="w-8 h-8" size={16} />
+          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Water Intake</h3>
+        </div>
         <span className="text-sm font-black text-blue-500">{glasses}/{goal} glasses</span>
       </div>
       <div className="flex gap-2 flex-wrap">
@@ -289,7 +303,10 @@ function MoodCard({ mood, navigate }) {
   return (
     <div className="card space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">😊 Today's Mood</h3>
+        <div className="flex items-center gap-2">
+          <PastelIcon name="Smile" colorType="mood" circleSize="w-8 h-8" size={16} />
+          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Today's Mood</h3>
+        </div>
         {mood && <span className="text-xs font-bold text-slate-400">{timeAgo(new Date(mood.savedAt).getTime())}</span>}
       </div>
       {mood ? (
@@ -304,7 +321,7 @@ function MoodCard({ mood, navigate }) {
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3 py-6">
-          <span className="text-4xl">🌿</span>
+          <PastelIcon name="Smile" colorType="mood" circleSize="w-12 h-12" size={24} />
           <p className="text-sm font-semibold text-slate-500">Mood not logged yet today</p>
           <button onClick={() => navigate('Mood')} className="btn-primary text-xs py-2 px-4">
             Log your mood
@@ -338,13 +355,15 @@ function NotesCard({ notes, navigate, darkMode }) {
   return (
     <div className="card flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">📝 Recent Notes</h3>
-
+        <div className="flex items-center gap-2">
+          <PastelIcon name="FileText" colorType="notes" circleSize="w-8 h-8" size={16} />
+          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Recent Notes</h3>
+        </div>
       </div>
 
       {recent.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-8">
-          <span className="text-4xl">📋</span>
+          <PastelIcon name="FileText" colorType="notes" circleSize="w-12 h-12" size={24} />
           <p className="text-sm font-semibold text-slate-500">No notes yet</p>
           <button onClick={() => navigate('Notes')} className="btn-primary text-xs py-2 px-4">
             Create your first note
@@ -554,7 +573,10 @@ function PriorityTasksCard({ navigate, darkMode }) {
     <div className="card flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">📅 Today's Schedule</h3>
+        <div className="flex items-center gap-2">
+          <PastelIcon name="Calendar" colorType="schedule" circleSize="w-8 h-8" size={16} />
+          <h3 className="font-black text-[#3B1F5E] dark:text-slate-100 text-base">Today's Schedule</h3>
+        </div>
         <span className="badge bg-indigo-100 text-indigo-600">
           {doneCount}/{totalCount} done
         </span>
@@ -563,7 +585,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
       {/* Slots */}
       {display.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-6">
-          <span className="text-4xl">📅</span>
+          <PastelIcon name="Calendar" colorType="schedule" circleSize="w-12 h-12" size={24} />
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">No tasks scheduled today</p>
           <button onClick={() => navigate('Schedule')} className="btn-primary text-xs py-2 px-4">
             Open Schedule
@@ -650,8 +672,6 @@ function PlannerBuddyCard({ habits, water, mood }) {
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState(getTimePeriod());
 
-  console.log("PlannerBuddyCard render: user =", user?.id, "period =", period, "briefing =", briefing, "loading =", loading);
-
   // Update period automatically
   useEffect(() => {
     const id = setInterval(() => {
@@ -661,13 +681,11 @@ function PlannerBuddyCard({ habits, water, mood }) {
   }, []);
 
   const loadBriefing = useCallback(async (forceRefresh = false) => {
-    console.log("loadBriefing called: user =", user?.id, "forceRefresh =", forceRefresh);
     if (!user) return;
     const today = todayKey();
     const currentPeriod = getTimePeriod();
     const localKey = `planner_briefing_${user.id}_${today}_${currentPeriod}`;
 
-    // 1. Check local storage cache
     if (!forceRefresh) {
       const cached = localStorage.getItem(localKey);
       if (cached) {
@@ -679,7 +697,6 @@ function PlannerBuddyCard({ habits, water, mood }) {
     setLoading(true);
     let allBriefings = {};
 
-    // 2. Check Supabase briefings
     if (supabase && !forceRefresh) {
       try {
         const { data, error } = await supabase
@@ -700,7 +717,6 @@ function PlannerBuddyCard({ habits, water, mood }) {
               return;
             }
           } catch (_) {
-            // legacy plain text briefing
             if (currentPeriod === 'Morning') {
               localStorage.setItem(localKey, data.message);
               setBriefing(data.message);
@@ -714,7 +730,6 @@ function PlannerBuddyCard({ habits, water, mood }) {
       }
     }
 
-    // 3. Gather stats for prompt
     let tasksDone = 0;
     let tasksTotal = 0;
     let nextTask = null;
@@ -788,7 +803,6 @@ function PlannerBuddyCard({ habits, water, mood }) {
     const moodText = mood ? mood.label : 'Not logged yet';
     const displayName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User';
 
-    // 4. Generate using Groq API
     let generatedText = '';
     try {
       let apiKey = localStorage.getItem(`planner_groq_key_${user.id}`) || '';
@@ -846,7 +860,6 @@ Instructions:
       generatedText = json.choices?.[0]?.message?.content || '';
     } catch (err) {
       console.warn('API call failed, running rule-based fallback:', err);
-      // Fallback rule-based insight
       generatedText = `Hello, ${displayName}! Hope you are having a productive day. `;
       if (tasksTotal === 0 && habitsTotal === 0) {
         generatedText += "Start by listing some tasks or habits to get organized. You got this! 🌟";
@@ -863,11 +876,9 @@ Instructions:
     }
 
     if (generatedText) {
-      // Save locally
       localStorage.setItem(localKey, generatedText);
       setBriefing(generatedText);
 
-      // Save to database
       if (supabase) {
         try {
           const { data } = await supabase
@@ -904,7 +915,6 @@ Instructions:
     loadBriefing();
   }, [loadBriefing]);
 
-  // Re-read when planner data changes
   useEffect(() => {
     const handler = () => {
       loadBriefing();
@@ -923,14 +933,12 @@ Instructions:
   const currentConfig = periodConfig[period] || periodConfig.Morning;
 
   return (
-    <div className="card space-y-4 shadow-sm border border-indigo-50/50 relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #EEF2FF 0%, #FAF5FF 100%)' }}>
-      
-      <div className="flex items-center justify-between flex-wrap gap-2">
+    <div className="card border border-indigo-100/40 p-5 space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-indigo-100/50">
         <div className="flex items-center gap-2.5">
-          <span className="text-xl text-indigo-500">✦</span>
+          <PastelIcon name="Sparkles" colorType="default" circleSize="w-8 h-8" size={16} />
           <div>
-            <h3 className="font-black text-slate-700 text-base leading-none">Planner Buddy Insights</h3>
+            <h3 className="font-black text-[#3B1F5E] text-base leading-none">Planner Buddy Insights</h3>
           </div>
         </div>
         <div className="flex items-center gap-2">

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
 
 const MOOD_MAP = {
   1: { emoji: '😔', label: 'Rough' },
@@ -146,7 +147,8 @@ export default function NotificationsPage() {
         todayCompletions.forEach((fc, fidx) => {
           list.push({
             id: `focus-${fc.id || fidx}`,
-            icon: '⏱️',
+            iconName: 'Timer',
+            colorType: 'timer',
             text: 'Focus session completed! 🏆',
             sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
             page: 'Focus Timer',
@@ -162,7 +164,8 @@ export default function NotificationsPage() {
     if (habitsDone > 0) {
       list.push({
         id: idx++,
-        icon: '✅',
+        iconName: 'CheckSquare',
+        colorType: 'habits',
         text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
         sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
         page: 'Habits',
@@ -177,7 +180,8 @@ export default function NotificationsPage() {
       const goalReached = waterGlasses >= waterGoal;
       list.push({
         id: idx++,
-        icon: '💧',
+        iconName: 'Droplet',
+        colorType: 'water',
         text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
@@ -192,7 +196,8 @@ export default function NotificationsPage() {
       const allDone = tasksDone === tasksTotal;
       list.push({
         id: idx++,
-        icon: '📅',
+        iconName: 'Calendar',
+        colorType: 'schedule',
         text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
@@ -206,7 +211,8 @@ export default function NotificationsPage() {
     if (moodLabel) {
       list.push({
         id: idx++,
-        icon: '😊',
+        iconName: 'Smile',
+        colorType: 'mood',
         text: 'Mood logged today',
         sub: `You are feeling "${moodLabel}" today.`,
         page: 'Mood',
@@ -220,7 +226,8 @@ export default function NotificationsPage() {
     if (notesCount > 0) {
       list.push({
         id: idx++,
-        icon: '📝',
+        iconName: 'FileText',
+        colorType: 'notes',
         text: 'Notes captured',
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
@@ -254,13 +261,15 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8 animate-fade-in">
 
-      {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl font-black text-slate-700">🔔 Notifications</h1>
-          <p className="text-sm font-semibold text-slate-500 mt-0.5">
-            {visible.length} notification{visible.length !== 1 ? 's' : ''}
-          </p>
+        <div className="flex items-center gap-3">
+          <PastelIcon name="Bell" colorType="default" circleSize="w-12 h-12" size={22} />
+          <div>
+            <h1 className="text-2xl font-black text-slate-700 leading-tight">Notifications</h1>
+            <p className="text-sm font-semibold text-slate-500 mt-0.5">
+              {visible.length} notification{visible.length !== 1 ? 's' : ''}
+            </p>
+          </div>
         </div>
         {cleared.size < notifications.length && notifications.length > 0 && (
           <button
@@ -288,10 +297,9 @@ export default function NotificationsPage() {
         ))}
       </div>
 
-      {/* Notifications list */}
       {visible.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 gap-4">
-          <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center text-4xl">🔔</div>
+          <PastelIcon name="BellOff" colorType="default" circleSize="w-20 h-20" size={36} />
           <p className="text-lg font-black text-slate-600">All caught up!</p>
           <p className="text-sm text-slate-400">No notifications here.</p>
           <button onClick={() => setFilter('All')} className="btn-primary text-sm mt-2">
@@ -306,9 +314,7 @@ export default function NotificationsPage() {
               onClick={() => setActiveNav(n.page)}
             >
               {/* Icon */}
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 bg-white shadow-sm">
-                {n.icon}
-              </div>
+              <PastelIcon name={n.iconName} colorType={n.colorType} circleSize="w-12 h-12" size={20} className="shadow-sm bg-white" />
 
               {/* Content */}
               <div className="flex-1 min-w-0">
@@ -332,10 +338,10 @@ export default function NotificationsPage() {
               {/* Dismiss X */}
               <button
                 onClick={e => { e.stopPropagation(); setCleared(p => new Set([...p, n.id])); }}
-                className="absolute top-3 right-3 w-5 h-5 rounded-full bg-white/70 text-slate-400 hover:bg-red-100 hover:text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs font-black"
+                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                 aria-label="Dismiss"
               >
-                ✕
+                <PastelIcon name="X" colorType="danger" circleSize="w-6 h-6" size={12} />
               </button>
             </div>
           ))}

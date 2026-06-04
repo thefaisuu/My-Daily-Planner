@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from './PastelIcon';
+import { ChevronDown } from 'lucide-react';
 
 function useDate() {
   const [now, setNow] = useState(new Date());
@@ -160,7 +162,8 @@ export function NotificationBell() {
         todayCompletions.forEach((fc, fidx) => {
           list.push({
             id: `focus-${fc.id || fidx}`,
-            icon: '⏱️',
+            iconName: 'Timer',
+            colorType: 'timer',
             text: 'Focus session completed! 🏆',
             sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
             page: 'Focus Timer',
@@ -176,7 +179,8 @@ export function NotificationBell() {
     if (habitsDone > 0) {
       list.push({
         id: idx++,
-        icon: '✅',
+        iconName: 'CheckSquare',
+        colorType: 'habits',
         text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
         sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
         page: 'Habits',
@@ -191,7 +195,8 @@ export function NotificationBell() {
       const goalReached = waterGlasses >= waterGoal;
       list.push({
         id: idx++,
-        icon: '💧',
+        iconName: 'Droplet',
+        colorType: 'water',
         text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
@@ -206,7 +211,8 @@ export function NotificationBell() {
       const allDone = tasksDone === tasksTotal;
       list.push({
         id: idx++,
-        icon: '📅',
+        iconName: 'Calendar',
+        colorType: 'schedule',
         text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
@@ -220,7 +226,8 @@ export function NotificationBell() {
     if (moodLabel) {
       list.push({
         id: idx++,
-        icon: '😊',
+        iconName: 'Smile',
+        colorType: 'mood',
         text: 'Mood logged today',
         sub: `You are feeling "${moodLabel}" today.`,
         page: 'Mood',
@@ -234,7 +241,8 @@ export function NotificationBell() {
     if (notesCount > 0) {
       list.push({
         id: idx++,
-        icon: '📝',
+        iconName: 'FileText',
+        colorType: 'notes',
         text: 'Notes captured',
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
@@ -270,14 +278,12 @@ export function NotificationBell() {
       <button
         id="notification-bell"
         onClick={() => setOpen(p => !p)}
-        className="relative p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-[#F5EEFF]/65 text-slate-500 cursor-pointer"
+        className="relative cursor-pointer transition-all duration-200 hover:scale-105"
         aria-label="Notifications"
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
+        <PastelIcon name="Bell" colorType="default" circleSize="w-10 h-10" />
         {notifications.length > 0 && (
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border border-white animate-pulse"
+          <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white animate-pulse"
             style={{ background: '#F9A8D4' }} />
         )}
       </button>
@@ -293,16 +299,16 @@ export function NotificationBell() {
           {/* List — max 3 in dropdown */}
           <div className="divide-y divide-purple-50/50">
             {notifications.length === 0 ? (
-              <div className="px-5 py-6 text-center text-[#9B8AAE]">
-                <span className="text-xl block mb-1">🔔</span>
+              <div className="px-5 py-6 text-center text-[#9B8AAE] flex flex-col items-center justify-center">
+                <PastelIcon name="BellOff" colorType="default" circleSize="w-12 h-12" size={22} className="mb-2" />
                 <p className="text-xs font-semibold">All caught up! No alerts.</p>
               </div>
             ) : (
               notifications.slice(0, 3).map(n => (
                 <button key={n.id}
                   onClick={() => handleNotifClick(n.page)}
-                  className="w-full text-left px-5 py-3.5 hover:bg-[#F5EEFF]/60 transition-colors flex items-start gap-3 cursor-pointer">
-                  <span className="text-xl flex-shrink-0 mt-0.5">{n.icon}</span>
+                  className="w-full text-left px-5 py-3.5 hover:bg-[#F5EEFF]/60 transition-colors flex items-center gap-3 cursor-pointer">
+                  <PastelIcon name={n.iconName} colorType={n.colorType} circleSize="w-9 h-9" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-[#3B1F5E] truncate">{n.text}</p>
                     <p className="text-xs text-[#9B8AAE] mt-0.5">{n.sub}</p>
@@ -351,10 +357,11 @@ function AvatarDropdown() {
     .toUpperCase() || 'U';
 
   const menuItems = [
-    { icon: '⚙️', label: 'Settings', action: () => setActiveNav('Settings') },
-    { icon: '🔔', label: 'Notifications', action: () => setActiveNav('Notifications') },
+    { iconName: 'Settings', colorType: 'settings', label: 'Settings', action: () => setActiveNav('Settings') },
+    { iconName: 'Bell', colorType: 'default', label: 'Notifications', action: () => setActiveNav('Notifications') },
     {
-      icon: '🚪',
+      iconName: 'LogOut',
+      colorType: 'danger',
       label: 'Logout',
       action: () => {
         showConfirm({
@@ -385,10 +392,7 @@ function AvatarDropdown() {
         </div>
         <div className="hidden sm:flex items-center gap-1">
           <span className="text-sm font-bold text-[#3B1F5E]">{firstName}</span>
-          <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-[#9B8AAE]`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-[#9B8AAE]`} strokeWidth={1.5} />
         </div>
       </button>
 
@@ -403,7 +407,7 @@ function AvatarDropdown() {
               <button key={item.label} id={`menu-${item.label}`}
                 className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F5EEFF]/65 text-[#3B1F5E] cursor-pointer"
                 onClick={() => { item.action(); setOpen(false); }}>
-                <span>{item.icon}</span>
+                <PastelIcon name={item.iconName} colorType={item.colorType} circleSize="w-7 h-7" size={13} />
                 {item.label}
               </button>
             ))}
@@ -427,18 +431,16 @@ export default function Navbar() {
       <button
         id="hamburger-btn"
         onClick={toggleSidebar}
-        className="lg:hidden p-2.5 rounded-2xl transition-all duration-200 hover:scale-105 hover:bg-[#F5EEFF]/65 text-slate-500"
+        className="lg:hidden cursor-pointer"
         aria-label="Open navigation menu"
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <PastelIcon name="Menu" colorType="default" circleSize="w-9 h-9" size={18} />
       </button>
 
       {/* Date pill – centered */}
       <div className="flex-1 flex justify-center">
         <div className="flex items-center gap-2 px-3 py-2 sm:px-4 rounded-2xl text-xs sm:text-sm font-bold bg-[#F5EEFF]/80 text-[#3B1F5E]">
-          <span className="text-base">📅</span>
+          <PastelIcon name="Calendar" colorType="schedule" circleSize="w-6 h-6" size={12} />
           <span className="hidden sm:inline">{dateStr}</span>
           <span className="inline sm:hidden">{`${now.getDate()} ${MONTHS[now.getMonth()].slice(0,3)}`}</span>
         </div>

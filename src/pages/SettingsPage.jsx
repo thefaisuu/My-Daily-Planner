@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
+import PastelIcon from '../components/PastelIcon';
+import { Camera, Settings } from 'lucide-react';
 
 /* ── Toast ── */
 function Toast({ message, type = 'success', onDone }) {
@@ -360,7 +362,10 @@ export default function SettingsPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-black text-slate-700">⚙️ Settings</h1>
+        <div className="flex items-center gap-3">
+          <PastelIcon name="Settings" colorType="settings" circleSize="w-12 h-12" size={22} />
+          <h1 className="text-2xl font-black text-[#3B1F5E]">Settings</h1>
+        </div>
         <p className="text-sm font-semibold text-slate-500 mt-0.5">Customize your Planner AI experience</p>
       </div>
 
@@ -382,10 +387,7 @@ export default function SettingsPage() {
                 
                 <label className="absolute -bottom-1 -right-1 w-7 h-7 bg-pink-500 hover:bg-pink-600 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white transition-all transform hover:scale-110" title="Upload avatar">
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={updatingProfile} />
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <Camera className="w-3.5 h-3.5" strokeWidth={1.5} />
                 </label>
               </div>
               <span className="text-[10px] font-bold text-slate-400">Max 100x100 px & 10Kb</span>
