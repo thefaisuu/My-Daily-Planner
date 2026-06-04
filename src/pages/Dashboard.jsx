@@ -339,12 +339,7 @@ function NotesCard({ notes, navigate, darkMode }) {
     <div className="card flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="font-black text-slate-700 dark:text-slate-100 text-base">📝 Recent Notes</h3>
-        <button
-          onClick={() => navigate('Notes')}
-          className="btn-primary text-[11px] py-1.5 px-3"
-        >
-          + New Note
-        </button>
+
       </div>
 
       {recent.length === 0 ? (
