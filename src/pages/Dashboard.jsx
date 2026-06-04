@@ -415,16 +415,86 @@ function loadScheduleSlots() {
 }
 
 function PriorityTasksCard({ navigate, darkMode }) {
-  const [slots, setSlots] = useState(loadScheduleSlots);
+  const { user } = useApp();
+  const [slots, setSlots] = useState({});
+  const [loading, setLoading] = useState(false);
   const now         = new Date();
   const currentHour = now.getHours();
 
+  const loadSlots = useCallback(async () => {
+    if (!supabase || !user) {
+      try {
+        const raw = localStorage.getItem('planner_schedule');
+        setSlots(raw ? JSON.parse(raw) : {});
+      } catch (_) {
+        setSlots({});
+      }
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const todayISO = () => {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+      const today = todayISO();
+
+      const { data, error } = await supabase
+        .from('schedule_tasks')
+        .select('date, time_slot, task, completed')
+        .eq('user_id', user.id)
+        .eq('date', today);
+
+      if (error) throw error;
+
+      const init = {};
+      SLOT_HOURS.forEach(h => {
+        init[h] = { task: '', done: false, cat: 'work' };
+      });
+
+      if (data) {
+        data.forEach(row => {
+          const hour = parseInt(row.time_slot);
+          if (!isNaN(hour) && init[hour] !== undefined) {
+            let parsedTask = row.task;
+            let cat = 'work';
+            try {
+              if (row.task.startsWith('{')) {
+                const json = JSON.parse(row.task);
+                parsedTask = json.task || '';
+                cat = json.cat || 'work';
+              }
+            } catch (_) {}
+
+            init[hour] = {
+              task: parsedTask,
+              done: row.completed,
+              cat
+            };
+          }
+        });
+      }
+      setSlots(init);
+    } catch (err) {
+      console.error('Failed to load dashboard schedule tasks:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadSlots();
+  }, [loadSlots]);
+
   /* Re-read when schedule changes */
   useEffect(() => {
-    const refresh = () => setSlots(loadScheduleSlots());
-    window.addEventListener('planner-data-changed', refresh);
-    return () => window.removeEventListener('planner-data-changed', refresh);
-  }, []);
+    window.addEventListener('planner-data-changed', loadSlots);
+    return () => window.removeEventListener('planner-data-changed', loadSlots);
+  }, [loadSlots]);
 
   /* Build display list: current slot + next 2 with tasks */
   const filled = SLOT_HOURS

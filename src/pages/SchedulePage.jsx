@@ -586,17 +586,55 @@ function TimeSlotCard({ slot, data, isCurrent, isPast, onEdit, onClear, onToggle
 /* ═══════════════════════════════════════════════════════
    TODAY'S FOCUS CARD (STICKY)
 ═══════════════════════════════════════════════════════ */
-function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot }) {
-  const [focus, setFocus] = useState('Ship the schedule page design ✨');
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
-
-  const filled = Object.values(slots).filter(s => s.task.trim()).length;
-  const done   = Object.values(slots).filter(s => s.done && s.task.trim()).length;
+function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now }) {
+  const filled = Object.values(slots).filter(s => s?.task?.trim()).length;
+  const done   = Object.values(slots).filter(s => s?.done && s?.task?.trim()).length;
   const pct    = filled ? Math.round((done / filled) * 100) : 0;
-  const nextSlot = SLOTS.find(s => s.hour > currentHour && slots[s.hour]?.task?.trim() && !slots[s.hour]?.done);
 
-  useEffect(() => { if (editing) inputRef.current?.focus(); }, [editing]);
+  // For current and next events
+  const [currentEvent, nextEvent] = useMemo(() => {
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const filledEvents = Object.values(slots).filter(s => s?.task?.trim());
+    
+    let active = null;
+    let upcoming = [];
+    
+    filledEvents.forEach(s => {
+      const [sh, sm] = (s.startTime || '').split(':').map(Number);
+      const [eh, em] = (s.endTime || '').split(':').map(Number);
+      if (isNaN(sh) || isNaN(eh)) return;
+      
+      const startMin = sh * 60 + (sm || 0);
+      const endMin = eh * 60 + (em || 0);
+      
+      if (nowMin >= startMin && nowMin < endMin) {
+        active = s;
+      } else if (startMin > nowMin) {
+        upcoming.push(s);
+      }
+    });
+    
+    // Sort upcoming by start time ascending
+    upcoming.sort((a, b) => {
+      const [ah, am] = a.startTime.split(':').map(Number);
+      const [bh, bm] = b.startTime.split(':').map(Number);
+      return (ah * 60 + am) - (bh * 60 + bm);
+    });
+    
+    return [active, upcoming[0] || null];
+  }, [slots, now]);
+
+  function formatTimeRange(start, end) {
+    if (!start || !end) return '';
+    const parse = (timeStr) => {
+      const [h, m] = timeStr.split(':').map(Number);
+      if (isNaN(h) || isNaN(m)) return timeStr;
+      const ampm = h < 12 ? 'AM' : 'PM';
+      const h12 = h % 12 || 12;
+      return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+    };
+    return `${parse(start)} - ${parse(end)}`;
+  }
 
   return (
     <div className={`sticky top-16 z-10 rounded-3xl border shadow-lg backdrop-blur-xl
@@ -623,31 +661,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot }) {
                 strokeDasharray={`${pct * 0.565} 56.5`} strokeLinecap="round" />
             </svg>
             <span className={`text-xs font-black ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{pct}%</span>
-            <span className={`text-[10px] ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>{done}/{filled}</span>
           </div>
-        </div>
-
-        {/* Editable focus statement */}
-        <div
-          className={`rounded-2xl px-4 py-3 cursor-text transition-all
-            ${editing
-              ? darkMode ? 'bg-slate-700 ring-2 ring-pink-400/50' : 'bg-pink-50 ring-2 ring-pink-300/50'
-              : darkMode ? 'bg-slate-800/80' : 'bg-gradient-to-r from-pink-50 to-purple-50'
-            }`}
-          onClick={() => setEditing(true)}
-        >
-          {editing ? (
-            <input ref={inputRef} value={focus}
-              onChange={e => setFocus(e.target.value)}
-              onBlur={() => setEditing(false)}
-              onKeyDown={e => e.key === 'Enter' && setEditing(false)}
-              className={`w-full bg-transparent outline-none text-sm font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`} />
-          ) : (
-            <>
-              <p className={`text-sm font-bold ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{focus}</p>
-              <p className={`text-[10px] mt-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>✏️ Click to edit</p>
-            </>
-          )}
         </div>
 
         {/* Stats row */}
@@ -655,7 +669,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot }) {
           {[
             { icon: '✅', val: `${done}/${filled}`, label: 'Tasks'     },
             { icon: '⏰', val: filled - done,        label: 'Remaining' },
-            { icon: '🔥', val: '12',                 label: 'Streak'    },
+            { icon: '🔥', val: String(streak),       label: 'Streak'    },
           ].map((s, i) => (
             <div key={i} className={`text-center py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
               <p className="text-sm">{s.icon}</p>
@@ -665,16 +679,30 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot }) {
           ))}
         </div>
 
-        {/* Next up */}
-        {nextSlot && (
-          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-purple-50'}`}>
-            <span className="text-base">⏭️</span>
-            <div className="min-w-0">
-              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-purple-400'}`}>Next up</p>
-              <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{slots[nextSlot.hour].task}</p>
+        {/* Current Event */}
+        {currentEvent && (
+          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-pink-500/10 border border-pink-400/20'}`}>
+            <span className="text-base">⚡</span>
+            <div className="min-w-0 flex-1">
+              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-pink-400' : 'text-pink-600'}`}>Current Event</p>
+              <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{currentEvent.task}</p>
             </div>
-            <span className={`ml-auto text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-purple-500'}`}>
-              {nextSlot.label}
+            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-pink-600'}`}>
+              {formatTimeRange(currentEvent.startTime, currentEvent.endTime)}
+            </span>
+          </div>
+        )}
+
+        {/* Next Event */}
+        {nextEvent && (
+          <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-purple-50 border border-purple-100'}`}>
+            <span className="text-base">⏭️</span>
+            <div className="min-w-0 flex-1">
+              <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>Next Event</p>
+              <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{nextEvent.task}</p>
+            </div>
+            <span className={`text-[10px] font-black flex-shrink-0 ${darkMode ? 'text-slate-400' : 'text-purple-600'}`}>
+              {formatTimeRange(nextEvent.startTime, nextEvent.endTime)}
             </span>
           </div>
         )}
@@ -745,6 +773,22 @@ export default function SchedulePage() {
 
   const [slotData, setSlotData] = useState({});
   const [loading, setLoading]   = useState(false);
+  const [streak, setStreak]     = useState(0);
+
+  const latestEndTime = useMemo(() => {
+    const filled = Object.values(slotData).filter(s => s?.task?.trim());
+    if (filled.length === 0) return '11:00 PM';
+    const sorted = [...filled].sort((a, b) => {
+      const [ah, am] = (a.endTime || '00:00').split(':').map(Number);
+      const [bh, bm] = (b.endTime || '00:00').split(':').map(Number);
+      return (bh * 60 + bm) - (ah * 60 + am);
+    });
+    const latest = sorted[0];
+    const [h, m] = latest.endTime.split(':').map(Number);
+    const ampm = h < 12 ? 'AM' : 'PM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+  }, [slotData]);
 
   // Load from DB or fallback
   const loadScheduleData = useCallback(async () => {
@@ -807,9 +851,100 @@ export default function SchedulePage() {
     }
   }, [user, today]);
 
+  const calculateStreak = useCallback(async () => {
+    if (!supabase || !user) {
+      setStreak(0);
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('schedule_tasks')
+        .select('date, completed')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        setStreak(0);
+        return;
+      }
+
+      // Group tasks by date
+      const tasksByDate = {};
+      data.forEach(task => {
+        const d = task.date;
+        if (!tasksByDate[d]) {
+          tasksByDate[d] = { total: 0, completed: 0 };
+        }
+        tasksByDate[d].total++;
+        if (task.completed) {
+          tasksByDate[d].completed++;
+        }
+      });
+
+      // A date is completed if total > 0 and completed === total
+      const completedDates = new Set();
+      Object.entries(tasksByDate).forEach(([d, stats]) => {
+        if (stats.total > 0 && stats.completed === stats.total) {
+          completedDates.add(d);
+        }
+      });
+
+      let currentStreak = 0;
+      let checkDate = new Date(); // local time today
+      
+      const formatDate = (dateObj) => {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      let todayStr = formatDate(checkDate);
+      
+      if (completedDates.has(todayStr)) {
+        currentStreak = 1;
+        while (true) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          const prevStr = formatDate(checkDate);
+          if (completedDates.has(prevStr)) {
+            currentStreak++;
+          } else {
+            break;
+          }
+        }
+      } else {
+        checkDate.setDate(checkDate.getDate() - 1);
+        const yesterdayStr = formatDate(checkDate);
+        
+        if (completedDates.has(yesterdayStr)) {
+          currentStreak = 1;
+          while (true) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            const prevStr = formatDate(checkDate);
+            if (completedDates.has(prevStr)) {
+              currentStreak++;
+            } else {
+              break;
+            }
+          }
+        }
+      }
+
+      setStreak(currentStreak);
+    } catch (err) {
+      console.error('Error calculating streak:', err);
+      setStreak(0);
+    }
+  }, [user]);
+
   useEffect(() => {
     loadScheduleData();
   }, [loadScheduleData]);
+
+  useEffect(() => {
+    calculateStreak();
+  }, [slotData, calculateStreak]);
 
   /* Persist on every change to local storage backup */
   useEffect(() => {
@@ -1115,6 +1250,8 @@ export default function SchedulePage() {
                 currentHour={currentHour}
                 darkMode={darkMode}
                 onAddSlot={openNextEmpty}
+                streak={streak}
+                now={now}
               />
             </div>
 
@@ -1186,7 +1323,7 @@ export default function SchedulePage() {
               )}
 
               <p className={`mt-6 text-center text-xs font-semibold ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                🌙 Schedule ends at 11:00 PM · Click any slot or the + button to add events
+                🌙 Schedule ends at {latestEndTime} · Click any slot or the + button to add events
               </p>
             </div>
           </div>

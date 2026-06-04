@@ -240,6 +240,11 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
   const isNew = !note?.id;
   const c = COLOR_MAP[color] || COLORS[0];
 
+  const noteIdRef = useRef(note?.id);
+  useEffect(() => {
+    noteIdRef.current = note?.id;
+  }, [note?.id]);
+
   useEffect(() => { titleRef.current?.focus(); }, []);
 
   /* Auto-save debounce */
@@ -248,7 +253,7 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
     clearTimeout(autoSaveRef.current);
     setSaved(false);
     autoSaveRef.current = setTimeout(() => {
-      onSave({ id: note?.id, title, body, color }, false);
+      onSave({ id: noteIdRef.current, title, body, color }, false);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }, 800);
@@ -258,7 +263,7 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
   const handleClose = () => {
     clearTimeout(autoSaveRef.current);
     if (title.trim() || body.trim()) {
-      onSave({ id: note?.id, title, body, color }, true);
+      onSave({ id: noteIdRef.current, title, body, color }, true);
     }
     onClose();
   };
