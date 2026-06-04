@@ -10,7 +10,7 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 
 const MOOD_MAP = {
   1: { emoji: '😔', label: 'Rough',   color: '#818cf8' },
-  2: { emoji: '😐', label: 'Meh',     color: '#60a5fa' },
+  2: { emoji: '😐', label: 'Neutral', color: '#60a5fa' },
   3: { emoji: '🙂', label: 'Okay',    color: '#34d399' },
   4: { emoji: '😊', label: 'Good',    color: '#f472b6' },
   5: { emoji: '🤩', label: 'Amazing', color: '#fbbf24' },

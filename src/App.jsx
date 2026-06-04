@@ -57,7 +57,7 @@ function ToastNotification({ message, type, action, playSound, onDone }) {
     if (action) return;
     const id = setTimeout(onDone, 4000);
     return () => clearTimeout(id);
-  }, [action, playSound, onDone]);
+  }, [message, type, action, playSound, onDone]);
 
   return (
     <div className={`fixed bottom-6 right-6 z-50 flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-black animate-bounce-in min-w-[280px] max-w-sm

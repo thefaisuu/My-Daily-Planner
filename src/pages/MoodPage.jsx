@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase';
 ═══════════════════════════════════════════════════════ */
 const MOODS = [
   { id: 1, emoji: '😔', label: 'Rough',    color: '#818cf8', bg: '#eef2ff', darkBg: '#1e1b4b', glow: '#818cf830', ring: '#818cf8' },
-  { id: 2, emoji: '😐', label: 'Meh',      color: '#60a5fa', bg: '#eff6ff', darkBg: '#1e3a5f', glow: '#60a5fa30', ring: '#60a5fa' },
+  { id: 2, emoji: '😐', label: 'Neutral',  color: '#60a5fa', bg: '#eff6ff', darkBg: '#1e3a5f', glow: '#60a5fa30', ring: '#60a5fa' },
   { id: 3, emoji: '🙂', label: 'Okay',     color: '#34d399', bg: '#ecfdf5', darkBg: '#064e3b', glow: '#34d39930', ring: '#34d399' },
   { id: 4, emoji: '😊', label: 'Good',     color: '#f472b6', bg: '#fdf2f8', darkBg: '#4a0e2b', glow: '#f472b630', ring: '#f472b6' },
   { id: 5, emoji: '🤩', label: 'Amazing',  color: '#fbbf24', bg: '#fffbeb', darkBg: '#451a03', glow: '#fbbf2430', ring: '#fbbf24' },

@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 
 const MOOD_MAP = {
   1: { emoji: '😔', label: 'Rough' },
-  2: { emoji: '😐', label: 'Meh' },
+  2: { emoji: '😐', label: 'Neutral' },
   3: { emoji: '🙂', label: 'Okay' },
   4: { emoji: '😊', label: 'Good' },
   5: { emoji: '🤩', label: 'Amazing' },

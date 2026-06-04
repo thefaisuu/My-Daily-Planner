@@ -299,12 +299,20 @@ export default function FocusTimerPage() {
 
   const intervalRef = useRef(null);
   const runningRef  = useRef(running);
+  const sessionsCompRef = useRef(sessionsComp);
+  const modeRef = useRef(mode);
+  const settingsRef = useRef(settings);
+
   const cfg         = MODES[mode];
   const pct         = secsLeft / totalSecs;
 
   useEffect(() => {
     runningRef.current = running;
   }, [running]);
+
+  useEffect(() => { sessionsCompRef.current = sessionsComp; }, [sessionsComp]);
+  useEffect(() => { modeRef.current = mode; }, [mode]);
+  useEffect(() => { settingsRef.current = settings; }, [settings]);
 
   const triggerNotification = useCallback((title, body) => {
     // 1. Show react toast with playSound = true
@@ -374,9 +382,13 @@ export default function FocusTimerPage() {
   /* ── Auto-start next session ── */
   useEffect(() => {
     if (!completed) return;
-    if (mode === 'focus') {
-      const next = (sessionsComp + 1) % settings.sessions === 0 ? 'long_break' : 'short_break';
-      const newCount = sessionsComp + 1;
+    const currentMode = modeRef.current;
+    const currentSessionsComp = sessionsCompRef.current;
+    const currentSettings = settingsRef.current;
+
+    if (currentMode === 'focus') {
+      const next = (currentSessionsComp + 1) % currentSettings.sessions === 0 ? 'long_break' : 'short_break';
+      const newCount = currentSessionsComp + 1;
       setSessionsComp(newCount);
       triggerNotification('Focus Session Complete! 🎉', `Great job! Session #${newCount} completed.`);
       
@@ -387,7 +399,7 @@ export default function FocusTimerPage() {
           id: Date.now(),
           sessionNumber: newCount,
           timestamp: new Date().toISOString(),
-          duration: settings.focusMin,
+          duration: currentSettings.focusMin,
         });
         localStorage.setItem('planner_focus_completions', JSON.stringify(list));
         window.dispatchEvent(new Event('planner-data-changed'));
@@ -395,13 +407,12 @@ export default function FocusTimerPage() {
         console.warn('Failed to save focus completion:', e);
       }
 
-      if (settings.autoStart) { switchMode(next, true); }
+      if (currentSettings.autoStart) { switchMode(next, true); }
     } else {
       triggerNotification('Break Over! ⚡', 'Ready to focus again? Let\'s get back to work!');
-      if (settings.autoStart) { switchMode('focus', true); }
+      if (currentSettings.autoStart) { switchMode('focus', true); }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [completed]);
+  }, [completed, triggerNotification, switchMode]);
 
   /* ── Switch mode ── */
   const switchMode = (m, autoRun = false) => {
@@ -423,7 +434,13 @@ export default function FocusTimerPage() {
   }, [settings.focusMin, settings.shortMin, settings.longMin, mode, getDuration]);
 
   /* ── Controls ── */
-  const handleStart  = () => { setCompleted(false); setRunning(true); };
+  const handleStart  = () => {
+    setCompleted(false);
+    setRunning(true);
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  };
   const handlePause  = () => setRunning(false);
   const handleReset  = () => {
     clearInterval(intervalRef.current);
