@@ -926,12 +926,11 @@ export default function SchedulePage() {
     if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
   }, [currentHour]);
 
-  /* Filter */
+  /* Filter — always only show filled slots */
   const visibleSlots = SLOTS.filter(s => {
-    if (activeFilter === 'filled')    return slotData[s.hour]?.task?.trim();
-    if (activeFilter === 'empty')     return !slotData[s.hour]?.task?.trim();
+    if (!slotData[s.hour]?.task?.trim()) return false; // never show empty slots
     if (activeFilter === 'completed') return slotData[s.hour]?.done;
-    return true;
+    return true; // 'all' = all filled slots
   });
 
   const filledSlots = SLOTS.filter(s => slotData[s.hour]?.task?.trim());
@@ -1008,9 +1007,8 @@ export default function SchedulePage() {
               {/* Filter + category strip */}
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
-                  { id: 'all',       label: `All (${filledSlots.length})`    },
-                  { id: 'filled',    label: `Events (${filledSlots.length})` },
-                  { id: 'completed', label: `Done (${doneSlots.length})`     },
+                  { id: 'all',       label: `All (${filledSlots.length})`  },
+                  { id: 'completed', label: `Done (${doneSlots.length})`   },
                 ].map(f => (
                   <button key={f.id} onClick={() => setFilt(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200
