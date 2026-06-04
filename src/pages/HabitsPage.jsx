@@ -933,30 +933,6 @@ export default function HabitsPage() {
                 darkMode={darkMode}
               />
             ))}
-
-            {/* Add new card (ghost) */}
-            <button
-              onClick={() => { setHabitToEdit(null); setShowModal(true); }}
-              className={`rounded-3xl border-2 border-dashed p-5 flex flex-col items-center justify-center gap-3
-                min-h-[180px] transition-all duration-200 group hover:scale-[1.02]
-                ${darkMode
-                  ? 'border-slate-700 hover:border-pink-500/50 hover:bg-slate-800/50'
-                  : 'border-slate-200 hover:border-pink-300 hover:bg-pink-50/50'
-                }`}
-            >
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200
-                group-hover:scale-110 group-hover:shadow-md group-hover:shadow-pink-200
-                ${darkMode ? 'bg-slate-700' : 'bg-slate-100'}`}>
-                <svg className={`w-6 h-6 transition-colors ${darkMode ? 'text-slate-400 group-hover:text-pink-400' : 'text-slate-400 group-hover:text-pink-500'}`}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-              <p className={`text-sm font-bold transition-colors
-                ${darkMode ? 'text-slate-500 group-hover:text-pink-400' : 'text-slate-400 group-hover:text-pink-500'}`}>
-                Add new habit
-              </p>
-            </button>
           </div>
         )}
 
@@ -967,6 +943,24 @@ export default function HabitsPage() {
           </p>
         )}
       </div>
+
+      {/* Floating Action Button (FAB) to Add Habit */}
+      <button
+        onClick={() => { setHabitToEdit(null); setShowModal(true); }}
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
+        aria-label="Add new habit"
+        title="Add new habit"
+      >
+        <svg
+          className="w-7 h-7 transition-transform group-hover:rotate-90 duration-300"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.5}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
     </>
   );
 }
