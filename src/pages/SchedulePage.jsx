@@ -974,6 +974,7 @@ export default function SchedulePage() {
   const [gCalSyncing, setGCalSyncing] = useState(false);
 
   const syncSlotToDB = async (hour, task, cat, date, startTime, endTime, note, done, prevSlotData) => {
+    localStorage.setItem('last_action_schedule', new Date().toISOString());
     if (!supabase || !user) {
       const nextData = {
         ...prevSlotData,

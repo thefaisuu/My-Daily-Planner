@@ -558,6 +558,7 @@ export default function MoodPage() {
   }, [loadMoodData]);
 
   const syncMoodToDB = async (moodId, noteText, prevHistory) => {
+    localStorage.setItem('last_action_mood', new Date().toISOString());
     if (!supabase || !user) {
       const updated = {
         ...prevHistory,

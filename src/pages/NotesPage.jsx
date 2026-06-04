@@ -490,6 +490,7 @@ export default function NotesPage() {
 
   /* Handlers */
   const handleSave = useCallback(async ({ id, title, body, color }, isClose) => {
+    localStorage.setItem('last_action_notes', new Date().toISOString());
     if (!title.trim() && !body.trim()) return;
 
     const now = Date.now();

@@ -504,6 +504,7 @@ export default function WaterPage() {
 
   // Sync to database or local storage fallback
   const syncWaterToDB = useCallback(async (nextGlasses, nextGoal, prevGlasses, prevGoal, currentHistory) => {
+    localStorage.setItem('last_action_water', new Date().toISOString());
     if (!supabase || !user) {
       const nextState = { glasses: nextGlasses, goal: nextGoal, lastDate: todayKey(), history: currentHistory || {} };
       persist(nextState);

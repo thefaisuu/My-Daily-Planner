@@ -612,6 +612,7 @@ export default function HabitsPage() {
 
   /* Toggle done */
   const handleToggle = useCallback(async (id) => {
+    localStorage.setItem('last_action_habit', new Date().toISOString());
     const prevHabits = [...habits];
     const habit = habits.find(h => h.id === id);
     if (!habit) return;

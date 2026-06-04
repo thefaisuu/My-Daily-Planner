@@ -17,6 +17,22 @@ function todayKey() {
 
 const FILTERS = ['All', 'Habits', 'Schedule', 'Water', 'Mood', 'Notes', 'Focus Timer'];
 
+function timeAgo(dateString) {
+  if (!dateString) return 'just now';
+  try {
+    const ts = new Date(dateString).getTime();
+    if (isNaN(ts)) return dateString;
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 0)     return 'just now';
+    if (s < 60)    return 'just now';
+    if (s < 3600)  return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+  } catch (_) {
+    return dateString;
+  }
+}
+
 export default function NotificationsPage() {
   const { setActiveNav, user } = useApp();
   const [filter,  setFilter]  = useState('All');
@@ -110,8 +126,38 @@ export default function NotificationsPage() {
       } catch (_) {}
     }
 
+    // Fetch last action timestamps
+    const timeHabit = localStorage.getItem('last_action_habit') || '';
+    const timeWater = localStorage.getItem('last_action_water') || '';
+    const timeSchedule = localStorage.getItem('last_action_schedule') || '';
+    const timeMood = localStorage.getItem('last_action_mood') || '';
+    const timeNotes = localStorage.getItem('last_action_notes') || '';
+
     const list = [];
     let idx = 1;
+
+    // Load Focus Timer completions
+    try {
+      const rawFocus = localStorage.getItem('planner_focus_completions');
+      if (rawFocus) {
+        const parsed = JSON.parse(rawFocus);
+        const today = todayKey();
+        const todayCompletions = parsed.filter(c => c.timestamp && c.timestamp.startsWith(today));
+        todayCompletions.forEach((fc, fidx) => {
+          list.push({
+            id: `focus-${fc.id || fidx}`,
+            icon: '⏱️',
+            text: 'Focus session completed! 🏆',
+            sub: `Session #${fc.sessionNumber} (${fc.duration}m) completed successfully.`,
+            page: 'Focus Timer',
+            time: fc.timestamp,
+            color: '#a78bfa',
+            bg: 'bg-purple-50/50',
+            badge: 'bg-purple-100 text-purple-700'
+          });
+        });
+      }
+    } catch (_) {}
 
     if (habitsDone > 0) {
       list.push({
@@ -120,7 +166,7 @@ export default function NotificationsPage() {
         text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
         sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
         page: 'Habits',
-        time: 'Just now',
+        time: timeHabit || new Date().toISOString(),
         color: '#A78BFA',
         bg: 'bg-violet-50',
         badge: 'bg-violet-100 text-violet-700'
@@ -135,7 +181,7 @@ export default function NotificationsPage() {
         text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
         sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
         page: 'Water',
-        time: 'Just now',
+        time: timeWater || new Date().toISOString(),
         color: '#8DB4FF',
         bg: 'bg-sky-50',
         badge: 'bg-sky-100 text-sky-700'
@@ -150,7 +196,7 @@ export default function NotificationsPage() {
         text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
         sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
         page: 'Schedule',
-        time: 'Just now',
+        time: timeSchedule || new Date().toISOString(),
         color: '#F59E0B',
         bg: 'bg-amber-50',
         badge: 'bg-amber-100 text-amber-700'
@@ -164,7 +210,7 @@ export default function NotificationsPage() {
         text: 'Mood logged today',
         sub: `You are feeling "${moodLabel}" today.`,
         page: 'Mood',
-        time: 'Just now',
+        time: timeMood || new Date().toISOString(),
         color: '#22C55E',
         bg: 'bg-emerald-50',
         badge: 'bg-emerald-100 text-emerald-700'
@@ -178,12 +224,15 @@ export default function NotificationsPage() {
         text: 'Notes captured',
         sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
         page: 'Notes',
-        time: 'Just now',
+        time: timeNotes || new Date().toISOString(),
         color: '#f472b6',
         bg: 'bg-pink-50',
         badge: 'bg-pink-100 text-pink-700'
       });
     }
+
+    // Sort list by time descending
+    list.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 
     setNotifications(list);
     setLoading(false);
@@ -268,7 +317,7 @@ export default function NotificationsPage() {
                     <p className="font-black text-slate-700 text-sm">{n.text}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{n.sub}</p>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-semibold flex-shrink-0 mt-0.5">{n.time}</span>
+                  <span className="text-[10px] text-slate-400 font-semibold flex-shrink-0 mt-0.5">{timeAgo(n.time)}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${n.badge}`}>

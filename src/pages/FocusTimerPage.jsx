@@ -379,6 +379,22 @@ export default function FocusTimerPage() {
       const newCount = sessionsComp + 1;
       setSessionsComp(newCount);
       triggerNotification('Focus Session Complete! 🎉', `Great job! Session #${newCount} completed.`);
+      
+      try {
+        const raw = localStorage.getItem('planner_focus_completions');
+        const list = raw ? JSON.parse(raw) : [];
+        list.push({
+          id: Date.now(),
+          sessionNumber: newCount,
+          timestamp: new Date().toISOString(),
+          duration: settings.focusMin,
+        });
+        localStorage.setItem('planner_focus_completions', JSON.stringify(list));
+        window.dispatchEvent(new Event('planner-data-changed'));
+      } catch (e) {
+        console.warn('Failed to save focus completion:', e);
+      }
+
       if (settings.autoStart) { switchMode(next, true); }
     } else {
       triggerNotification('Break Over! ⚡', 'Ready to focus again? Let\'s get back to work!');
