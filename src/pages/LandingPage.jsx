@@ -152,6 +152,7 @@ function FloatingOrbs() {
 export default function LandingPage({ onLogin, onSignup }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('landing');
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -163,6 +164,16 @@ export default function LandingPage({ onLogin, onSignup }) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
   };
+
+  if (activeTab === 'privacy') {
+    return <PrivacyPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+  }
+  if (activeTab === 'terms') {
+    return <TermsPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+  }
+  if (activeTab === 'contact') {
+    return <ContactPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+  }
 
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
@@ -201,35 +212,37 @@ export default function LandingPage({ onLogin, onSignup }) {
             </button>
           </div>
 
-          {/* Mobile hamburger */}
-          <button className="md:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
-            onClick={() => setMobileMenuOpen(v => !v)}>
-            <svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              {mobileMenuOpen
-                ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-            </svg>
+          {/* Mobile menu button */}
+          <button onClick={() => setMobileMenuOpen(p => !p)}
+            className="p-2 rounded-2xl md:hidden hover:bg-slate-50 transition-colors text-slate-600">
+            {mobileMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu panel */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white/98 backdrop-blur-md border-t border-slate-100 px-4 py-4 space-y-2 shadow-lg">
+          <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 shadow-xl">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="block w-full text-left px-4 py-3 rounded-2xl text-sm font-semibold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-indigo-600">
                 {label}
               </button>
             ))}
-            <div className="flex gap-2 pt-2">
-              <button onClick={onLogin}
-                className="flex-1 py-3 rounded-2xl text-sm font-bold text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-colors">
+            <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+              <button onClick={onLogin} className="w-full py-2.5 rounded-2xl font-bold text-slate-700 bg-slate-50">
                 Log In
               </button>
-              <button onClick={onSignup}
-                className="flex-1 py-3 rounded-2xl text-sm font-bold text-white transition-all"
+              <button onClick={onSignup} className="w-full py-2.5 rounded-2xl font-bold text-white text-center shadow-md"
                 style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
-                Get Started
+                Get Started Free →
               </button>
             </div>
           </div>
@@ -489,7 +502,14 @@ export default function LandingPage({ onLogin, onSignup }) {
           </p>
           <div className="flex gap-4">
             {['Privacy', 'Terms', 'Contact'].map(link => (
-              <button key={link} className="text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors">
+              <button
+                key={link}
+                onClick={() => {
+                  setActiveTab(link.toLowerCase());
+                  window.scrollTo(0, 0);
+                }}
+                className="text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors"
+              >
                 {link}
               </button>
             ))}
@@ -497,5 +517,294 @@ export default function LandingPage({ onLogin, onSignup }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+/* ── Legal pages shared layout wrapper ── */
+function LegalPageLayout({ title, children, onBack }) {
+  return (
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden relative flex flex-col justify-between">
+      {/* Background gradients */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-20 animate-pulse"
+          style={{ background: 'radial-gradient(circle, #A78BFA, transparent)', animationDuration: '4s' }} />
+        <div className="absolute top-1/2 left-1/4 w-80 h-80 rounded-full opacity-15 animate-pulse"
+          style={{ background: 'radial-gradient(circle, #60a5fa, transparent)', animationDuration: '6s', animationDelay: '2s' }} />
+      </div>
+
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm shadow-indigo-100/30 border-b border-slate-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
+              style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              <span className="text-white text-base font-black">✦</span>
+            </div>
+            <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
+          </div>
+          {/* Back button */}
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 transition-all border border-slate-200"
+          >
+            ← Back to Home
+          </button>
+        </div>
+      </nav>
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 relative z-10">
+        <div className="bg-white/75 backdrop-blur-md border border-slate-100 shadow-xl rounded-[2.5rem] p-8 sm:p-12">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-800 mb-8 tracking-tight">
+            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}>
+              {title}
+            </span>
+          </h1>
+          <div className="prose prose-slate max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-6">
+            {children}
+          </div>
+        </div>
+      </main>
+
+      {/* Simple Footer */}
+      <footer className="py-6 px-4 bg-slate-900 border-t border-slate-800 text-center">
+        <p className="text-slate-500 text-xs font-medium">
+          © {new Date().getFullYear()} Made with ♥️ by Haider & Faisal
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+/* ── Privacy Policy Page ── */
+function PrivacyPage({ onBack }) {
+  return (
+    <LegalPageLayout title="Privacy Policy" onBack={onBack}>
+      <p className="text-lg font-medium text-slate-700">
+        Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+      </p>
+      <p>
+        At My Daily Planner, we take your privacy very seriously. We believe in transparency and keeping your information secure. This Privacy Policy details how we handle the information you provide when using our application.
+      </p>
+      
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">1. Information We Collect</h2>
+      <p>
+        When you register for an account, we collect basic details such as your email address and password. If you choose to authenticate with external providers (such as Google), we receive information according to your provider's settings (e.g., your email and profile name).
+      </p>
+      <p>
+        We also store the planner content you explicitly create, which includes your daily schedule, habits tracker entries, mood logs, water consumption counts, and custom notes.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">2. How We Use Your Information</h2>
+      <p>
+        Your data is used solely to provide and improve the services offered by My Daily Planner. Specifically:
+      </p>
+      <ul className="list-disc pl-6 space-y-2">
+        <li>To synchronize your schedule and habits across all your logged-in devices.</li>
+        <li>To generate personal briefings and insights dynamically (if opted in).</li>
+        <li>To facilitate optional integrations such as Google Calendar syncing.</li>
+      </ul>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">3. Data Security & Storage</h2>
+      <p>
+        We implement industry-standard encryption protocols to protect your personal information during transit and storage. All planner data is stored in secure database servers with strict access controls. We do not sell or share your personal data with third-party advertisers.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">4. Google Calendar Integration</h2>
+      <p>
+        If you connect your Google Calendar, our app only requests permissions necessary to view and sync your calendar events. This data is processed locally or stored securely on our backend solely to coordinate your daily schedule, and is never shared.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">5. Your Rights & Control</h2>
+      <p>
+        You retain full ownership and control of your data. You may update, download, or permanently delete your account and associated planner data directly from the settings panel in the app at any time.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">6. Contact Us</h2>
+      <p>
+        If you have any questions or feedback regarding our privacy practices, please contact us at{' '}
+        <a href="mailto:faisugraphics@gmail.com" className="text-indigo-600 hover:text-indigo-800 font-bold underline">
+          faisugraphics@gmail.com
+        </a>.
+      </p>
+    </LegalPageLayout>
+  );
+}
+
+/* ── Terms of Service Page ── */
+function TermsPage({ onBack }) {
+  return (
+    <LegalPageLayout title="Terms of Service" onBack={onBack}>
+      <p className="text-lg font-medium text-slate-700">
+        Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+      </p>
+      <p>
+        By accessing or using My Daily Planner, you agree to comply with and be bound by the following terms of service. Please review them carefully.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">1. Acceptance of Terms</h2>
+      <p>
+        By creating an account or using My Daily Planner, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree, you must discontinue using our services immediately.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">2. Account Responsibility</h2>
+      <p>
+        You are responsible for maintaining the confidentiality of your account credentials (email and password). You agree to notify us immediately of any unauthorized use of your account. We are not responsible for any losses arising from unauthorized access to your planner data.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">3. Prohibited Content & Use</h2>
+      <p>
+        You agree to use our application only for lawful purposes. You must not attempt to disrupt the performance of our servers, inject malicious scripts, or reverse engineer any parts of the platform.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">4. Limitation of Liability</h2>
+      <p>
+        My Daily Planner is provided "as is" and "as available" without warranties of any kind. We do not guarantee uninterrupted access or that the service will be entirely free of errors or downtime. In no event shall My Daily Planner, Haider, Faisal, or our partners be liable for any direct or indirect damages.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">5. Service Modifications</h2>
+      <p>
+        We reserve the right to modify or discontinue features of the planner at any time. We will make reasonable efforts to notify active users of major updates or deprecations that could impact account data.
+      </p>
+
+      <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4">6. Inquiries</h2>
+      <p>
+        For any questions regarding these terms, please contact us directly at{' '}
+        <a href="mailto:faisugraphics@gmail.com" className="text-indigo-600 hover:text-indigo-800 font-bold underline">
+          faisugraphics@gmail.com
+        </a>.
+      </p>
+    </LegalPageLayout>
+  );
+}
+
+/* ── Contact Us Page ── */
+function ContactPage({ onBack }) {
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <LegalPageLayout title="Contact Us" onBack={onBack}>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Contact details */}
+        <div className="md:col-span-5 space-y-6">
+          <p className="text-base text-slate-600 leading-relaxed">
+            Have questions, feature suggestions, or business inquiries? We'd love to hear from you. Get in touch with us using the form or reach out directly via email.
+          </p>
+
+          <div className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50 space-y-4">
+            <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">Direct Contact Info</h3>
+            
+            <div className="flex items-start gap-3">
+              <span className="text-xl">✉️</span>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">Email Address</p>
+                <a 
+                  href="mailto:faisugraphics@gmail.com" 
+                  className="text-indigo-600 hover:text-indigo-800 font-black text-sm break-all"
+                >
+                  faisugraphics@gmail.com
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <span className="text-xl">🤝</span>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">Co-Founders</p>
+                <p className="text-slate-500 text-xs mt-0.5">Haider & Faisal</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Form */}
+        <div className="md:col-span-7">
+          {submitted ? (
+            <div className="p-8 rounded-3xl border border-emerald-100 bg-emerald-50 text-center space-y-3">
+              <span className="text-4xl">🎉</span>
+              <h3 className="font-black text-emerald-800 text-lg">Thank you!</h3>
+              <p className="text-sm text-emerald-600">
+                Your message has been sent successfully. We will get back to you shortly.
+              </p>
+              <button 
+                onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', subject: '', message: '' }); }}
+                className="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+              >
+                Send another message
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="contact-name" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Name</label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  required
+                  placeholder="Your Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="contact-email" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Email Address</label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  required
+                  placeholder="your.email@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="contact-subject" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Subject</label>
+                <input
+                  id="contact-subject"
+                  type="text"
+                  required
+                  placeholder="How can we help?"
+                  value={formData.subject}
+                  onChange={(e) => setFormData(p => ({ ...p, subject: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="contact-message" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Message</label>
+                <textarea
+                  id="contact-message"
+                  required
+                  rows={4}
+                  placeholder="Write your message here..."
+                  value={formData.message}
+                  onChange={(e) => setFormData(p => ({ ...p, message: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all"
+                style={{ background: 'linear-gradient(135deg, #5B6CFF, #A78BFA)' }}
+              >
+                Send Message
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </LegalPageLayout>
   );
 }

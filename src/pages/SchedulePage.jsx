@@ -1257,8 +1257,8 @@ export default function SchedulePage() {
                 {gCalSyncing
                   ? 'Syncing…'
                   : gCalToken
-                    ? 'Sync to Google Cal'
-                    : 'Connect Google Cal'}
+                    ? 'Sync Google Calendar'
+                    : 'Connect Google Calendar'}
                 {/* Connected dot */}
                 {gCalToken && !gCalSyncing && (
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
