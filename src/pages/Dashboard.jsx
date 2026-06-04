@@ -442,7 +442,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
         return `${y}-${m}-${day}`;
       };
       const today = todayISO();
-
+      console.log('Dashboard loading slots for today:', today, 'user:', user.id);
       const { data, error } = await supabase
         .from('schedule_tasks')
         .select('date, time_slot, task, completed')
@@ -450,6 +450,8 @@ function PriorityTasksCard({ navigate, darkMode }) {
         .eq('date', today);
 
       if (error) throw error;
+
+      console.log('Dashboard slots data from DB:', data);
 
       const init = {};
       SLOT_HOURS.forEach(h => {
@@ -478,6 +480,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
           }
         });
       }
+      console.log('Dashboard final slots map:', init);
       setSlots(init);
     } catch (err) {
       console.error('Failed to load dashboard schedule tasks:', err);
