@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Calendar, Flame } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -389,15 +389,23 @@ function StatsStrip({ history, darkMode }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {[
-        { icon: topMood.emoji, label: 'Most frequent', val: topMood.label, color: topMood.color },
-        { icon: avgMood.emoji, label: 'Average mood',  val: avgMood.label, color: avgMood.color },
-        { icon: '📅',          label: 'Total entries', val: total,          color: '#f472b6'     },
-        { icon: '🔥',          label: 'Day streak',    val: `${streak} days`, color: '#fb923c'  },
+        { isMood: true, emoji: topMood.emoji, label: 'Most frequent', val: topMood.label, color: topMood.color, bg: `${topMood.color}15` },
+        { isMood: true, emoji: avgMood.emoji, label: 'Average mood',  val: avgMood.label, color: avgMood.color, bg: `${avgMood.color}15` },
+        { iconName: 'Calendar', colorType: 'notes',          label: 'Total entries', val: total },
+        { iconName: 'Flame',    colorType: 'schedule',       label: 'Day streak',    val: `${streak} days` },
       ].map((s, i) => (
-        <div key={i} className={`rounded-2xl p-4 ${darkMode ? 'bg-slate-800/70 border border-slate-700/50' : 'bg-white/80 border border-slate-100'} shadow-sm`}>
-          <div className="text-2xl mb-2">{s.icon}</div>
-          <p className={`text-lg font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-          <p className={`text-xs font-bold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{s.label}</p>
+        <div key={i} className={`rounded-2xl p-4 flex flex-col gap-1.5 ${darkMode ? 'bg-slate-800/70 border border-slate-700/50' : 'bg-white/80 border border-slate-100'} shadow-sm`}>
+          {s.isMood ? (
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-base shadow-sm" style={{ background: s.bg }}>
+              {s.emoji}
+            </div>
+          ) : (
+            <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={16} />
+          )}
+          <div className="mt-1">
+            <p className={`text-lg font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>{s.val}</p>
+            <p className={`text-[10px] font-bold uppercase tracking-wider mt-1.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.label}</p>
+          </div>
         </div>
       ))}
     </div>

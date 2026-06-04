@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles } from 'lucide-react';
+import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles, Trophy, Calendar } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & DEFAULTS
@@ -240,13 +240,13 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
         {/* Current streak */}
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl"
           style={{ background: '#FDE68A' }}>
-          <span className="text-sm">🔥</span>
+          <Flame className="w-3.5 h-3.5 text-[#854d0e] fill-[#854d0e]/20" strokeWidth={1.5} />
           <span className="text-xs font-black text-[#854d0e]">{habit.streak} day{habit.streak !== 1 ? 's' : ''}</span>
         </div>
 
         {/* Best streak */}
         <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white/70">
-          <span className="text-xs">🏆</span>
+          <Trophy className="w-3 h-3 text-amber-500 fill-amber-500/20" strokeWidth={1.5} />
           <span className={`text-[10px] font-bold ${darkMode ? 'text-slate-400' : 'text-[#9B8AAE]'}`}>Best: {habit.bestStreak}</span>
         </div>
 
@@ -838,19 +838,25 @@ export default function HabitsPage() {
           {/* Stats cards */}
           <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { icon: '✅', val: `${doneCount}/${total}`, label: 'Today\'s done',  color: 'from-pink-400 to-rose-400',    bg: 'bg-pink-50   dark:bg-pink-900/20'   },
-              { icon: '🔥', val: totalStreak,              label: 'Total streak',  color: 'from-orange-400 to-amber-400', bg: 'bg-orange-50 dark:bg-orange-900/20' },
-              { icon: '🏆', val: longestStreak,            label: 'Best streak',   color: 'from-purple-400 to-violet-400',bg: 'bg-purple-50 dark:bg-purple-900/20' },
-              { icon: '📅', val: total,                    label: 'Total habits',  color: 'from-blue-400 to-cyan-400',    bg: 'bg-blue-50   dark:bg-blue-900/20'   },
-            ].map((s, i) => (
-              <div key={i} className={`rounded-2xl p-4 ${s.bg} border border-white/60 dark:border-slate-700/40 shadow-sm`}>
-                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-lg shadow-sm mb-3`}>
-                  {s.icon}
+              { iconName: 'CheckSquare', val: `${doneCount}/${total}`, label: 'Today\'s done',  color: 'from-pink-400 to-rose-400',    bg: 'bg-pink-50   dark:bg-pink-900/20'   },
+              { iconName: 'Flame',       val: totalStreak,              label: 'Total streak',  color: 'from-orange-400 to-amber-400', bg: 'bg-orange-50 dark:bg-orange-900/20' },
+              { iconName: 'Trophy',      val: longestStreak,            label: 'Best streak',   color: 'from-purple-400 to-violet-400',bg: 'bg-purple-50 dark:bg-purple-900/20' },
+              { iconName: 'Calendar',    val: total,                    label: 'Total habits',  color: 'from-blue-400 to-cyan-400',    bg: 'bg-blue-50   dark:bg-blue-900/20'   },
+            ].map((s, i) => {
+              const IconComp = s.iconName === 'CheckSquare' ? CheckSquare
+                             : s.iconName === 'Flame' ? Flame
+                             : s.iconName === 'Trophy' ? Trophy
+                             : Calendar;
+              return (
+                <div key={i} className={`rounded-2xl p-4 ${s.bg} border border-white/60 dark:border-slate-700/40 shadow-sm`}>
+                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white shadow-sm mb-3`}>
+                    <IconComp size={16} strokeWidth={1.5} />
+                  </div>
+                  <p className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
+                  <p className={`text-xs font-bold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{s.label}</p>
                 </div>
-                <p className={`text-2xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-                <p className={`text-xs font-bold mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{s.label}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

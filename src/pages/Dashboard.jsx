@@ -129,37 +129,62 @@ function GreetingBanner({ now, habits, water, mood }) {
   const displayName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Ata';
   
   const hrs = now.getHours();
-  const { text, icon } =
-    hrs < 12 ? { text: 'Good Morning',   icon: '🌅' }
-  : hrs < 17 ? { text: 'Good Afternoon', icon: '☀️' }
-  :            { text: 'Good Evening',   icon: '🌙' };
+  const { text, iconName, iconColorType } =
+    hrs < 12 ? { text: 'Good Morning',   iconName: 'Sunrise', iconColorType: 'schedule' }
+  : hrs < 17 ? { text: 'Good Afternoon', iconName: 'Sun',     iconColorType: 'schedule' }
+  :            { text: 'Good Evening',   iconName: 'Moon',    iconColorType: 'timer' };
 
   const done  = habits.filter(h => h.doneToday).length;
   const total = habits.length;
   const streak = habits.length ? Math.max(...habits.map(h => h.streak), 0) : 0;
+
+  const statsList = [
+    {
+      icon: <PastelIcon name="Flame" colorType="schedule" circleSize="w-8 h-8" size={16} />,
+      v: `${streak}`,
+      l: 'best streak'
+    },
+    {
+      icon: <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-8 h-8" size={16} />,
+      v: `${done}/${total}`,
+      l: 'habits today'
+    },
+    {
+      icon: mood ? (
+        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FFF1F2] text-base shadow-sm">
+          {mood.emoji}
+        </div>
+      ) : (
+        <PastelIcon name="Smile" colorType="mood" circleSize="w-8 h-8" size={16} />
+      ),
+      v: mood ? mood.label : '—',
+      l: 'mood today'
+    }
+  ];
 
   return (
     <div className="card col-span-full relative overflow-hidden !p-0"
       style={{ background: 'linear-gradient(120deg, #F9A8D4 0%, #F5EEFF 55%, #C4B5FD 100%)' }}>
       <div className="relative p-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-[#3B1F5E]/80 text-sm font-bold flex items-center gap-2">
-            <span className="text-xl">{icon}</span> {text}
-          </p>
-          <h2 className="text-[#3B1F5E] text-3xl sm:text-4xl font-black mt-1 tracking-tight">Hello, {displayName}! 👋</h2>
-          <p className="text-[#3B1F5E]/70 text-sm mt-1.5 font-semibold">
-            {DAYS[now.getDay()]}, {MONTHS[now.getMonth()]} {now.getDate()} · Let's make today count ✨
+          <div className="text-[#3B1F5E]/80 text-sm font-bold flex items-center gap-2">
+            <PastelIcon name={iconName} colorType={iconColorType} circleSize="w-7 h-7" size={14} />
+            <span>{text}</span>
+          </div>
+          <h2 className="text-[#3B1F5E] text-3xl sm:text-4xl font-black mt-2 tracking-tight">Hello, {displayName}!</h2>
+          <p className="text-[#3B1F5E]/70 text-sm mt-2 font-semibold flex items-center flex-wrap gap-1">
+            <span>{DAYS[now.getDay()]}, {MONTHS[now.getMonth()]} {now.getDate()} · Let's make today count</span>
+            <Sparkles size={14} className="text-yellow-600 fill-yellow-600/30 ml-0.5" strokeWidth={1.5} />
           </p>
         </div>
         <div className="flex gap-3 flex-wrap">
-          {[
-            { v: `🔥 ${streak}`, l: 'best streak' },
-            { v: `✅ ${done}/${total}`, l: 'habits today' },
-            { v: mood ? `${mood.emoji} ${mood.label}` : '😊 —', l: 'mood today' },
-          ].map((s, i) => (
-            <div key={i} className="px-4 py-2.5 rounded-2xl bg-[#3B1F5E]/10 backdrop-blur-sm text-center">
-              <p className="text-[#3B1F5E] font-black text-base">{s.v}</p>
-              <p className="text-[#3B1F5E]/70 text-[10px] font-bold uppercase tracking-wider">{s.l}</p>
+          {statsList.map((s, i) => (
+            <div key={i} className="px-4 py-2.5 rounded-2xl bg-white/40 backdrop-blur-sm flex items-center gap-2.5 border border-white/50 shadow-sm min-w-[110px]">
+              {s.icon}
+              <div className="text-left">
+                <p className="text-[#3B1F5E] font-black text-sm leading-none">{s.v}</p>
+                <p className="text-[#3B1F5E]/70 text-[9px] font-bold uppercase tracking-wider mt-1">{s.l}</p>
+              </div>
             </div>
           ))}
         </div>

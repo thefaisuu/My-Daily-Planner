@@ -663,14 +663,14 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { icon: '✅', val: `${done}/${filled}`, label: 'Tasks'     },
-            { icon: '⏰', val: filled - done,        label: 'Remaining' },
-            { icon: '🔥', val: String(streak),       label: 'Streak'    },
+            { iconName: 'CheckSquare', colorType: 'habits', val: `${done}/${filled}`, label: 'Tasks'     },
+            { iconName: 'Clock',       colorType: 'timer',  val: filled - done,        label: 'Remaining' },
+            { iconName: 'Flame',       colorType: 'schedule', val: String(streak),       label: 'Streak'    },
           ].map((s, i) => (
-            <div key={i} className={`text-center py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-[#F5EEFF]/80'}`}>
-              <p className="text-sm">{s.icon}</p>
-              <p className={`text-sm font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-              <p className={`text-[10px] font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>{s.label}</p>
+            <div key={i} className={`flex flex-col items-center justify-center py-2.5 rounded-xl border border-purple-100/40 shadow-sm ${darkMode ? 'bg-slate-800' : 'bg-white/70'}`}>
+              <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-7 h-7" size={14} />
+              <p className={`text-sm font-black mt-1.5 ${darkMode ? 'text-slate-100' : 'text-slate-700'} leading-none`}>{s.val}</p>
+              <p className={`text-[9px] font-bold uppercase tracking-wider mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-400'}`}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -678,7 +678,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         {/* Current Event */}
         {currentEvent && (
           <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-pink-500/10 border border-pink-400/20'}`}>
-            <span className="text-base">⚡</span>
+            <PastelIcon name="Zap" colorType="danger" circleSize="w-8 h-8" size={14} />
             <div className="min-w-0 flex-1">
               <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-pink-400' : 'text-pink-600'}`}>Current Event</p>
               <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{currentEvent.task}</p>
@@ -692,7 +692,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
         {/* Next Event */}
         {nextEvent && (
           <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-purple-50 border border-purple-100'}`}>
-            <span className="text-base">⏭️</span>
+            <PastelIcon name="SkipForward" colorType="timer" circleSize="w-8 h-8" size={14} />
             <div className="min-w-0 flex-1">
               <p className={`text-[10px] font-black uppercase tracking-wider ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>Next Event</p>
               <p className={`text-xs font-bold truncate ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{nextEvent.task}</p>
