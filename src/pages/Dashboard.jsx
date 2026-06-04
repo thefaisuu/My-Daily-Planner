@@ -643,6 +643,339 @@ function PriorityTasksCard({ navigate, darkMode }) {
   );
 }
 
+/* ── Planner Buddy Insights Card ── */
+function PlannerBuddyCard({ habits, water, mood }) {
+  const { user } = useApp();
+  const [briefing, setBriefing] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [period, setPeriod] = useState(getTimePeriod());
+
+  console.log("PlannerBuddyCard render: user =", user?.id, "period =", period, "briefing =", briefing, "loading =", loading);
+
+  // Update period automatically
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPeriod(getTimePeriod());
+    }, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const loadBriefing = useCallback(async (forceRefresh = false) => {
+    console.log("loadBriefing called: user =", user?.id, "forceRefresh =", forceRefresh);
+    if (!user) return;
+    const today = todayKey();
+    const currentPeriod = getTimePeriod();
+    const localKey = `planner_briefing_${user.id}_${today}_${currentPeriod}`;
+
+    // 1. Check local storage cache
+    if (!forceRefresh) {
+      const cached = localStorage.getItem(localKey);
+      if (cached) {
+        setBriefing(cached);
+        return;
+      }
+    }
+
+    setLoading(true);
+    let allBriefings = {};
+
+    // 2. Check Supabase briefings
+    if (supabase && !forceRefresh) {
+      try {
+        const { data, error } = await supabase
+          .from('ai_briefings')
+          .select('message')
+          .eq('user_id', user.id)
+          .eq('briefing_date', today)
+          .maybeSingle();
+
+        if (!error && data?.message) {
+          try {
+            allBriefings = JSON.parse(data.message);
+            if (typeof allBriefings === 'object' && allBriefings[currentPeriod]) {
+              const text = allBriefings[currentPeriod];
+              localStorage.setItem(localKey, text);
+              setBriefing(text);
+              setLoading(false);
+              return;
+            }
+          } catch (_) {
+            // legacy plain text briefing
+            if (currentPeriod === 'Morning') {
+              localStorage.setItem(localKey, data.message);
+              setBriefing(data.message);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load briefings from database:', e);
+      }
+    }
+
+    // 3. Gather stats for prompt
+    let tasksDone = 0;
+    let tasksTotal = 0;
+    let nextTask = null;
+
+    if (supabase) {
+      try {
+        const { data } = await supabase
+          .from('schedule_tasks')
+          .select('time_slot, task, completed')
+          .eq('user_id', user.id)
+          .eq('date', today);
+
+        if (data) {
+          tasksTotal = data.length;
+          tasksDone = data.filter(t => t.completed).length;
+
+          const now = new Date();
+          const currentHour = now.getHours();
+          const sorted = data
+            .map(row => {
+              const hour = parseInt(row.time_slot);
+              let parsedTask = row.task;
+              try {
+                if (row.task.startsWith('{')) {
+                  parsedTask = JSON.parse(row.task).task || '';
+                }
+              } catch (_) {}
+              return { hour, task: parsedTask, completed: row.completed };
+            })
+            .filter(t => t.hour >= currentHour && !t.completed)
+            .sort((a, b) => a.hour - b.hour);
+
+          if (sorted.length > 0) {
+            const next = sorted[0];
+            const ampm = next.hour < 12 ? 'AM' : 'PM';
+            const h12 = next.hour === 0 ? 12 : next.hour > 12 ? next.hour - 12 : next.hour;
+            nextTask = `${h12}:00 ${ampm} - ${next.task}`;
+          }
+        }
+      } catch (_) {}
+    } else {
+      try {
+        const rawSchedule = localStorage.getItem('planner_schedule');
+        if (rawSchedule) {
+          const slots = JSON.parse(rawSchedule);
+          const activeSlots = Object.keys(slots).filter(h => slots[h]?.task?.trim());
+          tasksTotal = activeSlots.length;
+          tasksDone = activeSlots.filter(h => slots[h]?.done).length;
+
+          const now = new Date();
+          const currentHour = now.getHours();
+          const upcoming = activeSlots
+            .map(Number)
+            .filter(h => h >= currentHour && !slots[h]?.done)
+            .sort((a, b) => a - b);
+
+          if (upcoming.length > 0) {
+            const hour = upcoming[0];
+            const ampm = hour < 12 ? 'AM' : 'PM';
+            const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            nextTask = `${h12}:00 ${ampm} - ${slots[hour].task}`;
+          }
+        }
+      } catch (_) {}
+    }
+
+    const habitsDone = habits.filter(h => h.doneToday).length;
+    const habitsTotal = habits.length;
+    const waterGlasses = water.glasses;
+    const waterGoal = water.goal ?? 8;
+    const moodText = mood ? mood.label : 'Not logged yet';
+    const displayName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User';
+
+    // 4. Generate using Groq API
+    let generatedText = '';
+    try {
+      let apiKey = localStorage.getItem(`planner_groq_key_${user.id}`) || '';
+      if (!apiKey && supabase) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('gemini_api_key')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (data?.gemini_api_key) {
+          apiKey = data.gemini_api_key;
+        }
+      }
+      if (!apiKey) {
+        apiKey = import.meta.env.VITE_GROQ_API_KEY || '';
+      }
+
+      const systemPrompt = `You are a friendly, encouraging, and supportive Planner Buddy, a personal planning and productivity coach.
+You are generating a short, motivating, and personalized ${currentPeriod} briefing/insight summary for the user.
+
+Today's current metrics:
+- User Name: ${displayName}
+- Period of Day: ${currentPeriod}
+- Habits completed: ${habitsDone}/${habitsTotal}
+- Water logged: ${waterGlasses}/${waterGoal} glasses
+- Schedule Tasks completed: ${tasksDone}/${tasksTotal}
+- Today's Mood: ${moodText}
+- Next upcoming scheduled task: ${nextTask || 'None'}
+
+Instructions:
+1. Address the user by name with a friendly, period-appropriate greeting (e.g., "Good morning, ${displayName}!").
+2. Reflect on their current progress so far today. Give constructive, supportive advice (e.g., nudge them to drink water, encourage them to tackle their next task, or celebrate their wins).
+3. Keep the response extremely brief and concise—exactly 2 to 3 sentences.
+4. Keep it engaging, motivational, and light-hearted. Use a warm tone and a few relevant emojis.`;
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: `Generate today's ${currentPeriod} insight briefing.` }
+          ],
+          temperature: 0.7,
+          max_tokens: 256
+        })
+      });
+
+      if (!response.ok) throw new Error('Groq API error');
+      const json = await response.json();
+      generatedText = json.choices?.[0]?.message?.content || '';
+    } catch (err) {
+      console.warn('API call failed, running rule-based fallback:', err);
+      // Fallback rule-based insight
+      generatedText = `Hello, ${displayName}! Hope you are having a productive day. `;
+      if (tasksTotal === 0 && habitsTotal === 0) {
+        generatedText += "Start by listing some tasks or habits to get organized. You got this! 🌟";
+      } else {
+        generatedText += `You've checked off ${habitsDone}/${habitsTotal} habits and ${tasksDone}/${tasksTotal} tasks. `;
+        if (waterGlasses < waterGoal / 2) {
+          generatedText += "Remember to stay hydrated and grab a glass of water! 💧";
+        } else if (nextTask) {
+          generatedText += `Stay focused for your next task: ${nextTask}. 🚀`;
+        } else {
+          generatedText += "Keep up the excellent momentum and finish the day strong! 🏆";
+        }
+      }
+    }
+
+    if (generatedText) {
+      // Save locally
+      localStorage.setItem(localKey, generatedText);
+      setBriefing(generatedText);
+
+      // Save to database
+      if (supabase) {
+        try {
+          const { data } = await supabase
+            .from('ai_briefings')
+            .select('message')
+            .eq('user_id', user.id)
+            .eq('briefing_date', today)
+            .maybeSingle();
+
+          let dbBriefings = {};
+          if (data?.message) {
+            try {
+              dbBriefings = JSON.parse(data.message);
+            } catch (_) {}
+          }
+          dbBriefings[currentPeriod] = generatedText;
+
+          await supabase
+            .from('ai_briefings')
+            .upsert({
+              user_id: user.id,
+              briefing_date: today,
+              message: JSON.stringify(dbBriefings)
+            });
+        } catch (dbErr) {
+          console.warn('Failed to upsert briefing to database:', dbErr);
+        }
+      }
+    }
+    setLoading(false);
+  }, [user, habits, water, mood]);
+
+  useEffect(() => {
+    loadBriefing();
+  }, [loadBriefing]);
+
+  // Re-read when planner data changes
+  useEffect(() => {
+    const handler = () => {
+      loadBriefing();
+    };
+    window.addEventListener('planner-data-changed', handler);
+    return () => window.removeEventListener('planner-data-changed', handler);
+  }, [loadBriefing]);
+
+  const periodConfig = {
+    Morning: { icon: '🌅', label: 'Morning Briefing', badge: 'bg-amber-100 text-amber-700' },
+    Afternoon: { icon: '☀️', label: 'Afternoon Briefing', badge: 'bg-sky-100 text-sky-700' },
+    Evening: { icon: '🌙', label: 'Evening Briefing', badge: 'bg-indigo-100 text-indigo-700' },
+    Night: { icon: '✨', label: 'Night Briefing', badge: 'bg-violet-100 text-violet-700' }
+  };
+
+  const currentConfig = periodConfig[period] || periodConfig.Morning;
+
+  return (
+    <div className="card space-y-4 shadow-sm border border-indigo-50/50 relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #EEF2FF 0%, #FAF5FF 100%)' }}>
+      
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xl">🤖</span>
+          <div>
+            <h3 className="font-black text-slate-700 text-base leading-none">Planner Buddy Insights</h3>
+            <span className="text-[10px] text-slate-400 font-bold mt-1.5 block">Your personal AI coach</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-black px-2.5 py-1.5 rounded-full flex items-center gap-1.5 ${currentConfig.badge}`}>
+            <span>{currentConfig.icon}</span> {currentConfig.label}
+          </span>
+          <button
+            onClick={() => loadBriefing(true)}
+            disabled={loading}
+            className="w-7 h-7 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-400 hover:text-indigo-500 cursor-pointer transition-all border border-transparent hover:border-slate-100"
+            title="Regenerate insights"
+          >
+            <svg className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="pt-1.5 min-h-[50px] flex items-center">
+        {loading ? (
+          <div className="w-full space-y-2.5 py-2">
+            <div className="h-3 bg-indigo-100/50 rounded-full animate-pulse w-[95%]" />
+            <div className="h-3 bg-indigo-100/50 rounded-full animate-pulse w-[80%]" />
+            <div className="h-3 bg-indigo-100/50 rounded-full animate-pulse w-[50%]" />
+          </div>
+        ) : (
+          <div className="relative pl-4 border-l-2 border-indigo-200">
+            <p className="text-xs font-semibold text-slate-600 leading-relaxed italic">
+              "{briefing}"
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold uppercase tracking-wider pt-2 border-t border-slate-100/60">
+        <span>Generates 4 briefings daily</span>
+        <span>Next cache refresh: {period === 'Morning' ? '12:00 PM' : period === 'Afternoon' ? '5:00 PM' : period === 'Evening' ? '9:00 PM' : '5:00 AM'}</span>
+      </div>
+
+    </div>
+  );
+}
+
 function DashboardSkeleton() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 animate-pulse max-w-7xl mx-auto">
@@ -855,6 +1188,11 @@ export default function Dashboard() {
 
         {/* ── Daily Summary (full width) ── */}
         <DailySummary habits={habits} water={water} mood={mood} sessions={sessions} />
+
+        {/* ── Planner Buddy Insights (full width) ── */}
+        <div className="col-span-full">
+          <PlannerBuddyCard habits={habits} water={water} mood={mood} />
+        </div>
 
         {/* ── Habit Progress ── */}
         <HabitProgressCard habits={habits} navigate={navigate} darkMode={darkMode} />

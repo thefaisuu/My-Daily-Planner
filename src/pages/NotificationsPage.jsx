@@ -1,24 +1,204 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
-import { NOTIFICATIONS } from '../components/Navbar';
+import { supabase } from '../lib/supabase';
 
-const ALL_NOTIFICATIONS = [
-  ...NOTIFICATIONS,
-  { id: 6,  icon: '📝', text: 'New note saved',                    sub: 'App redesign ideas auto-saved',       page: 'Notes',       time: '3h ago',  color: '#f472b6', bg: 'bg-pink-50',    badge: 'bg-pink-100 text-pink-700'      },
-  { id: 7,  icon: '✅', text: 'Daily habit reset',                  sub: 'New day — 0/6 habits completed',      page: 'Habits',      time: '8h ago',  color: '#A78BFA', bg: 'bg-violet-50',  badge: 'bg-violet-100 text-violet-700'  },
-  { id: 8,  icon: '⏱️', text: 'Focus session completed',            sub: 'Great work! 25 minutes focused',      page: 'Focus Timer', time: '5h ago',  color: '#5B6CFF', bg: 'bg-indigo-50',  badge: 'bg-indigo-100 text-indigo-700'  },
-  { id: 9,  icon: '😊', text: 'Mood logged: Happy 😊',              sub: 'Feeling great today',                 page: 'Mood',        time: 'Yesterday', color: '#22C55E', bg: 'bg-emerald-50', badge: 'bg-emerald-100 text-emerald-700'},
-  { id: 10, icon: '💧', text: 'Water goal reached! 🎉',             sub: '8/8 glasses — amazing hydration!',   page: 'Water',       time: 'Yesterday', color: '#8DB4FF', bg: 'bg-sky-50',     badge: 'bg-sky-100 text-sky-700'        },
-];
+const MOOD_MAP = {
+  1: { emoji: '😔', label: 'Rough' },
+  2: { emoji: '😐', label: 'Meh' },
+  3: { emoji: '🙂', label: 'Okay' },
+  4: { emoji: '😊', label: 'Good' },
+  5: { emoji: '🤩', label: 'Amazing' },
+};
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
 const FILTERS = ['All', 'Habits', 'Schedule', 'Water', 'Mood', 'Notes', 'Focus Timer'];
 
 export default function NotificationsPage() {
-  const { setActiveNav } = useApp();
+  const { setActiveNav, user } = useApp();
   const [filter,  setFilter]  = useState('All');
   const [cleared, setCleared] = useState(new Set());
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const visible = ALL_NOTIFICATIONS.filter(n =>
+  const loadNotifications = useCallback(async () => {
+    if (!user) {
+      setNotifications([]);
+      return;
+    }
+    setLoading(true);
+    const today = todayKey();
+    
+    let habitsDone = 0;
+    let habitsTotal = 0;
+    let waterGlasses = 0;
+    let waterGoal = 8;
+    let tasksDone = 0;
+    let tasksTotal = 0;
+    let moodLabel = '';
+    let notesCount = 0;
+
+    if (supabase) {
+      try {
+        const [waterRes, habitsRes, logsRes, moodRes, scheduleRes, notesRes] = await Promise.all([
+          supabase.from('water_logs').select('glasses, goal').eq('user_id', user.id).eq('logged_date', today).maybeSingle(),
+          supabase.from('habits').select('id').eq('user_id', user.id),
+          supabase.from('habit_logs').select('habit_id').eq('user_id', user.id).eq('completed_date', today),
+          supabase.from('mood_logs').select('mood').eq('user_id', user.id).eq('logged_date', today).maybeSingle(),
+          supabase.from('schedule_tasks').select('completed').eq('user_id', user.id).eq('date', today),
+          supabase.from('notes').select('id', { count: 'exact' }).eq('user_id', user.id)
+        ]);
+
+        if (waterRes.data) {
+          waterGlasses = waterRes.data.glasses;
+          waterGoal = waterRes.data.goal;
+        }
+        if (habitsRes.data) habitsTotal = habitsRes.data.length;
+        if (logsRes.data) habitsDone = logsRes.data.length;
+        if (moodRes.data) {
+          const mVal = Number(moodRes.data.mood);
+          if (MOOD_MAP[mVal]) moodLabel = MOOD_MAP[mVal].label;
+        }
+        if (scheduleRes.data) {
+          tasksTotal = scheduleRes.data.length;
+          tasksDone = scheduleRes.data.filter(t => t.completed).length;
+        }
+        if (notesRes.count !== null) {
+          notesCount = notesRes.count;
+        }
+      } catch (e) {
+        console.warn('Failed to load notifications stats from Supabase:', e);
+      }
+    } else {
+      try {
+        const rawWater = localStorage.getItem('planner_water');
+        if (rawWater) {
+          const parsed = JSON.parse(rawWater);
+          if (parsed.lastDate === today) {
+            waterGlasses = parsed.glasses;
+            waterGoal = parsed.goal ?? 8;
+          }
+        }
+        const rawHabits = localStorage.getItem('planner_habits');
+        if (rawHabits) {
+          const parsed = JSON.parse(rawHabits);
+          habitsTotal = parsed.habits?.length || 0;
+          habitsDone = parsed.habits?.filter(h => h.doneToday).length || 0;
+        }
+        const rawMoods = localStorage.getItem('planner_moods');
+        if (rawMoods) {
+          const history = JSON.parse(rawMoods);
+          const entry = history[today];
+          if (entry && MOOD_MAP[entry.moodId]) {
+            moodLabel = MOOD_MAP[entry.moodId].label;
+          }
+        }
+        const rawNotes = localStorage.getItem('planner_notes');
+        if (rawNotes) {
+          notesCount = JSON.parse(rawNotes).length;
+        }
+        const rawSchedule = localStorage.getItem('planner_schedule');
+        if (rawSchedule) {
+          const slots = JSON.parse(rawSchedule);
+          const activeSlots = Object.keys(slots).filter(h => slots[h]?.task?.trim());
+          tasksTotal = activeSlots.length;
+          tasksDone = activeSlots.filter(h => slots[h]?.done).length;
+        }
+      } catch (_) {}
+    }
+
+    const list = [];
+    let idx = 1;
+
+    if (habitsDone > 0) {
+      list.push({
+        id: idx++,
+        icon: '✅',
+        text: `${habitsDone} habit${habitsDone !== 1 ? 's' : ''} completed today!`,
+        sub: habitsDone === habitsTotal ? 'All habits completed! Perfect streak! 🔥' : 'Keep the streak going 🔥',
+        page: 'Habits',
+        time: 'Just now',
+        color: '#A78BFA',
+        bg: 'bg-violet-50',
+        badge: 'bg-violet-100 text-violet-700'
+      });
+    }
+
+    if (waterGlasses > 0) {
+      const goalReached = waterGlasses >= waterGoal;
+      list.push({
+        id: idx++,
+        icon: '💧',
+        text: goalReached ? 'Water goal reached! 🎉' : 'Hydration logged',
+        sub: goalReached ? `${waterGlasses}/${waterGoal} glasses — amazing hydration!` : `You are at ${waterGlasses}/${waterGoal} glasses`,
+        page: 'Water',
+        time: 'Just now',
+        color: '#8DB4FF',
+        bg: 'bg-sky-50',
+        badge: 'bg-sky-100 text-sky-700'
+      });
+    }
+
+    if (tasksDone > 0) {
+      const allDone = tasksDone === tasksTotal;
+      list.push({
+        id: idx++,
+        icon: '📅',
+        text: allDone ? 'All events completed! 🏆' : `${tasksDone}/${tasksTotal} tasks completed`,
+        sub: allDone ? 'Outstanding job staying on schedule!' : 'Keep ticking off your day plan.',
+        page: 'Schedule',
+        time: 'Just now',
+        color: '#F59E0B',
+        bg: 'bg-amber-50',
+        badge: 'bg-amber-100 text-amber-700'
+      });
+    }
+
+    if (moodLabel) {
+      list.push({
+        id: idx++,
+        icon: '😊',
+        text: 'Mood logged today',
+        sub: `You are feeling "${moodLabel}" today.`,
+        page: 'Mood',
+        time: 'Just now',
+        color: '#22C55E',
+        bg: 'bg-emerald-50',
+        badge: 'bg-emerald-100 text-emerald-700'
+      });
+    }
+
+    if (notesCount > 0) {
+      list.push({
+        id: idx++,
+        icon: '📝',
+        text: 'Notes captured',
+        sub: `You have saved ${notesCount} active note${notesCount !== 1 ? 's' : ''}`,
+        page: 'Notes',
+        time: 'Just now',
+        color: '#f472b6',
+        bg: 'bg-pink-50',
+        badge: 'bg-pink-100 text-pink-700'
+      });
+    }
+
+    setNotifications(list);
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
+
+  useEffect(() => {
+    window.addEventListener('planner-data-changed', loadNotifications);
+    return () => window.removeEventListener('planner-data-changed', loadNotifications);
+  }, [loadNotifications]);
+
+  const visible = notifications.filter(n =>
     !cleared.has(n.id) && (filter === 'All' || n.page === filter)
   );
 
@@ -33,10 +213,10 @@ export default function NotificationsPage() {
             {visible.length} notification{visible.length !== 1 ? 's' : ''}
           </p>
         </div>
-        {cleared.size < ALL_NOTIFICATIONS.length && (
+        {cleared.size < notifications.length && notifications.length > 0 && (
           <button
-            onClick={() => setCleared(new Set(ALL_NOTIFICATIONS.map(n => n.id)))}
-            className="text-xs font-black text-slate-400 hover:text-rose-500 transition-colors px-3 py-1.5 rounded-xl hover:bg-rose-50 border border-slate-200 hover:border-rose-200"
+            onClick={() => setCleared(new Set(notifications.map(n => n.id)))}
+            className="text-xs font-black text-slate-400 hover:text-rose-500 transition-colors px-3 py-1.5 rounded-xl hover:bg-rose-50 border border-slate-200 hover:border-rose-200 cursor-pointer"
           >
             Clear all
           </button>

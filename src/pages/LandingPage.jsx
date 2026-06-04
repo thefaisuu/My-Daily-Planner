@@ -485,7 +485,7 @@ export default function LandingPage({ onLogin, onSignup }) {
             <span className="font-black text-white text-sm">My Daily Planner</span>
           </div>
           <p className="text-slate-500 text-xs font-medium">
-            © {new Date().getFullYear()} My Daily Planner. Built with ❤️ for productivity lovers.
+            © {new Date().getFullYear()} Made with ♥️ by Haider & Faisal
           </p>
           <div className="flex gap-4">
             {['Privacy', 'Terms', 'Contact'].map(link => (
