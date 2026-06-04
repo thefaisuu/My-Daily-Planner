@@ -708,15 +708,7 @@ export default function NotesPage() {
               {notes.length} notes · {pinnedCount} pinned
             </p>
           </div>
-          <button
-            onClick={() => setModal({})}
-            className="btn-primary flex items-center gap-2 flex-shrink-0"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            New Note
-          </button>
+
         </div>
 
         {/* ── Search ── */}

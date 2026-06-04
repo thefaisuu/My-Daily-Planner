@@ -832,16 +832,7 @@ export default function HabitsPage() {
               &nbsp;·&nbsp;{doneCount}/{total} completed today
             </p>
           </div>
-          <button
-            id="add-habit-btn"
-            onClick={() => { setHabitToEdit(null); setShowModal(true); }}
-            className="btn-primary flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            New Habit
-          </button>
+
         </div>
 
         {/* ── Top summary row ── */}

@@ -1117,10 +1117,48 @@ export default function SchedulePage() {
     if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
   }, [currentHour]);
 
+  const eventsSlots = SLOTS.filter(s => {
+    const data = slotData[s.hour];
+    if (!data?.task?.trim()) return false;
+    const currentH = now.getHours();
+    const currentM = now.getMinutes();
+    const currentMin = currentH * 60 + currentM;
+    const getMins = (timeStr, defaultHour) => {
+      if (timeStr) {
+        const [h, m] = timeStr.split(':').map(Number);
+        if (!isNaN(h)) return h * 60 + (m || 0);
+      }
+      return defaultHour * 60;
+    };
+    const startMin = getMins(data.startTime, s.hour);
+    const endMin   = getMins(data.endTime, s.hour + 1);
+    const isCurrent = currentMin >= startMin && currentMin < endMin;
+    const isFuture  = startMin > currentMin;
+    return isCurrent || isFuture;
+  });
+
   /* Filter — always only show filled slots */
   const visibleSlots = SLOTS.filter(s => {
-    if (!slotData[s.hour]?.task?.trim()) return false; // never show empty slots
-    if (activeFilter === 'completed') return slotData[s.hour]?.done;
+    const data = slotData[s.hour];
+    if (!data?.task?.trim()) return false; // never show empty slots
+    if (activeFilter === 'completed') return data?.done;
+    if (activeFilter === 'events') {
+      const currentH = now.getHours();
+      const currentM = now.getMinutes();
+      const currentMin = currentH * 60 + currentM;
+      const getMins = (timeStr, defaultHour) => {
+        if (timeStr) {
+          const [h, m] = timeStr.split(':').map(Number);
+          if (!isNaN(h)) return h * 60 + (m || 0);
+        }
+        return defaultHour * 60;
+      };
+      const startMin = getMins(data.startTime, s.hour);
+      const endMin   = getMins(data.endTime, s.hour + 1);
+      const isCurrent = currentMin >= startMin && currentMin < endMin;
+      const isFuture  = startMin > currentMin;
+      return isCurrent || isFuture;
+    }
     return true; // 'all' = all filled slots
   }).sort((a, b) => {
     const dataA = slotData[a.hour];
@@ -1128,11 +1166,14 @@ export default function SchedulePage() {
     const getStartMin = (slot, data) => {
       if (data?.startTime) {
         const [sh, sm] = data.startTime.split(':').map(Number);
-        if (!isNaN(sh)) return sh * 60 + (sm || 0);
+        if (!isNaN(sh)) return h => sh * 60 + (sm || 0);
       }
       return slot.hour * 60;
     };
-    return getStartMin(a, dataA) - getStartMin(b, dataB);
+    // Fix getStartMin return value
+    const valA = dataA?.startTime ? (() => { const [h, m] = dataA.startTime.split(':').map(Number); return h * 60 + (m || 0); })() : a.hour * 60;
+    const valB = dataB?.startTime ? (() => { const [h, m] = dataB.startTime.split(':').map(Number); return h * 60 + (m || 0); })() : b.hour * 60;
+    return valA - valB;
   });
 
   const filledSlots = SLOTS.filter(s => slotData[s.hour]?.task?.trim());
@@ -1236,16 +1277,7 @@ export default function SchedulePage() {
                 </button>
               )}
 
-              {/* Add Event */}
-              <button
-                onClick={openNextEmpty}
-                className="btn-primary flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                Add Event
-              </button>
+
             </div>
           </div>
         </div>
@@ -1273,6 +1305,7 @@ export default function SchedulePage() {
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 {[
                   { id: 'all',       label: `All (${filledSlots.length})`  },
+                  { id: 'events',    label: `Events (${eventsSlots.length})` },
                   { id: 'completed', label: `Done (${doneSlots.length})`   },
                 ].map(f => (
                   <button key={f.id} onClick={() => setFilt(f.id)}
