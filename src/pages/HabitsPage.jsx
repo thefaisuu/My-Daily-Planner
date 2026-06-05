@@ -411,7 +411,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
           {/* Icon picker */}
           <div>
             <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              Choose Icon
+              Choose Emoji
             </label>
             <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
               {ICON_OPTIONS.map(name => {
@@ -436,7 +436,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                   ${showCustomInput 
                     ? 'border-pink-500 text-[#4F7CFF] scale-110' 
                     : darkMode ? 'border-slate-700 hover:bg-slate-700 text-slate-400' : 'border-slate-300 hover:bg-slate-100 text-slate-500'}`}
-                title="Choose custom icon name"
+                title="Choose custom emoji"
               >
                 <Plus size={18} strokeWidth={1.5} />
               </button>
@@ -938,7 +938,7 @@ export default function HabitsPage() {
         {habits.length > 0 && (
           <div className={`mt-8 text-center text-xs font-semibold flex items-center justify-center gap-1.5 ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
             <Clock size={13} strokeWidth={1.5} />
-            <span>Habits reset automatically at midnight · Hover a card to delete it</span>
+            <span>Habits reset automatically at midnight</span>
           </div>
         )}
       </div>
