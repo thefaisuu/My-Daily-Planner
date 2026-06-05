@@ -467,23 +467,6 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
             )}
           </div>
 
-          {/* Theme picker */}
-          <div>
-            <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              Card Color
-            </label>
-            <div className="flex gap-2 flex-wrap">
-              {PASTEL_THEMES.map(t => (
-                <button key={t.id} onClick={() => setTheme(t.id)}
-                  className={`w-9 h-9 rounded-xl border-2 transition-all duration-150 hover:scale-110
-                    ${theme === t.id ? 'scale-110 border-slate-500 shadow-md' : 'border-transparent'}`}
-                  style={{ background: `linear-gradient(135deg, ${t.ring}, ${t.bg})` }}
-                  title={t.id}
-                />
-              ))}
-            </div>
-          </div>
-
           {/* Actions */}
           <div className="flex gap-3 pt-1">
             <button onClick={onClose}

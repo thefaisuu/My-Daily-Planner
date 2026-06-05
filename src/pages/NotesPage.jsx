@@ -126,7 +126,7 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setConfirmDel(false); }}
-      onClick={() => onEdit(note)}
+      onClick={() => onEdit({ ...note, viewOnly: true })}
     >
       {/* Pin badge */}
       {note.pinned && (
@@ -144,7 +144,7 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
       >
         {/* Edit */}
         <button
-          onClick={() => onEdit(note)}
+          onClick={() => onEdit({ ...note, viewOnly: false })}
           title="Edit note"
           className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70 cursor-pointer"
         >
@@ -160,29 +160,6 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
         >
           <Pin className={`w-3.5 h-3.5 ${note.pinned ? 'text-amber-600 fill-amber-600' : 'text-slate-500'}`} strokeWidth={1.5} style={{ transform: note.pinned ? 'none' : 'rotate(45deg)' }} />
         </button>
-
-        {/* Color picker */}
-        <div className="relative group/color">
-          <button
-            className="w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110 bg-white/70 dark:bg-slate-700/70 cursor-pointer"
-            title="Change color"
-          >
-            <Palette className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
-          </button>
-          {/* Color palette popup */}
-          <div className="absolute right-0 top-9 hidden group-hover/color:flex flex-wrap gap-1.5 p-2.5 rounded-2xl shadow-xl border z-20 w-32
-            bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700">
-            {COLORS.map(col => (
-              <button key={col.id}
-                onClick={() => onColorChange(note.id, col.id)}
-                className={`w-7 h-7 rounded-xl transition-all hover:scale-110 border-2
-                  ${note.color === col.id ? 'border-slate-500 scale-110' : 'border-transparent'}`}
-                style={{ background: col.bg, borderColor: note.color === col.id ? col.accent : 'transparent' }}
-                title={col.id}
-              />
-            ))}
-          </div>
-        </div>
 
         {/* Delete */}
         {confirmDel ? (
@@ -221,16 +198,8 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
         {note.body}
       </p>
 
-      <div className="flex items-center justify-between mt-4 pt-3 border-t"
+      <div className="flex items-center justify-end mt-4 pt-3 border-t"
         style={{ borderColor: darkMode ? c.dark.border : c.border }}>
-        <button
-          onClick={(e) => { e.stopPropagation(); onEdit(note); }}
-          className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider hover:opacity-80 transition-all cursor-pointer"
-          style={{ color: c.accent }}
-        >
-          <Edit2 size={11} strokeWidth={2.5} />
-          <span>Edit</span>
-        </button>
         <span className="text-[10px] font-semibold opacity-50"
           style={{ color: darkMode ? '#94a3b8' : c.text }}>
           {timeAgo(note.updatedAt)}
@@ -243,10 +212,10 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
 /* ═══════════════════════════════════════════════════════
    NOTE EDITOR MODAL
 ═══════════════════════════════════════════════════════ */
-function NoteModal({ note, darkMode, onSave, onClose }) {
+function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   const [title,  setTitle]  = useState(note?.title  || '');
   const [body,   setBody]   = useState(note?.body   || '');
-  const [color,  setColor]  = useState(note?.color  || 'pink');
+  const [color,  setColor]  = useState(note?.color  || 'slate');
   const [saved,  setSaved]  = useState(false);
   const autoSaveRef = useRef(null);
   const titleRef    = useRef(null);
@@ -259,10 +228,13 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
     noteIdRef.current = note?.id;
   }, [note?.id]);
 
-  useEffect(() => { titleRef.current?.focus(); }, []);
+  useEffect(() => {
+    if (!viewOnly) titleRef.current?.focus();
+  }, [viewOnly]);
 
   /* Auto-save debounce */
   useEffect(() => {
+    if (viewOnly) return;
     if (!title.trim() && !body.trim()) return;
     clearTimeout(autoSaveRef.current);
     setSaved(false);
@@ -272,11 +244,11 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
       setTimeout(() => setSaved(false), 2000);
     }, 800);
     return () => clearTimeout(autoSaveRef.current);
-  }, [title, body, color]);
+  }, [title, body, color, viewOnly]);
 
   const handleClose = () => {
     clearTimeout(autoSaveRef.current);
-    if (title.trim() || body.trim()) {
+    if (!viewOnly && (title.trim() || body.trim())) {
       onSave({ id: noteIdRef.current, title, body, color }, true);
     }
     onClose();
@@ -309,19 +281,23 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
           <div className="flex items-center gap-2">
             {isNew ? (
               <Sparkles size={16} style={{ color: c.accent }} />
+            ) : viewOnly ? (
+              <FileText size={16} style={{ color: c.accent }} />
             ) : (
               <Edit2 size={16} style={{ color: c.accent }} />
             )}
             <p className="text-xs font-black uppercase tracking-wider" style={{ color: c.accent }}>
-              {isNew ? 'New Note' : 'Edit Note'}
+              {isNew ? 'New Note' : viewOnly ? 'View Note' : 'Edit Note'}
             </p>
           </div>
           <div className="flex items-center gap-3">
             {/* Auto-save indicator */}
-            <span className={`text-[11px] font-bold transition-all duration-300 ${saved ? 'opacity-100' : 'opacity-0'}`}
-              style={{ color: c.accent }}>
-              ✓ Saved
-            </span>
+            {!viewOnly && (
+              <span className={`text-[11px] font-bold transition-all duration-300 ${saved ? 'opacity-100' : 'opacity-0'}`}
+                style={{ color: c.accent }}>
+                ✓ Saved
+              </span>
+            )}
             <button onClick={handleClose}
               className="w-8 h-8 rounded-xl flex items-center justify-center text-lg transition-all hover:scale-110 cursor-pointer"
               style={{ background: `${c.accent}22`, color: c.accent }}>
@@ -330,32 +306,13 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
           </div>
         </div>
 
-        {/* Color picker strip */}
-        <div className="flex items-center gap-2 px-6 pb-3 flex-shrink-0 bg-transparent">
-          <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" style={{ color: darkMode ? undefined : `${c.text}88` }}>Color:</span>
-          <div className="flex gap-1.5">
-            {COLORS.map(col => (
-              <button key={col.id}
-                onClick={() => setColor(col.id)}
-                className={`w-6 h-6 rounded-lg transition-all duration-150 hover:scale-110 border-2`}
-                style={{
-                  background: col.bg,
-                  borderColor: color === col.id ? col.accent : 'transparent',
-                  transform: color === col.id ? 'scale(1.2)' : undefined,
-                  boxShadow: color === col.id ? `0 2px 8px ${col.accent}60` : 'none',
-                }}
-                title={col.id}
-              />
-            ))}
-          </div>
-        </div>
-
         {/* Title */}
         <input
           ref={titleRef}
           value={title}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="Note title…"
+          onChange={e => !viewOnly && setTitle(e.target.value)}
+          placeholder={viewOnly ? "" : "Note title…"}
+          readOnly={viewOnly}
           className="w-full px-6 py-3.5 text-xl font-black bg-transparent outline-none border-0 placeholder-slate-400/70"
           style={{ color: darkMode ? '#f1f5f9' : c.text }}
         />
@@ -366,8 +323,9 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
         {/* Body */}
         <textarea
           value={body}
-          onChange={e => setBody(e.target.value)}
-          placeholder="Write your note here… (auto-saves as you type)"
+          onChange={e => !viewOnly && setBody(e.target.value)}
+          placeholder={viewOnly ? "" : "Write your note here… (auto-saves as you type)"}
+          readOnly={viewOnly}
           className="flex-1 w-full px-6 py-4 text-sm font-medium bg-transparent outline-none resize-none leading-relaxed placeholder-slate-400/70 min-h-48"
           style={{ color: darkMode ? '#e2e8f0' : c.text }}
         />
@@ -386,7 +344,7 @@ function NoteModal({ note, darkMode, onSave, onClose }) {
           <button onClick={handleClose}
             className="px-5 py-2 rounded-2xl text-sm font-black text-white transition-all hover:shadow-md hover:-translate-y-0.5 active:scale-95 cursor-pointer animate-fade-in"
             style={{ background: c.accent, color: darkMode ? '#0f172a' : '#ffffff' }}>
-            Done ✓
+            {viewOnly ? 'Close' : 'Done ✓'}
           </button>
         </div>
       </div>
@@ -423,7 +381,6 @@ export default function NotesPage() {
   const [notes,       setNotes]       = useState([]);
   const [modal,       setModal]       = useState(null);  // null | note object (empty = new)
   const [search,      setSearch]      = useState('');
-  const [colorFilter, setColorFilter] = useState('all');
   const [columns,     setColumns]     = useState(3);
   const [loading,     setLoading]     = useState(false);
 
@@ -491,7 +448,6 @@ export default function NotesPage() {
   /* Filtered + sorted notes */
   const filtered = useMemo(() => {
     let list = [...notes];
-    if (colorFilter !== 'all') list = list.filter(n => n.color === colorFilter);
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(n => n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q));
@@ -502,7 +458,7 @@ export default function NotesPage() {
       return b.updatedAt - a.updatedAt;
     });
     return list;
-  }, [notes, colorFilter, search]);
+  }, [notes, search]);
 
   const masonry = useMasonry(filtered, columns);
 
@@ -709,6 +665,7 @@ export default function NotesPage() {
       {modal !== null && (
         <NoteModal
           note={modal}
+          viewOnly={modal?.viewOnly}
           darkMode={darkMode}
           onSave={handleSave}
           onClose={() => setModal(null)}
