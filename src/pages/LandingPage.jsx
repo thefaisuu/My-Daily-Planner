@@ -108,7 +108,7 @@ function AnimatedStat({ value, label, icon, delay = 0 }) {
         {icon}
       </div>
       <p className="text-4xl font-black text-white">{value}</p>
-      <p className="text-sm font-semibold text-white/70">{label}</p>
+      <p className="text-sm font-semibold text-slate-200">{label}</p>
     </div>
   );
 }
@@ -145,7 +145,7 @@ function FeatureCard({ feature, index }) {
         <CardIcon size={20} strokeWidth={1.5} className="text-white" />
       </div>
       <h3 className="font-black text-slate-800 text-base mb-2">{feature.title}</h3>
-      <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
+      <p className="text-sm text-slate-600 leading-relaxed">{feature.desc}</p>
     </div>
   );
 }
@@ -208,7 +208,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="hidden md:flex items-center gap-6">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="text-sm font-semibold text-slate-600 hover:text-[#7DD3FC] transition-colors">
+                className="text-sm font-semibold text-slate-600 hover:text-[#4F7CFF] transition-colors">
                 {label}
               </button>
             ))}
@@ -222,7 +222,7 @@ export default function LandingPage({ onLogin, onSignup }) {
             </button>
             <button onClick={onSignup}
               className="px-5 py-2 rounded-2xl text-sm font-bold text-white shadow-lg hover:shadow-blue-100 hover:-translate-y-0.5 transition-all"
-              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
               Get Started Free →
             </button>
           </div>
@@ -247,7 +247,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 shadow-xl">
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-[#7DD3FC]">
+                className="block w-full text-left py-2 font-bold text-slate-700 hover:text-[#4F7CFF]">
                 {label}
               </button>
             ))}
@@ -256,7 +256,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                 Log In
               </button>
               <button onClick={onSignup} className="w-full py-2.5 rounded-2xl font-bold text-white text-center shadow-md"
-                style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
+                style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
                 Get Started Free →
               </button>
             </div>
@@ -282,7 +282,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-200 bg-white/80 backdrop-blur-sm shadow-sm mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Personal Productivity Suite</span>
+            <span className="text-xs font-bold text-[#4F7CFF] uppercase tracking-widest">Personal Productivity Suite</span>
           </div>
 
           {/* Headline */}
@@ -290,14 +290,14 @@ export default function LandingPage({ onLogin, onSignup }) {
             Your entire life,{' '}
             <span className="relative inline-block">
               <span className="relative z-10 text-transparent bg-clip-text"
-                style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC, #F7F9FF)' }}>
+                style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
                 beautifully organized
               </span>
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed mb-10 font-medium">
+          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed mb-10 font-semibold">
             Habits, schedule, notes, mood, water, and focus timer — all in one gorgeous personal planner that actually helps you grow.
           </p>
 
@@ -305,7 +305,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14">
             <button onClick={onSignup}
               className="group flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-2xl hover:shadow-blue-100 hover:-translate-y-1 active:translate-y-0 transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
+              style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
               <span>Start for Free</span>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -313,7 +313,7 @@ export default function LandingPage({ onLogin, onSignup }) {
             </button>
             <button onClick={onLogin}
               className="flex items-center gap-2 px-8 py-4 rounded-2xl text-[#1E293B] font-bold text-base border-2 border-slate-200 bg-white/80 hover:border-blue-300 hover:bg-[#F0F4FF]/80 transition-all duration-200">
-              <svg className="w-5 h-5 text-[#7DD3FC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-5 h-5 text-[#4F7CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In to Dashboard
@@ -341,7 +341,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                       <CardIcon size={16} style={{ color: card.color }} strokeWidth={1.5} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.color + 'aa' }}>{card.label}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-700">{card.label}</p>
                       <p className="text-sm font-black mt-0.5" style={{ color: card.color }}>{card.value}</p>
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       </section>
 
       {/* ── Stats Section ── */}
-      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #4F7CFF, #F0F4FF, #7DD3FC)' }}>
+      <section className="py-16 px-4" style={{ background: 'linear-gradient(135deg, #1E293B, #3B66E8, #4F7CFF)' }}>
         <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8">
           {STATS.map((stat, i) => (
             <AnimatedStat key={i} {...stat} delay={i * 100} />
@@ -366,14 +366,14 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-sky-100 mb-4">
-              <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Everything You Need</span>
+              <span className="text-xs font-bold text-[#4F7CFF] uppercase tracking-widest">Everything You Need</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-[#1E293B] mb-4">6 powerful tools,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
                 one beautiful app
               </span>
             </h2>
-            <p className="text-lg text-slate-500 max-w-xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-xl mx-auto font-medium">
               Everything you need to build better habits, stay focused, and live intentionally — all in one place.
             </p>
           </div>
@@ -391,10 +391,10 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-sky-100 shadow-sm mb-4">
-              <span className="text-xs font-bold text-[#7DD3FC] uppercase tracking-widest">Simple Setup</span>
+              <span className="text-xs font-bold text-[#4F7CFF] uppercase tracking-widest">Simple Setup</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-[#1E293B] mb-4">Up and running in{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}>
                 60 seconds
               </span>
             </h2>
@@ -434,7 +434,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                     <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: step.color }}>Step {step.step}</span>
                   </div>
                   <h3 className="font-black text-slate-800 text-lg mb-1">{step.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -482,7 +482,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* ── Final CTA Section ── */}
       <section className="py-24 px-4 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #4F7CFF 0%, #F0F4FF 40%, #7DD3FC 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #1E293B, #3B66E8, #4F7CFF)' }}>
         <FloatingOrbs />
         <div className="relative max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-5xl mx-auto mb-8 shadow-xl">
@@ -493,7 +493,7 @@ export default function LandingPage({ onLogin, onSignup }) {
             <span className="text-yellow-300">best days</span>{' '}
             today
           </h2>
-          <p className="text-white/80 text-lg mb-10 leading-relaxed font-medium">
+          <p className="text-slate-200 text-lg mb-10 leading-relaxed font-semibold">
             Join thousands building better habits, staying focused, and feeling great — one day at a time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -509,7 +509,7 @@ export default function LandingPage({ onLogin, onSignup }) {
               Already have an account? Log in →
             </button>
           </div>
-          <p className="text-white/50 text-xs mt-6 font-medium">No credit card required · Free forever · Your data stays private</p>
+          <p className="text-slate-400 text-xs mt-6 font-medium">No credit card required · Free forever · Your data stays private</p>
         </div>
       </section>
 
@@ -536,7 +536,7 @@ export default function LandingPage({ onLogin, onSignup }) {
                   setActiveTab(link.toLowerCase());
                   window.scrollTo(0, 0);
                 }}
-                className="text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors"
+                className="text-slate-400 hover:text-white text-xs font-medium transition-colors"
               >
                 {link}
               </button>
