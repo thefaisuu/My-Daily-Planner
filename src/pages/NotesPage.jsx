@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText, Bold, Italic, Underline, Highlighter, List, ListOrdered, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Undo, Redo } from 'lucide-react';
+import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText, Bold, Italic, Underline, Highlighter, List, ListOrdered, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Undo, Redo, Baseline } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -146,10 +146,9 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
         </div>
       )}
 
-      {/* Action bar — visible on hover */}
+      {/* Action bar — visible on hover on desktop, always visible on mobile */}
       <div
-        className={`absolute top-3 right-3 flex items-center gap-1.5 transition-all duration-200 z-10
-          ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
+        className="absolute top-3 right-3 flex items-center gap-1.5 transition-all duration-200 z-10 opacity-100 sm:opacity-0 sm:pointer-events-none sm:-translate-y-1 sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto sm:group-hover:translate-y-0"
         onClick={e => e.stopPropagation()}
       >
         {/* Edit */}
@@ -236,9 +235,13 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   const [body,   setBody]   = useState(note?.body   || '');
   const [color,  setColor]  = useState(note?.color  || 'slate');
   const [saved,  setSaved]  = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const savedRangeRef = useRef(null);
   const autoSaveRef = useRef(null);
   const titleRef    = useRef(null);
   const editorRef   = useRef(null);
+  const textColorRef = useRef(null);
   const backdropRef = useRef(null);
   const isNew = !note?.id;
   const c = COLOR_MAP[color] || COLORS[0];
@@ -280,10 +283,53 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   };
 
   const handleLink = () => {
-    const url = prompt('Enter the link URL:');
-    if (url) {
-      runCommand('createLink', url);
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+      savedRangeRef.current = sel.getRangeAt(0);
+    } else {
+      savedRangeRef.current = null;
     }
+    setLinkUrl('');
+    setShowLinkModal(true);
+  };
+
+  const handleLinkConfirm = () => {
+    setShowLinkModal(false);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    if (savedRangeRef.current) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRangeRef.current);
+    }
+    if (linkUrl.trim()) {
+      let formattedUrl = linkUrl.trim();
+      if (!/^https?:\/\//i.test(formattedUrl) && !/^mailto:/i.test(formattedUrl)) {
+        formattedUrl = 'https://' + formattedUrl;
+      }
+      runCommand('createLink', formattedUrl);
+    }
+  };
+
+  const handleLinkCancel = () => {
+    setShowLinkModal(false);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    if (savedRangeRef.current) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRangeRef.current);
+    }
+  };
+
+  const handleTextColorClick = () => {
+    textColorRef.current?.click();
+  };
+
+  const handleTextColorChange = (e) => {
+    runCommand('foreColor', e.target.value);
   };
 
   /* Auto-save debounce */
@@ -373,29 +419,6 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
         {/* Divider */}
         <div className="mx-6 h-px flex-shrink-0" style={{ backgroundColor: darkMode ? `${c.accent}30` : c.border }} />
 
-        {/* Color picker strip (only when not viewOnly) */}
-        {!viewOnly && (
-          <div className="flex items-center gap-2 px-6 pt-3 pb-1 flex-shrink-0 bg-transparent">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" style={{ color: darkMode ? undefined : `${c.text}88` }}>Color:</span>
-            <div className="flex gap-1.5">
-              {COLORS.map(col => (
-                <button key={col.id}
-                  type="button"
-                  onClick={() => setColor(col.id)}
-                  className="w-6 h-6 rounded-lg transition-all duration-150 hover:scale-110 border-2 cursor-pointer"
-                  style={{
-                    background: col.bg,
-                    borderColor: color === col.id ? col.accent : 'transparent',
-                    transform: color === col.id ? 'scale(1.2)' : undefined,
-                    boxShadow: color === col.id ? `0 2px 8px ${col.accent}60` : 'none',
-                  }}
-                  title={col.id}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Toolbar (only if editing) */}
         {!viewOnly && (
           <div className="flex flex-wrap items-center gap-1.5 px-6 py-2 border-b text-slate-500 overflow-x-auto flex-shrink-0"
@@ -437,6 +460,22 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
               className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-[#eab308]"
             >
               <Highlighter size={15} strokeWidth={2} />
+            </button>
+
+            {/* Text Color */}
+            <button
+              type="button"
+              onClick={handleTextColorClick}
+              title="Text Color"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300 relative"
+            >
+              <Baseline size={15} strokeWidth={2} />
+              <input
+                ref={textColorRef}
+                type="color"
+                onChange={handleTextColorChange}
+                className="sr-only"
+              />
             </button>
 
             <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
@@ -577,6 +616,67 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
           </button>
         </div>
       </div>
+
+      {/* Custom Link Modal Popup */}
+      {showLinkModal && (
+        <div 
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          onClick={handleLinkCancel}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl border-2 shadow-2xl p-6 animate-bounce-in flex flex-col gap-4"
+            style={{
+              background: darkMode ? '#1e293b' : '#ffffff',
+              borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2">
+              <LinkIcon size={16} className="text-[#4F7CFF]" />
+              <h4 className="text-sm font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Insert Link
+              </h4>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 dark:text-slate-500">URL Address</label>
+              <input
+                type="text"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="w-full px-4 py-2.5 rounded-2xl border-2 bg-transparent text-sm font-semibold outline-none transition-all focus:border-[#4F7CFF]"
+                style={{
+                  borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                  color: darkMode ? '#ffffff' : '#1e293b',
+                }}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleLinkConfirm();
+                  if (e.key === 'Escape') handleLinkCancel();
+                }}
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 mt-2">
+              <button
+                type="button"
+                onClick={handleLinkCancel}
+                className="px-4 py-2 rounded-2xl text-xs font-black text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleLinkConfirm}
+                className="px-5 py-2 rounded-2xl text-xs font-black text-white hover:shadow-md active:scale-95 transition-all cursor-pointer bg-[#4F7CFF]"
+              >
+                Insert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1018,13 +1118,7 @@ export default function NotesPage() {
           </>
         )}
 
-        {/* Bottom note count */}
-        {notes.length > 0 && (
-          <div className={`mt-8 text-center text-xs font-semibold flex items-center justify-center gap-1.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-            <FileText size={13} strokeWidth={1.5} />
-            <span>{notes.length} notes · Auto-saves as you type · Hover a card to edit, pin, or delete</span>
-          </div>
-        )}
+
       </div>
 
 
