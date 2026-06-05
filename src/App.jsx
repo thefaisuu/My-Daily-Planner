@@ -60,12 +60,16 @@ function ToastNotification({ message, type, action, playSound, onDone }) {
     return () => clearTimeout(id);
   }, [message, type, action, playSound, onDone]);
 
+  const cleanMessage = typeof message === 'string'
+    ? (message.endsWith(' ✓') ? message.slice(0, -2) : message.endsWith('✓') ? message.slice(0, -1) : message)
+    : message;
+
   return (
     <div className={`fixed bottom-6 right-6 z-50 flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-black animate-bounce-in min-w-[280px] max-w-sm
       ${type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-indigo-500 text-white'}`}>
       <div className="flex items-center gap-3">
         <span>{type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-        <span>{message}</span>
+        <span>{cleanMessage}</span>
       </div>
       {action && (
         <button

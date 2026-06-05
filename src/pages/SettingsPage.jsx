@@ -7,6 +7,9 @@ import { Camera, Settings, Download, Trash2, Heart, Loader2, Check, X, Info } fr
 /* ── Toast ── */
 function Toast({ message, type = 'success', onDone }) {
   useState(() => { const id = setTimeout(onDone, 3000); return () => clearTimeout(id); });
+  const cleanMessage = typeof message === 'string'
+    ? (message.endsWith(' ✓') ? message.slice(0, -2) : message.endsWith('✓') ? message.slice(0, -1) : message)
+    : message;
   return (
     <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-black animate-bounce-in
       ${type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-indigo-500 text-white'}`}>
@@ -15,7 +18,7 @@ function Toast({ message, type = 'success', onDone }) {
          : type === 'error' ? <X className="w-4 h-4" strokeWidth={3} />
          : <Info className="w-4 h-4" strokeWidth={3} />}
       </span>
-      {message}
+      {cleanMessage}
     </div>
   );
 }
@@ -61,10 +64,7 @@ export default function SettingsPage() {
   const [avatarUrl, setAvatarUrl] = useState(user?.user_metadata?.avatar_url || '');
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
-  // Account settings states
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [updatingPassword, setUpdatingPassword] = useState(false);
+
 
   const [prefs, setPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('planner_prefs') || '{}'); } catch { return {}; }
@@ -267,42 +267,7 @@ export default function SettingsPage() {
     }
   };
 
-  // ── Change Password ──
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setToast({ message: 'Passwords do not match', type: 'error' });
-      return;
-    }
-    if (newPassword.length < 6) {
-      setToast({ message: 'Password must be at least 6 characters', type: 'error' });
-      return;
-    }
 
-    setUpdatingPassword(true);
-    setToast(null);
-
-    try {
-      if (supabase) {
-        const { error } = await supabase.auth.updateUser({ password: newPassword });
-        if (error) throw error;
-        setToast({ message: 'Password updated successfully ✓', type: 'success' });
-        setNewPassword('');
-        setConfirmPassword('');
-      } else {
-        // Mock fallback
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        setToast({ message: 'Mock password updated successfully ✓', type: 'success' });
-        setNewPassword('');
-        setConfirmPassword('');
-      }
-    } catch (err) {
-      console.error(err);
-      setToast({ message: err.message || 'Failed to update password', type: 'error' });
-    } finally {
-      setUpdatingPassword(false);
-    }
-  };
 
   // ── Delete Account ──
   const handleDeleteAccount = () => {
@@ -410,75 +375,25 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <div className="flex justify-between items-center pt-1">
-                <span className="text-xs font-semibold text-slate-400">
+              <div className="space-y-3 pt-1">
+                <div className="text-xs font-semibold text-slate-400">
                   Email: <span className="font-bold text-slate-500">{user?.email || 'ata@planner.app'}</span>
-                </span>
-                <button
-                  type="submit"
-                  disabled={updatingProfile}
-                  className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
-                >
-                  {updatingProfile ? 'Saving...' : 'Save Name ✓'}
-                </button>
+                </div>
+                <div className="flex justify-start">
+                  <button
+                    type="submit"
+                    disabled={updatingProfile}
+                    className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
+                  >
+                    {updatingProfile ? 'Saving...' : 'Save Name ✓'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
         </Section>
 
-        {/* ── ACCOUNT SECTION ── */}
-        <Section title="Account Security" icon={<PastelIcon name="Lock" colorType="danger" circleSize="w-9 h-9" size={16} />}>
-          <form onSubmit={handleChangePassword} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-55 transition-all"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-55 transition-all"
-                />
-              </div>
-            </div>
 
-            <div className="flex justify-between items-center pt-1 flex-wrap gap-3">
-              {/* Delete account triggers */}
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                className="text-xs font-black text-rose-500 border-2 border-rose-100 hover:bg-rose-50 px-4 py-2 rounded-2xl transition-colors cursor-pointer"
-              >
-                Delete Account
-              </button>
-
-              <button
-                type="submit"
-                disabled={updatingPassword}
-                className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
-              >
-                {updatingPassword ? 'Updating...' : 'Change Password ✓'}
-              </button>
-            </div>
-          </form>
-        </Section>
 
         {/* ── NOTIFICATIONS SECTION ── */}
         <Section title="Notifications" icon={<PastelIcon name="Bell" colorType="schedule" circleSize="w-9 h-9" size={16} />}>
@@ -556,6 +471,14 @@ export default function SettingsPage() {
                     <span>Clear All Data</span>
                   </>
                 )}
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                className="text-xs font-black border-2 text-rose-500 border-rose-200 hover:bg-rose-50 px-4 py-2 rounded-2xl transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Trash2 size={13} strokeWidth={1.5} />
+                <span>Delete Account</span>
               </button>
             </div>
           </div>
