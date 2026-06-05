@@ -367,7 +367,7 @@ export default function SettingsPage() {
           <PastelIcon name="Settings" colorType="settings" circleSize="w-12 h-12" size={22} />
           <h1 className="text-2xl font-black text-[#1E293B]">Settings</h1>
         </div>
-        <p className="text-sm font-semibold text-slate-500 mt-0.5">Customize your Planner AI experience</p>
+        <p className="text-sm font-semibold text-slate-500 mt-0.5">Customize your Planner experience</p>
       </div>
 
       <div className="max-w-2xl space-y-5">

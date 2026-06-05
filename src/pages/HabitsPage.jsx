@@ -817,7 +817,7 @@ export default function HabitsPage() {
       <div className="p-4 sm:p-6 lg:p-8 animate-fade-in">
 
         {/* ── Page header ── */}
-        <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
+        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
           <div className="flex items-center gap-3">
             <PastelIcon name="CheckSquare" colorType="habits" circleSize="w-12 h-12" size={22} />
             <div>
@@ -830,6 +830,14 @@ export default function HabitsPage() {
               </p>
             </div>
           </div>
+          <button
+            onClick={() => { setHabitToEdit(null); setShowModal(true); }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white shadow-md hover:shadow-blue-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer"
+            style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)' }}
+          >
+            <Plus size={16} strokeWidth={2} />
+            <span>New Habit</span>
+          </button>
         </div>
 
         {/* ── Top summary row ── */}
@@ -952,18 +960,7 @@ export default function HabitsPage() {
         )}
       </div>
 
-      {/* Floating Action Button (FAB) to Add Habit */}
-      <button
-        onClick={() => { setHabitToEdit(null); setShowModal(true); }}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#4F7CFF] to-[#7DD3FC] text-[#1E293B] flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group"
-        aria-label="Add new habit"
-        title="Add new habit"
-      >
-        <Plus
-          className="w-7 h-7 transition-transform group-hover:rotate-90 duration-300"
-          strokeWidth={1.5}
-        />
-      </button>
+
     </>
   );
 }

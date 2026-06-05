@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApp } from './context/AppContext';
+import { X, AlertTriangle, Info } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -176,6 +177,7 @@ export default function App() {
 
 /* ── Custom Confirm Modal ── */
 function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText, cancelText, isDanger }) {
+  const { darkMode } = useApp();
   if (!isOpen) return null;
 
   return (
@@ -188,33 +190,47 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
       
       {/* Card container */}
       <div 
-        className="relative bg-white border border-slate-100 shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center"
+        className={`relative border shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center transition-all ${
+          darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-800'
+        }`}
         role="dialog"
         aria-modal="true"
       >
         {/* Close Button */}
         <button 
           onClick={onCancel}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors text-lg cursor-pointer"
+          className={`absolute top-5 right-5 transition-colors cursor-pointer ${
+            darkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
+          }`}
         >
-          ✕
+          <X size={18} strokeWidth={1.5} />
         </button>
 
         <div className="flex flex-col items-center text-center space-y-4">
           {/* Icon */}
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-md ${
-            isDanger ? 'bg-rose-50 text-rose-500 border border-rose-100' : 'bg-indigo-50 text-indigo-500 border border-indigo-100'
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md ${
+            isDanger 
+              ? darkMode
+                ? 'bg-rose-950/40 text-rose-400 border border-rose-900/50'
+                : 'bg-rose-50 text-rose-500 border border-rose-100' 
+              : darkMode
+                ? 'bg-blue-950/40 text-blue-400 border border-blue-900/50'
+                : 'bg-blue-50 text-[#4F7CFF] border border-blue-100'
           }`}>
-            {isDanger ? '⚠️' : 'ℹ️'}
+            {isDanger ? (
+              <AlertTriangle size={28} strokeWidth={1.5} />
+            ) : (
+              <Info size={28} strokeWidth={1.5} />
+            )}
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-black text-slate-800 tracking-tight">
+          <h3 className={`text-lg font-black tracking-tight ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             {title}
           </h3>
 
           {/* Message */}
-          <p className="text-sm font-semibold text-slate-500 leading-relaxed max-w-sm">
+          <p className={`text-sm font-semibold leading-relaxed max-w-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {message}
           </p>
         </div>
@@ -223,7 +239,11 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 px-4 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all text-center cursor-pointer"
+            className={`flex-1 py-3 px-4 rounded-2xl border-2 font-bold text-sm transition-all text-center cursor-pointer ${
+              darkMode
+                ? 'border-slate-800 text-slate-400 hover:bg-slate-800'
+                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
           >
             {cancelText || 'Cancel'}
           </button>
@@ -231,8 +251,8 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
             onClick={onConfirm}
             className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center cursor-pointer ${
               isDanger 
-                ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100'
-                : 'bg-gradient-to-r from-indigo-500 to-violet-600 hover:shadow-indigo-100'
+                ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100/50'
+                : 'bg-gradient-to-r from-[#4F7CFF] to-[#3B66E8] hover:shadow-blue-100/50'
             }`}
           >
             {confirmText || 'Confirm'}

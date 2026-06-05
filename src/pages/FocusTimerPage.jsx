@@ -541,9 +541,11 @@ export default function FocusTimerPage() {
   return (
     <>
       {/* Mobile settings drawer */}
-      <BottomDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} darkMode={darkMode}>
-        <SettingsPanel settings={settings} setSettings={setSettings} onPreset={handlePreset} darkMode={darkMode} />
-      </BottomDrawer>
+      {drawerOpen && (
+        <BottomDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} darkMode={darkMode}>
+          <SettingsPanel settings={settings} setSettings={setSettings} onPreset={handlePreset} darkMode={darkMode} />
+        </BottomDrawer>
+      )}
 
       <div className="min-h-screen animate-fade-in flex flex-col">
 

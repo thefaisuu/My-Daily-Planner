@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Droplet, Droplets, Settings, Percent, Hourglass, Target, Waves, Sparkles, Heart, Trophy, BarChart2, Lightbulb, Moon } from 'lucide-react';
+import { Droplet, Droplets, Settings, Percent, Hourglass, Target, Waves, Sparkles, Heart, Trophy, BarChart2, Lightbulb, Moon, X } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & STORAGE

@@ -186,7 +186,6 @@ function EventModal({ hour, slotLabel, existing, allSlots, darkMode, onSave, onC
               <input
                 type="date"
                 value={date}
-                min={todayISO()}
                 onChange={e => setDate(e.target.value)}
                 className={`${inputCls} pr-4`}
                 style={{ colorScheme: darkMode ? 'dark' : 'light' }}
@@ -736,9 +735,9 @@ function CurrentTimeBar({ darkMode }) {
   );
 }
 
-function loadSchedule() {
+function loadSchedule(selectedDate = todayISO()) {
   const init = {};
-  SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: todayISO() }; });
+  SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
   return init;
 }
 
@@ -765,7 +764,7 @@ export default function SchedulePage() {
   const { darkMode, user, showToast } = useApp();
   const now = useNow();
   const currentHour = now.getHours();
-  const today = todayISO();
+  const [selectedDate, setSelectedDate] = useState(todayISO());
 
   const [slotData, setSlotData] = useState({});
   const [loading, setLoading]   = useState(false);
@@ -789,7 +788,7 @@ export default function SchedulePage() {
   // Load from DB or fallback
   const loadScheduleData = useCallback(async () => {
     if (!supabase || !user) {
-      setSlotData(loadSchedule());
+      setSlotData(loadSchedule(selectedDate));
       return;
     }
     setLoading(true);
@@ -798,12 +797,12 @@ export default function SchedulePage() {
         .from('schedule_tasks')
         .select('date, time_slot, task, completed')
         .eq('user_id', user.id)
-        .eq('date', today);
+        .eq('date', selectedDate);
 
       if (error) throw error;
 
       const init = {};
-      SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: today }; });
+      SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
 
       if (data) {
         data.forEach(row => {
@@ -841,11 +840,11 @@ export default function SchedulePage() {
       setSlotData(init);
     } catch (err) {
       console.error('Failed to load schedule tasks:', err);
-      setSlotData(loadSchedule());
+      setSlotData(loadSchedule(selectedDate));
     } finally {
       setLoading(false);
     }
-  }, [user, today]);
+  }, [user, selectedDate]);
 
   const calculateStreak = useCallback(async () => {
     if (!supabase || !user) {
@@ -1214,13 +1213,33 @@ export default function SchedulePage() {
                   Daily Schedule
                 </h1>
                 <p className={`text-sm font-semibold mt-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {DAYS[now.getDay()]}, {MONTHS[now.getMonth()]} {now.getDate()} · {filledSlots.length} events · {doneSlots.length} done
+                  {(() => {
+                    try {
+                      const [yr, mn, dy] = selectedDate.split('-').map(Number);
+                      const dObj = new Date(yr, mn - 1, dy);
+                      return dObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                    } catch (_) {
+                      return selectedDate;
+                    }
+                  })()} · {filledSlots.length} events · {doneSlots.length} done
                 </p>
               </div>
             </div>
 
             {/* Header buttons */}
             <div className="flex items-center gap-2 flex-wrap">
+              {/* Date Picker */}
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all border outline-none cursor-pointer ${
+                  darkMode
+                    ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-[#4F7CFF]'
+                    : 'bg-white border-slate-200 text-slate-700 focus:border-[#4F7CFF]'
+                }`}
+                style={{ colorScheme: darkMode ? 'dark' : 'light' }}
+              />
 
               {/* Google Calendar sync button */}
               <button
