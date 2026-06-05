@@ -5,6 +5,15 @@ import PastelIcon from '../components/PastelIcon';
 import { CheckSquare, Edit2, Trash2, Check, X, Flame, Plus, Sparkles, Trophy, Calendar, Leaf, Moon, Clock } from 'lucide-react';
 import * as Icons from 'lucide-react';
 
+function renderHabitIcon(iconName, className = "w-5 h-5") {
+  if (!iconName) return <Icons.CheckSquare className={className} strokeWidth={1.5} />;
+  const Icon = Icons[iconName];
+  if (Icon) {
+    return <Icon className={className} strokeWidth={1.5} />;
+  }
+  return <span className="text-xl leading-none">{iconName}</span>;
+}
+
 /* ═══════════════════════════════════════════════════════
    CONSTANTS & DEFAULTS
    ═══════════════════════════════════════════════════════ */
@@ -20,20 +29,20 @@ const PASTEL_THEMES = [
 ];
 
 const ICON_OPTIONS = [
-  'Brain', 'Activity', 'BookOpen', 'Pills', 'Droplet', 'Moon', 'Apple', 'PenTool', 'Smile',
-  'Target', 'Heart', 'Flame', 'Sparkles', 'Trophy', 'Calendar', 'Clock', 'Coffee', 'Music',
-  'Sun', 'Briefcase', 'GraduationCap', 'Home', 'Lock', 'Mail', 'MapPin', 'Bell', 'Settings'
+  '🧘', '🏃', '📚', '💊', '💧', '😴', '🍎', '✍️', '😊',
+  '🎯', '❤️', '🔥', '✨', '🏆', '📅', '⏰', '☕', '🎵',
+  '☀️', '💼', '🎓', '🏠', '🔒', '✉️', '📍', '🔔', '⚙️'
 ];
 
 const DEFAULT_HABITS = [
-  { id: 1,  name: 'Morning Meditation', icon: 'Brain', theme: 'purple', streak: 12, bestStreak: 21, doneToday: true,  createdAt: Date.now() },
-  { id: 2,  name: 'Exercise 30 min',    icon: 'Activity', theme: 'pink',   streak: 7,  bestStreak: 14, doneToday: true,  createdAt: Date.now() },
-  { id: 3,  name: 'Read 20 pages',      icon: 'BookOpen', theme: 'blue',   streak: 4,  bestStreak: 10, doneToday: false, createdAt: Date.now() },
-  { id: 4,  name: 'Take vitamins',      icon: 'Pills', theme: 'mint',   streak: 21, bestStreak: 30, doneToday: false, createdAt: Date.now() },
-  { id: 5,  name: 'Drink 8 glasses',    icon: 'Droplet', theme: 'cyan',   streak: 5,  bestStreak: 8,  doneToday: false, createdAt: Date.now() },
-  { id: 6,  name: 'Sleep by 11 PM',     icon: 'Moon', theme: 'lemon',  streak: 3,  bestStreak: 7,  doneToday: false, createdAt: Date.now() },
-  { id: 7,  name: 'Healthy eating',     icon: 'Apple', theme: 'peach',  streak: 9,  bestStreak: 15, doneToday: true,  createdAt: Date.now() },
-  { id: 8,  name: 'Evening journaling', icon: 'PenTool', theme: 'rose',   streak: 2,  bestStreak: 6,  doneToday: false, createdAt: Date.now() },
+  { id: 1,  name: 'Morning Meditation', icon: '🧘', theme: 'purple', streak: 12, bestStreak: 21, doneToday: true,  createdAt: Date.now() },
+  { id: 2,  name: 'Exercise 30 min',    icon: '🏃', theme: 'pink',   streak: 7,  bestStreak: 14, doneToday: true,  createdAt: Date.now() },
+  { id: 3,  name: 'Read 20 pages',      icon: '📚', theme: 'blue',   streak: 4,  bestStreak: 10, doneToday: false, createdAt: Date.now() },
+  { id: 4,  name: 'Take vitamins',      icon: '💊', theme: 'mint',   streak: 21, bestStreak: 30, doneToday: false, createdAt: Date.now() },
+  { id: 5,  name: 'Drink 8 glasses',    icon: '💧', theme: 'cyan',   streak: 5,  bestStreak: 8,  doneToday: false, createdAt: Date.now() },
+  { id: 6,  name: 'Sleep by 11 PM',     icon: '😴', theme: 'lemon',  streak: 3,  bestStreak: 7,  doneToday: false, createdAt: Date.now() },
+  { id: 7,  name: 'Healthy eating',     icon: '🍎', theme: 'peach',  streak: 9,  bestStreak: 15, doneToday: true,  createdAt: Date.now() },
+  { id: 8,  name: 'Evening journaling', icon: '✍️', theme: 'rose',   streak: 2,  bestStreak: 6,  doneToday: false, createdAt: Date.now() },
 ];
 
 function todayKey() {
@@ -185,10 +194,7 @@ function HabitCard({ habit, onToggle, onDelete, onEditClick, darkMode }) {
       <div className="flex items-start justify-between mb-4">
         {/* Icon blob */}
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm flex-shrink-0 bg-gradient-to-tr from-[#4F7CFF]/30 to-[#7DD3FC]/30 text-slate-700">
-          {(() => {
-            const Icon = Icons[habit.icon] || Icons.CheckSquare;
-            return <Icon className="w-5 h-5" strokeWidth={1.5} />;
-          })()}
+          {renderHabitIcon(habit.icon)}
         </div>
 
         {/* Actions layout: Edit pencil, Delete trash, Complete checkbox */}
@@ -371,10 +377,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
             style={{ background: selectedTheme.bg, borderColor: selectedTheme.ring + '60' }}>
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-700"
               style={{ background: `linear-gradient(135deg, ${selectedTheme.ring}, ${selectedTheme.icon_bg})` }}>
-              {(() => {
-                const Icon = Icons[icon] || Icons.CheckSquare;
-                return <Icon className="w-5 h-5" strokeWidth={1.5} />;
-              })()}
+              {renderHabitIcon(icon)}
             </div>
             <div>
               <p className="font-black text-slate-700" style={{ color: selectedTheme.text }}>
@@ -414,21 +417,18 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
               Choose Emoji
             </label>
             <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
-              {ICON_OPTIONS.map(name => {
-                const Icon = Icons[name] || Icons.CheckSquare;
-                return (
-                  <button key={name} onClick={() => setIcon(name)}
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 hover:scale-110
-                      ${icon === name
-                        ? 'scale-110 shadow-md ring-2'
-                        : darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
-                      }`}
-                    style={icon === name ? { background: selectedTheme.bg, color: selectedTheme.text, ringColor: selectedTheme.ring } : {}}
-                  >
-                    <Icon className="w-5 h-5" strokeWidth={1.5} />
-                  </button>
-                );
-              })}
+              {ICON_OPTIONS.map(name => (
+                <button key={name} onClick={() => setIcon(name)}
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 hover:scale-110
+                    ${icon === name
+                      ? 'scale-110 shadow-md ring-2'
+                      : darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
+                    }`}
+                  style={icon === name ? { background: selectedTheme.bg, color: selectedTheme.text, ringColor: selectedTheme.ring } : {}}
+                >
+                  <span className="text-lg leading-none">{name}</span>
+                </button>
+              ))}
               {/* Plus Button to add custom icon names */}
               <button
                 onClick={() => setShowCustomInput(prev => !prev)}
@@ -453,7 +453,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                     setCustomEmoji(val);
                     if (val.trim()) setIcon(val.trim());
                   }}
-                  placeholder="Type any Lucide icon name (e.g. Heart)..."
+                  placeholder="Type or paste any emoji/icon..."
                   className={`flex-1 px-4 py-2 rounded-2xl text-sm font-semibold outline-none border-2 transition-all
                     ${darkMode
                       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-pink-400'
@@ -461,7 +461,7 @@ function AddHabitModal({ onClose, onAdd, onEdit, habitToEdit, darkMode }) {
                     }`}
                 />
                 <span className="text-[10px] font-bold text-slate-400 max-w-28 leading-tight">
-                  Enter any valid Lucide icon name
+                  Enter any emoji or custom icon name
                 </span>
               </div>
             )}

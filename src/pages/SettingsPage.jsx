@@ -221,6 +221,58 @@ export default function SettingsPage() {
     }
   };
 
+  const handleDeleteAvatar = async () => {
+    setUpdatingProfile(true);
+    setToast(null);
+
+    try {
+      if (supabase && user) {
+        // 1. List and remove existing files in the user's bucket folder
+        const { data: files, error: listError } = await supabase.storage.from('avatars').list(user.id);
+        if (listError) throw listError;
+
+        if (files && files.length > 0) {
+          const filePaths = files.map(f => `${user.id}/${f.name}`);
+          const { error: removeError } = await supabase.storage.from('avatars').remove(filePaths);
+          if (removeError) throw removeError;
+        }
+
+        // 2. Set profile avatar url to null in public profiles table
+        const { error: dbError } = await supabase
+          .from('profiles')
+          .update({ avatar_url: null })
+          .eq('id', user.id);
+        if (dbError) throw dbError;
+
+        // 3. Update auth metadata
+        const { data, error: authError } = await supabase.auth.updateUser({
+          data: { avatar_url: null }
+        });
+        if (authError) throw authError;
+
+        setAvatarUrl('');
+        if (data?.user) setUser(data.user);
+        setToast({ message: 'Avatar deleted', type: 'success' });
+      } else {
+        // Mock fallback delete
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        const updatedUser = {
+          ...user,
+          user_metadata: { ...user.user_metadata, avatar_url: null }
+        };
+        localStorage.setItem('planner_mock_session', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setAvatarUrl('');
+        setToast({ message: 'Mock Avatar deleted', type: 'success' });
+      }
+    } catch (err) {
+      console.error('Failed to delete avatar:', err);
+      setToast({ message: err.message || 'Failed to delete avatar', type: 'error' });
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
+
   // ── Save profile name ──
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -351,6 +403,18 @@ export default function SettingsPage() {
                   )}
                 </div>
                 
+                {avatarUrl && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteAvatar}
+                    disabled={updatingProfile}
+                    className="absolute -bottom-1 -left-1 w-7 h-7 bg-rose-500 hover:bg-rose-600 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white transition-all transform hover:scale-110 z-10"
+                    title="Delete avatar"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  </button>
+                )}
+
                 <label className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#4F7CFF] hover:bg-[#3B66E8] text-white rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white transition-all transform hover:scale-110" title="Upload avatar">
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={updatingProfile} />
                   <Camera className="w-3.5 h-3.5" strokeWidth={1.5} />
