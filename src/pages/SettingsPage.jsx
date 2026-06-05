@@ -385,7 +385,7 @@ export default function SettingsPage() {
                     disabled={updatingProfile}
                     className="btn-primary text-xs py-2 px-4 shadow-blue-100 hover:shadow-blue-200"
                   >
-                    {updatingProfile ? 'Saving...' : 'Save Name ✓'}
+                    {updatingProfile ? 'Saving...' : 'Save Name'}
                   </button>
                 </div>
               </div>

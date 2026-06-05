@@ -272,17 +272,17 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   };
 
   const handleHighlight = () => {
-    runCommand('hiliteColor', false, '#fef08a');
+    runCommand('hiliteColor', '#fef08a');
   };
 
   const handleHeading = (tag) => {
-    runCommand('formatBlock', false, `<${tag}>`);
+    runCommand('formatBlock', `<${tag}>`);
   };
 
   const handleLink = () => {
     const url = prompt('Enter the link URL:');
     if (url) {
-      runCommand('createLink', false, url);
+      runCommand('createLink', url);
     }
   };
 
