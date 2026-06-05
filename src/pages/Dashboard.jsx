@@ -696,66 +696,17 @@ function PlannerBuddyCard({ habits, water, mood }) {
   const { user } = useApp();
   const [briefing, setBriefing] = useState('');
   const [loading, setLoading] = useState(false);
-  const [period, setPeriod] = useState(getTimePeriod());
-
-  // Update period automatically
-  useEffect(() => {
-    const id = setInterval(() => {
-      setPeriod(getTimePeriod());
-    }, 60_000);
-    return () => clearInterval(id);
-  }, []);
 
   const loadBriefing = useCallback(async (forceRefresh = false) => {
     if (!user) return;
     const today = todayKey();
+    const localKey = `planner_briefing_${user.id}_${today}`;
+    const metricsKey = `planner_briefing_metrics_${user.id}_${today}`;
+
+    // Get current period for greeting variations
     const currentPeriod = getTimePeriod();
-    const localKey = `planner_briefing_${user.id}_${today}_${currentPeriod}`;
 
-    if (!forceRefresh) {
-      const cached = localStorage.getItem(localKey);
-      if (cached) {
-        setBriefing(cached);
-        return;
-      }
-    }
-
-    setLoading(true);
-    let allBriefings = {};
-
-    if (supabase && !forceRefresh) {
-      try {
-        const { data, error } = await supabase
-          .from('ai_briefings')
-          .select('message')
-          .eq('user_id', user.id)
-          .eq('briefing_date', today)
-          .maybeSingle();
-
-        if (!error && data?.message) {
-          try {
-            allBriefings = JSON.parse(data.message);
-            if (typeof allBriefings === 'object' && allBriefings[currentPeriod]) {
-              const text = allBriefings[currentPeriod];
-              localStorage.setItem(localKey, text);
-              setBriefing(text);
-              setLoading(false);
-              return;
-            }
-          } catch (_) {
-            if (currentPeriod === 'Morning') {
-              localStorage.setItem(localKey, data.message);
-              setBriefing(data.message);
-              setLoading(false);
-              return;
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to load briefings from database:', e);
-      }
-    }
-
+    // 1. Gather all progress metrics
     let tasksDone = 0;
     let tasksTotal = 0;
     let nextTask = null;
@@ -785,7 +736,7 @@ function PlannerBuddyCard({ habits, water, mood }) {
               } catch (_) {}
               return { hour, task: parsedTask, completed: row.completed };
             })
-            .filter(t => t.hour >= currentHour && !t.completed)
+            .filter(t => !t.completed) // Show any incomplete task next
             .sort((a, b) => a.hour - b.hour);
 
           if (sorted.length > 0) {
@@ -805,11 +756,9 @@ function PlannerBuddyCard({ habits, water, mood }) {
           tasksTotal = activeSlots.length;
           tasksDone = activeSlots.filter(h => slots[h]?.done).length;
 
-          const now = new Date();
-          const currentHour = now.getHours();
           const upcoming = activeSlots
             .map(Number)
-            .filter(h => h >= currentHour && !slots[h]?.done)
+            .filter(h => !slots[h]?.done) // Show any incomplete task
             .sort((a, b) => a - b);
 
           if (upcoming.length > 0) {
@@ -829,6 +778,50 @@ function PlannerBuddyCard({ habits, water, mood }) {
     const moodText = mood ? mood.label : 'Not logged yet';
     const displayName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User';
 
+    // 2. Build progress metrics string to compare
+    const progressString = `${habitsDone}-${habitsTotal}-${waterGlasses}-${waterGoal}-${tasksDone}-${tasksTotal}-${moodText}-${nextTask || 'none'}`;
+
+    // 3. Check cache (only if not forceRefresh)
+    if (!forceRefresh) {
+      const cachedMetrics = localStorage.getItem(metricsKey);
+      if (cachedMetrics === progressString) {
+        const cachedBriefing = localStorage.getItem(localKey);
+        if (cachedBriefing) {
+          setBriefing(cachedBriefing);
+          return;
+        }
+      }
+    }
+
+    // 4. Try loading from database if forceRefresh is false
+    if (supabase && !forceRefresh) {
+      try {
+        const { data, error } = await supabase
+          .from('ai_briefings')
+          .select('message')
+          .eq('user_id', user.id)
+          .eq('briefing_date', today)
+          .maybeSingle();
+
+        if (!error && data?.message) {
+          try {
+            const allBriefings = JSON.parse(data.message);
+            if (typeof allBriefings === 'object' && allBriefings['daily']) {
+              const text = allBriefings['daily'];
+              localStorage.setItem(localKey, text);
+              localStorage.setItem(metricsKey, progressString);
+              setBriefing(text);
+              return;
+            }
+          } catch (_) {}
+        }
+      } catch (e) {
+        console.warn('Failed to load briefings from database:', e);
+      }
+    }
+
+    // 5. Generate new briefing via Groq AI
+    setLoading(true);
     let generatedText = '';
     try {
       let apiKey = localStorage.getItem(`planner_groq_key_${user.id}`) || '';
@@ -847,11 +840,10 @@ function PlannerBuddyCard({ habits, water, mood }) {
       }
 
       const systemPrompt = `You are a friendly, encouraging, and supportive Planner Buddy, a personal planning and productivity coach.
-You are generating a short, motivating, and personalized ${currentPeriod} briefing/insight summary for the user.
+Generate a short, motivating, and personalized insight and guidance briefing for the user based on their current progress metrics today.
 
 Today's current metrics:
 - User Name: ${displayName}
-- Period of Day: ${currentPeriod}
 - Habits completed: ${habitsDone}/${habitsTotal}
 - Water logged: ${waterGlasses}/${waterGoal} glasses
 - Schedule Tasks completed: ${tasksDone}/${tasksTotal}
@@ -859,10 +851,10 @@ Today's current metrics:
 - Next upcoming scheduled task: ${nextTask || 'None'}
 
 Instructions:
-1. Address the user by name with a friendly, period-appropriate greeting (e.g., "Good morning, ${displayName}!").
+1. Address the user by name with a warm greeting (do NOT make time-of-day references like morning/afternoon/evening, just a friendly greeting).
 2. Reflect on their current progress so far today. Give constructive, supportive advice (e.g., nudge them to drink water, encourage them to tackle their next task, or celebrate their wins).
 3. Keep the response extremely brief and concise—exactly 2 to 3 sentences.
-4. Keep it engaging, motivational, and light-hearted. Use a warm tone and a few relevant emojis.`;
+4. Keep it engaging, motivational, and light-hearted. Use a warm coaching tone and a few relevant emojis.`;
 
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -874,7 +866,7 @@ Instructions:
           model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Generate today's ${currentPeriod} insight briefing.` }
+            { role: 'user', content: `Analyze progress and generate a short motivational daily coaching insight.` }
           ],
           temperature: 0.7,
           max_tokens: 256
@@ -903,6 +895,7 @@ Instructions:
 
     if (generatedText) {
       localStorage.setItem(localKey, generatedText);
+      localStorage.setItem(metricsKey, progressString);
       setBriefing(generatedText);
 
       if (supabase) {
@@ -920,7 +913,7 @@ Instructions:
               dbBriefings = JSON.parse(data.message);
             } catch (_) {}
           }
-          dbBriefings[currentPeriod] = generatedText;
+          dbBriefings['daily'] = generatedText;
 
           await supabase
             .from('ai_briefings')
@@ -949,15 +942,6 @@ Instructions:
     return () => window.removeEventListener('planner-data-changed', handler);
   }, [loadBriefing]);
 
-  const periodConfig = {
-    Morning: { iconName: 'Sunrise', label: 'Morning Briefing', badge: 'bg-amber-100 text-amber-700' },
-    Afternoon: { iconName: 'Sun', label: 'Afternoon Briefing', badge: 'bg-sky-100 text-sky-700' },
-    Evening: { iconName: 'Moon', label: 'Evening Briefing', badge: 'bg-indigo-100 text-indigo-700' },
-    Night: { iconName: 'Sparkles', label: 'Night Briefing', badge: 'bg-violet-100 text-violet-700' }
-  };
-
-  const currentConfig = periodConfig[period] || periodConfig.Morning;
-
   return (
     <div className="card border border-indigo-100/40 p-5 space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-indigo-100/50">
@@ -968,12 +952,18 @@ Instructions:
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-[10px] font-black px-2.5 py-1.5 rounded-full flex items-center gap-1.5 ${currentConfig.badge}`}>
-            {(() => {
-              const Icon = Icons[currentConfig.iconName] || Icons.Sparkles;
-              return <Icon className="w-3.5 h-3.5" strokeWidth={2} />;
-            })()} {currentConfig.label}
+          <span className="text-[10px] font-black px-2.5 py-1.5 rounded-full flex items-center gap-1.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+            <Icons.Sparkles className="w-3.5 h-3.5" strokeWidth={2} /> AI Coach
           </span>
+          <button 
+            type="button"
+            onClick={() => loadBriefing(true)}
+            disabled={loading}
+            title="Refresh Insights"
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 transition-colors cursor-pointer text-slate-500 disabled:opacity-50"
+          >
+            <Icons.RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          </button>
         </div>
       </div>
 
@@ -992,7 +982,6 @@ Instructions:
           </div>
         )}
       </div>
-
     </div>
   );
 }
