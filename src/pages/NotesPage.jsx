@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import PastelIcon from '../components/PastelIcon';
-import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText } from 'lucide-react';
+import { Pin, Palette, Trash2, X, Search, Plus, Sparkles, Edit2, FileText, Bold, Italic, Underline, Highlighter, List, ListOrdered, Heading1, Heading2, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Undo, Redo } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTS
@@ -82,10 +82,20 @@ function saveNotes(notes) {
   localStorage.setItem('planner_notes', JSON.stringify(notes));
 }
 
+function stripHtml(html) {
+  if (!html) return '';
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  } catch (_) {
+    return html.replace(/<[^>]*>/g, '');
+  }
+}
+
 function timeAgo(ts) {
   const secs = Math.floor((Date.now() - ts) / 1000);
   if (secs < 60)    return 'just now';
-  if (secs < 3600)  return `${Math.floor(secs/60)}m ago`;
+  if (secs < 3600)  return `${Math.floor(secs/65)}m ago`;
   if (secs < 86400) return `${Math.floor(secs/3600)}h ago`;
   return `${Math.floor(secs/86400)}d ago`;
 }
@@ -193,13 +203,22 @@ function NoteCard({ note, onEdit, onPin, onDelete, onColorChange, darkMode }) {
       )}
 
       {/* Body preview */}
-      <p className="text-sm leading-relaxed font-medium whitespace-pre-line"
-        style={{ color: darkMode ? '#94a3b8' : c.text + 'cc' }}>
-        {note.body}
-      </p>
+      <div 
+        className="text-sm leading-relaxed font-medium line-clamp-6 overflow-hidden mb-3 whitespace-pre-line"
+        style={{ color: darkMode ? '#94a3b8' : c.text + 'cc' }}
+      >
+        {stripHtml(note.body)}
+      </div>
 
-      <div className="flex items-center justify-end mt-4 pt-3 border-t"
+      <div className="flex items-center justify-between mt-4 pt-3 border-t"
         style={{ borderColor: darkMode ? c.dark.border : c.border }}>
+        <button
+          onClick={(e) => { e.stopPropagation(); onEdit({ ...note, viewOnly: true }); }}
+          className="text-xs font-black hover:underline cursor-pointer"
+          style={{ color: c.accent }}
+        >
+          Read More →
+        </button>
         <span className="text-[10px] font-semibold opacity-50"
           style={{ color: darkMode ? '#94a3b8' : c.text }}>
           {timeAgo(note.updatedAt)}
@@ -219,6 +238,7 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   const [saved,  setSaved]  = useState(false);
   const autoSaveRef = useRef(null);
   const titleRef    = useRef(null);
+  const editorRef   = useRef(null);
   const backdropRef = useRef(null);
   const isNew = !note?.id;
   const c = COLOR_MAP[color] || COLORS[0];
@@ -231,6 +251,40 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
   useEffect(() => {
     if (!viewOnly) titleRef.current?.focus();
   }, [viewOnly]);
+
+  // Set initial content on mount
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.innerHTML = note?.body || '';
+    }
+  }, []);
+
+  const handleInput = () => {
+    if (editorRef.current) {
+      setBody(editorRef.current.innerHTML);
+    }
+  };
+
+  const runCommand = (cmd, val = null) => {
+    document.execCommand(cmd, false, val);
+    handleInput();
+    editorRef.current?.focus();
+  };
+
+  const handleHighlight = () => {
+    runCommand('hiliteColor', false, '#fef08a');
+  };
+
+  const handleHeading = (tag) => {
+    runCommand('formatBlock', false, `<${tag}>`);
+  };
+
+  const handleLink = () => {
+    const url = prompt('Enter the link URL:');
+    if (url) {
+      runCommand('createLink', false, url);
+    }
+  };
 
   /* Auto-save debounce */
   useEffect(() => {
@@ -267,12 +321,11 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
       style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}
     >
       <div
-        className="w-full max-w-2xl rounded-3xl border-2 shadow-2xl overflow-hidden animate-bounce-in flex flex-col transition-all duration-300"
+        className="w-full max-w-5xl h-[85vh] sm:h-[90vh] rounded-3xl border-2 shadow-2xl overflow-hidden animate-bounce-in flex flex-col transition-all duration-300"
         style={{
           background: darkMode ? c.dark.bg : c.bg,
           borderColor: darkMode ? c.dark.border : c.border,
           borderTop: `8px solid ${c.accent}`,
-          maxHeight: '90vh'
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -313,20 +366,173 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
           onChange={e => !viewOnly && setTitle(e.target.value)}
           placeholder={viewOnly ? "" : "Note title…"}
           readOnly={viewOnly}
-          className="w-full px-6 py-3.5 text-xl font-black bg-transparent outline-none border-0 placeholder-slate-400/70"
+          className="w-full px-6 py-3.5 text-xl font-black bg-transparent outline-none border-0 placeholder-slate-400/70 flex-shrink-0"
           style={{ color: darkMode ? '#f1f5f9' : c.text }}
         />
 
         {/* Divider */}
-        <div className="mx-6 h-px" style={{ backgroundColor: darkMode ? `${c.accent}30` : c.border }} />
+        <div className="mx-6 h-px flex-shrink-0" style={{ backgroundColor: darkMode ? `${c.accent}30` : c.border }} />
+
+        {/* Toolbar (only if editing) */}
+        {!viewOnly && (
+          <div className="flex flex-wrap items-center gap-1.5 px-6 py-2 border-b text-slate-500 overflow-x-auto flex-shrink-0"
+               style={{ borderColor: darkMode ? `${c.accent}30` : c.border }}>
+            
+            {/* Bold / Italic / Underline */}
+            <button
+              type="button"
+              onClick={() => runCommand('bold')}
+              title="Bold"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Bold size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('italic')}
+              title="Italic"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Italic size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('underline')}
+              title="Underline"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Underline size={15} strokeWidth={2} />
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Highlight */}
+            <button
+              type="button"
+              onClick={handleHighlight}
+              title="Highlight Text"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-[#eab308]"
+            >
+              <Highlighter size={15} strokeWidth={2} />
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Lists */}
+            <button
+              type="button"
+              onClick={() => runCommand('insertUnorderedList')}
+              title="Bullet List"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <List size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('insertOrderedList')}
+              title="Numbered List"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <ListOrdered size={15} strokeWidth={2} />
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Headings */}
+            <button
+              type="button"
+              onClick={() => handleHeading('h1')}
+              title="Heading 1"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Heading1 size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleHeading('h2')}
+              title="Heading 2"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Heading2 size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleHeading('p')}
+              title="Paragraph"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 font-black text-xs transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              P
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Text Alignment */}
+            <button
+              type="button"
+              onClick={() => runCommand('justifyLeft')}
+              title="Align Left"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <AlignLeft size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('justifyCenter')}
+              title="Align Center"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <AlignCenter size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('justifyRight')}
+              title="Align Right"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <AlignRight size={15} strokeWidth={2} />
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Link */}
+            <button
+              type="button"
+              onClick={handleLink}
+              title="Insert Link"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <LinkIcon size={15} strokeWidth={2} />
+            </button>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0" />
+
+            {/* Undo / Redo */}
+            <button
+              type="button"
+              onClick={() => runCommand('undo')}
+              title="Undo"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Undo size={15} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => runCommand('redo')}
+              title="Redo"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-slate-600 dark:text-slate-300"
+            >
+              <Redo size={15} strokeWidth={2} />
+            </button>
+          </div>
+        )}
 
         {/* Body */}
-        <textarea
-          value={body}
-          onChange={e => !viewOnly && setBody(e.target.value)}
+        <div
+          ref={editorRef}
+          contentEditable={!viewOnly}
+          onInput={handleInput}
           placeholder={viewOnly ? "" : "Write your note here… (auto-saves as you type)"}
-          readOnly={viewOnly}
-          className="flex-1 w-full px-6 py-4 text-sm font-medium bg-transparent outline-none resize-none leading-relaxed placeholder-slate-400/70 min-h-48"
+          className="flex-1 w-full px-6 py-4 text-sm font-medium bg-transparent outline-none overflow-y-auto leading-relaxed rich-note-content"
           style={{ color: darkMode ? '#e2e8f0' : c.text }}
         />
 
