@@ -395,7 +395,7 @@ export default function SettingsPage() {
             {/* Avatar block with upload button */}
             <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
               <div className="relative group">
-                <div className="w-20 h-20 rounded-3xl overflow-hidden flex items-center justify-center text-white text-2xl font-black shadow-lg bg-gradient-to-tr from-[#5B6CFF] via-[#8DB4FF] to-[#A78BFA]">
+                <div className="w-20 h-20 rounded-3xl overflow-hidden flex items-center justify-center text-black text-2xl font-black shadow-lg bg-gradient-to-tr from-[#5B6CFF] via-[#8DB4FF] to-[#A78BFA]">
                   {avatarUrl ? (
                     <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (

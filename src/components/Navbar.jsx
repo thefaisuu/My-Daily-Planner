@@ -383,7 +383,7 @@ function AvatarDropdown() {
         className="flex items-center gap-2 group cursor-pointer"
         aria-label="User menu"
       >
-        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
+        <div className="w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center text-black font-black text-xs shadow-md hover:scale-105 transition-all duration-200 bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (

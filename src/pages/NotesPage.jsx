@@ -373,6 +373,29 @@ function NoteModal({ note, viewOnly, darkMode, onSave, onClose }) {
         {/* Divider */}
         <div className="mx-6 h-px flex-shrink-0" style={{ backgroundColor: darkMode ? `${c.accent}30` : c.border }} />
 
+        {/* Color picker strip (only when not viewOnly) */}
+        {!viewOnly && (
+          <div className="flex items-center gap-2 px-6 pt-3 pb-1 flex-shrink-0 bg-transparent">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" style={{ color: darkMode ? undefined : `${c.text}88` }}>Color:</span>
+            <div className="flex gap-1.5">
+              {COLORS.map(col => (
+                <button key={col.id}
+                  type="button"
+                  onClick={() => setColor(col.id)}
+                  className="w-6 h-6 rounded-lg transition-all duration-150 hover:scale-110 border-2 cursor-pointer"
+                  style={{
+                    background: col.bg,
+                    borderColor: color === col.id ? col.accent : 'transparent',
+                    transform: color === col.id ? 'scale(1.2)' : undefined,
+                    boxShadow: color === col.id ? `0 2px 8px ${col.accent}60` : 'none',
+                  }}
+                  title={col.id}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Toolbar (only if editing) */}
         {!viewOnly && (
           <div className="flex flex-wrap items-center gap-1.5 px-6 py-2 border-b text-slate-500 overflow-x-auto flex-shrink-0"

@@ -131,7 +131,7 @@ export default function Sidebar() {
               ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-sky-100/40'}`}
           >
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-white font-black text-sm shadow-md bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center text-black font-black text-sm shadow-md bg-gradient-to-tr from-[#4F7CFF] via-[#F0F4FF] to-[#7DD3FC]">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
