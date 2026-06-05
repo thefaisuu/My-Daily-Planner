@@ -2,6 +2,7 @@ import { useApp } from '../context/AppContext';
 import NAV_ITEMS from '../constants/navItems';
 import PastelIcon from './PastelIcon';
 import { Sparkles, X, LogOut } from 'lucide-react';
+import PlannerLogo from './PlannerLogo';
 
 const ICON_MAP = {
   'Dashboard':   { name: 'Home',         colorType: 'dashboard' },
@@ -89,10 +90,7 @@ export default function Sidebar() {
       >
         {/* Logo & App Name */}
         <div className={`flex items-center gap-3 px-6 py-6 border-b ${darkMode ? 'border-slate-700/60' : 'border-indigo-100/60'}`}>
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md text-white"
-            style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
-            <Sparkles size={20} strokeWidth={1.5} className="animate-pulse" />
-          </div>
+          <PlannerLogo size={36} className="flex-shrink-0" />
           <div>
             <h1 className="font-black text-base leading-tight text-gradient-primary">
               My Daily

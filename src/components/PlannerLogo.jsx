@@ -1,0 +1,52 @@
+import React from 'react';
+
+export default function PlannerLogo({ size = 40, className = "" }) {
+  // Generate a unique ID for the mask to prevent collisions if multiple logos are rendered
+  const maskId = React.useId().replace(/:/g, '-');
+
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 100 100" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <defs>
+        <mask id={`logo-mask-${maskId}`}>
+          {/* Everything white is visible */}
+          <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
+          {/* Black circle cuts out the bottom right corner of the card and M */}
+          <circle cx="72" cy="72" r="20" fill="#000000" />
+        </mask>
+      </defs>
+
+      {/* Main Logo Group with Cutout Mask applied */}
+      <g mask={`url(#logo-mask-${maskId})`}>
+        {/* Calendar Rings */}
+        <rect x="24" y="6" width="12" height="22" rx="6" fill="#4F7CFF" />
+        <rect x="64" y="6" width="12" height="22" rx="6" fill="#4F7CFF" />
+
+        {/* Calendar Card Body */}
+        <rect x="10" y="20" width="80" height="70" rx="18" fill="#4F7CFF" />
+
+        {/* White 'M' Inner Shape */}
+        <path 
+          d="M 22 32 L 22 78 L 34 78 L 34 44 L 50 60 L 66 44 L 66 78 L 78 78 L 78 32 L 66 32 L 50 48 L 34 32 Z" 
+          fill="#FFFFFF" 
+        />
+      </g>
+
+      {/* Checkmark in Light Blue (rendered outside mask for full overlay) */}
+      <path 
+        d="M 58 72 L 68 84 L 88 56" 
+        stroke="#7DD3FC" 
+        strokeWidth="10" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        fill="none" 
+      />
+    </svg>
+  );
+}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Mail, Users, CheckCircle, AlertTriangle, Hammer, Lock, Palette, Gift, CheckSquare, Droplet, Smile, Timer, Zap, Shield, TrendingUp, Calendar, FileText, Star } from 'lucide-react';
+import PlannerLogo from '../components/PlannerLogo';
 
 /* ── Feature cards data ── */
 const FEATURES = [
@@ -197,10 +198,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
-              <span className="text-white text-base font-black">✦</span>
-            </div>
+            <PlannerLogo size={32} />
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
           </div>
 
@@ -517,10 +515,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       <footer className="py-10 px-4 bg-slate-900">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
-              <span className="text-white text-sm font-black">✦</span>
-            </div>
+            <PlannerLogo size={28} />
             <span className="font-black text-white text-sm">My Daily Planner</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
@@ -565,10 +560,7 @@ function LegalPageLayout({ title, children, onBack }) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md"
-              style={{ background: 'linear-gradient(135deg, #4F7CFF, #7DD3FC)' }}>
-              <span className="text-white text-base font-black">✦</span>
-            </div>
+            <PlannerLogo size={32} />
             <span className="font-black text-slate-800 text-base tracking-tight">My Daily Planner</span>
           </div>
           {/* Back button */}

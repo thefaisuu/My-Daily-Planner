@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
+import PlannerLogo from '../components/PlannerLogo';
 
 export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack }) {
   const [view, setView] = useState(initialView); // 'login' | 'signup' | 'forgot-password'
@@ -155,8 +156,8 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
           
           {/* Logo / Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4F7CFF] to-[#7DD3FC] text-white shadow-md mb-2">
-              <Sparkles size={20} strokeWidth={1.5} />
+            <div className="inline-flex items-center justify-center mb-2">
+              <PlannerLogo size={48} />
             </div>
             <h2 className="text-2xl font-black text-[#1E293B] dark:text-slate-100 tracking-tight">
               My Daily Planner
