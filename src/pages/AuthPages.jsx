@@ -93,7 +93,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
   return (
     <div style={{
       minHeight: '100vh', display: 'flex',
-      background: 'linear-gradient(135deg, #f8f7ff 0%, #eef2ff 50%, #f0f9ff 100%)',
+      background: 'radial-gradient(ellipse at top left, #F7F9FF 0%, #F0F4FF 40%, #F7F9FF 70%, #FFF0F5 100%)',
       fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       position: 'relative', overflow: 'hidden',
     }}>
@@ -107,8 +107,8 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         .auth-grid {
           position: absolute; inset: 0; pointer-events: none;
           background-image:
-            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+            linear-gradient(rgba(79, 124, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79, 124, 255, 0.04) 1px, transparent 1px);
           background-size: 44px 44px;
           mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black, transparent);
         }
@@ -116,7 +116,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
           display: none;
           flex: 1; flex-direction: column; justify-content: center; align-items: flex-start;
           padding: 60px 72px;
-          background: linear-gradient(135deg, #4f7cff 0%, #6d28d9 60%, #7c3aed 100%);
+          background: linear-gradient(135deg, #4F7CFF 0%, #3B66E8 60%, #7DD3FC 100%);
           position: relative; overflow: hidden;
         }
         @media (min-width: 1000px) { .auth-panel-left { display: flex; } }
@@ -161,7 +161,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
           box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
         .auth-input::placeholder { color: #cbd5e1; }
-        .auth-input:focus { border-color: #6366f1; background: #fefeff; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .auth-input:focus { border-color: #4F7CFF; background: #fefeff; box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15); }
         .auth-input-wrap { position: relative; }
         .auth-input-pw { padding-right: 44px; }
         .auth-pw-toggle {
@@ -180,10 +180,10 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
 
         .auth-submit {
           width: 100%; padding: 13px; border-radius: 14px;
-          background: linear-gradient(135deg, #4f7cff, #6d28d9);
+          background: linear-gradient(135deg, #4F7CFF, #3B66E8);
           border: none; color: #fff; font-size: 15px; font-weight: 800;
           cursor: pointer; transition: all 0.25s;
-          box-shadow: 0 8px 24px rgba(79,124,255,0.3);
+          box-shadow: 0 8px 24px rgba(79, 124, 255, 0.3);
           display: flex; align-items: center; justify-content: center; gap: 8px;
           margin-top: 4px; font-family: inherit;
         }
@@ -224,7 +224,7 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         }
         .left-h2 { font-size: 42px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -2px; margin: 0 0 20px; }
         .left-h2 .grad {
-          background: linear-gradient(135deg, #fbbf24, #f472b6);
+          background: linear-gradient(135deg, #7DD3FC, #ffffff);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
         .left-sub { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.7; max-width: 380px; margin: 0 0 40px; }
@@ -244,8 +244,8 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
       `}</style>
 
       {/* Background decorations */}
-      <div className="auth-orb" style={{ width: 500, height: 500, background: 'radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%)', top: -120, left: -120 }} />
-      <div className="auth-orb" style={{ width: 400, height: 400, background: 'radial-gradient(circle, rgba(168,85,247,0.1), transparent 70%)', bottom: -80, right: -80 }} />
+      <div className="auth-orb" style={{ width: 500, height: 500, background: 'radial-gradient(circle, rgba(79, 124, 255, 0.12), transparent 70%)', top: -120, left: -120 }} />
+      <div className="auth-orb" style={{ width: 400, height: 400, background: 'radial-gradient(circle, rgba(125, 211, 252, 0.12), transparent 70%)', bottom: -80, right: -80 }} />
       <div className="auth-grid" />
 
       {/* Left decorative panel */}

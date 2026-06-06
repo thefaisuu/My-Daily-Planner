@@ -149,7 +149,7 @@ function StatCard({ value, label, icon: Icon, delay }) {
       }}
     >
       <div className="stat-icon-ring">
-        <Icon size={20} strokeWidth={1.8} color="#fff" />
+        <Icon size={20} strokeWidth={1.8} color="#4F7CFF" />
       </div>
       <p className="stat-value">{value}</p>
       <p className="stat-label">{label}</p>
@@ -293,30 +293,30 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           display: flex; flex-direction: column; align-items: center; justify-content: center;
           text-align: center; padding: 120px 24px 80px;
           position: relative; overflow: hidden;
-          background: linear-gradient(180deg, #f8f7ff 0%, #ffffff 60%);
+          background: radial-gradient(ellipse at top left, #F7F9FF 0%, #F0F4FF 40%, #F7F9FF 70%, #ffffff 100%);
         }
         .hero-bg { position: absolute; inset: 0; pointer-events: none; }
         .hero-orb {
           position: absolute; border-radius: 50%; filter: blur(80px);
         }
-        .hero-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(99,102,241,0.10), transparent 65%); top: -180px; right: -150px; animation: floatOrb 9s ease-in-out infinite; }
-        .hero-orb-2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(168,85,247,0.08), transparent 65%); bottom: -120px; left: -120px; animation: floatOrb 11s ease-in-out infinite reverse; }
-        .hero-orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(236,72,153,0.07), transparent 65%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation: floatOrb 7s ease-in-out infinite 2s; }
+        .hero-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(79, 124, 255, 0.12), transparent 65%); top: -180px; right: -150px; animation: floatOrb 9s ease-in-out infinite; }
+        .hero-orb-2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(125, 211, 252, 0.10), transparent 65%); bottom: -120px; left: -120px; animation: floatOrb 11s ease-in-out infinite reverse; }
+        .hero-orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(79, 124, 255, 0.08), transparent 65%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation: floatOrb 7s ease-in-out infinite 2s; }
         @keyframes floatOrb { 0%,100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.06) translateY(-18px); } }
 
         .hero-grid {
           position: absolute; inset: 0;
           background-image:
-            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+            linear-gradient(rgba(79, 124, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79, 124, 255, 0.04) 1px, transparent 1px);
           background-size: 48px 48px;
           mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, black, transparent);
         }
 
         .hero-badge {
           display: inline-flex; align-items: center; gap: 8px;
-          background: #eef2ff; border: 1px solid #c7d2fe;
-          color: #4f46e5; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+          background: #F0F4FF; border: 1px solid rgba(79, 124, 255, 0.25);
+          color: #4F7CFF; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; padding: 6px 16px; border-radius: 100px;
           margin-bottom: 32px;
           position: relative; z-index: 1;
@@ -336,7 +336,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           animation: fadeInUp 0.6s ease 0.1s both;
         }
         .hero-h1 .grad {
-          background: linear-gradient(135deg, #4f7cff 0%, #7c3aed 50%, #ec4899 100%);
+          background: linear-gradient(135deg, #4F7CFF 0%, #7DD3FC 100%);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
         }
@@ -355,13 +355,13 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         }
         .btn-hero-primary {
           display: flex; align-items: center; gap: 10px;
-          background: linear-gradient(135deg, #4f7cff, #6d28d9);
+          background: linear-gradient(135deg, #4F7CFF, #3B66E8);
           border: none; color: #fff; font-size: 15px; font-weight: 700;
           padding: 14px 30px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s; box-shadow: 0 8px 32px rgba(79,124,255,0.35);
+          transition: all 0.25s; box-shadow: 0 8px 24px rgba(79, 124, 255, 0.3);
           font-family: inherit;
         }
-        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(79,124,255,0.5); }
+        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(79, 124, 255, 0.45); }
         .btn-hero-secondary {
           display: flex; align-items: center; gap: 8px;
           background: #ffffff; border: 1.5px solid #e2e8f0;
@@ -392,20 +392,23 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         /* ── Stats ── */
         .stats-section {
           padding: 80px 24px;
-          background: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #1e1b4b 100%);
+          background: radial-gradient(ellipse at center, #F0F4FF 0%, #F7F9FF 100%);
+          border-top: 1.5px solid rgba(79, 124, 255, 0.1);
+          border-bottom: 1.5px solid rgba(79, 124, 255, 0.1);
         }
         .stats-inner { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
         @media (max-width: 640px) { .stats-inner { grid-template-columns: repeat(2,1fr); } }
         .stat-item { text-align: center; }
         .stat-icon-ring {
           width: 48px; height: 48px; border-radius: 14px;
-          background: rgba(255,255,255,0.12);
-          border: 1px solid rgba(255,255,255,0.15);
+          background: rgba(255, 255, 255, 0.75);
+          border: 1.5px solid rgba(79, 124, 255, 0.2);
           display: flex; align-items: center; justify-content: center;
           margin: 0 auto 12px;
+          box-shadow: 0 4px 12px rgba(79, 124, 255, 0.1);
         }
-        .stat-value { font-size: 36px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
-        .stat-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.8px; }
+        .stat-value { font-size: 36px; font-weight: 900; color: #1e293b; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
+        .stat-label { font-size: 12px; font-weight: 600; color: rgba(30, 41, 59, 0.70); text-transform: uppercase; letter-spacing: 0.8px; }
 
         /* ── Features ── */
         .features-section { padding: 100px 24px; background: #f8fafc; }
@@ -413,8 +416,8 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         .section-header { text-align: center; margin-bottom: 64px; }
         .section-badge {
           display: inline-flex; align-items: center; gap: 6px;
-          background: #eef2ff; border: 1px solid #c7d2fe;
-          color: #4f46e5; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+          background: #F0F4FF; border: 1px solid rgba(79, 124, 255, 0.25);
+          color: #4F7CFF; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 20px;
         }
         .section-h2 {
@@ -422,7 +425,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 16px;
         }
         .section-h2 .grad {
-          background: linear-gradient(135deg, #4f7cff, #7c3aed);
+          background: linear-gradient(135deg, #4F7CFF, #7DD3FC);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
         }
@@ -467,7 +470,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           color: #94a3b8; transition: all 0.2s;
         }
         .feature-card:hover .feature-arrow {
-          background: #eef2ff; border-color: #c7d2fe; color: #4f46e5;
+          background: #F0F4FF; border-color: rgba(79, 124, 255, 0.25); color: #4F7CFF;
         }
 
         /* ── How It Works ── */
@@ -517,62 +520,63 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         /* ── CTA Section ── */
         .cta-section {
           padding: 100px 24px; text-align: center; position: relative; overflow: hidden;
-          background: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #1e1b4b 100%);
+          background: linear-gradient(135deg, #F0F4FF 0%, #F7F9FF 50%, #E0F2FE 100%);
+          border-top: 1.5px solid rgba(79, 124, 255, 0.1);
         }
         .cta-glow {
           position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-          width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(99,102,241,0.2), transparent 70%);
+          width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(79, 124, 255, 0.15), transparent 70%);
           pointer-events: none;
         }
         .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
         .cta-icon {
           width: 72px; height: 72px; border-radius: 22px;
-          background: linear-gradient(135deg, #4f7cff, #7c3aed);
+          background: linear-gradient(135deg, #4F7CFF, #7DD3FC);
           display: flex; align-items: center; justify-content: center;
-          margin: 0 auto 28px; box-shadow: 0 16px 48px rgba(79,124,255,0.45);
-          font-size: 32px;
+          margin: 0 auto 28px; box-shadow: 0 16px 32px rgba(79,124,255,0.2);
+          font-size: 32px; color: #ffffff;
         }
-        .cta-h2 { font-size: clamp(32px, 4vw, 52px); font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 16px; }
-        .cta-h2 .gold { color: #fbbf24; }
-        .cta-sub { font-size: 16px; color: rgba(255,255,255,0.6); margin: 0 0 40px; line-height: 1.7; }
+        .cta-h2 { font-size: clamp(32px, 4vw, 52px); font-weight: 900; color: #1e293b; line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 16px; }
+        .cta-h2 .gold { color: #4F7CFF; }
+        .cta-sub { font-size: 16px; color: rgba(30, 41, 59, 0.75); margin: 0 0 40px; line-height: 1.7; }
         .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .btn-cta-white {
+        .btn-cta-primary {
           display: flex; align-items: center; gap: 8px;
-          background: #fff; border: none; color: #1e1b4b; font-size: 15px; font-weight: 800;
+          background: linear-gradient(135deg, #4F7CFF, #3B66E8); border: none; color: #fff; font-size: 15px; font-weight: 800;
           padding: 14px 30px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+          transition: all 0.25s; box-shadow: 0 8px 24px rgba(79, 124, 255, 0.35);
           font-family: inherit;
         }
-        .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+        .btn-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(79, 124, 255, 0.5); }
         .btn-cta-outline {
           display: flex; align-items: center; gap: 8px;
-          background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-          color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600;
+          background: rgba(255, 255, 255, 0.7); border: 1.5px solid rgba(79, 124, 255, 0.25);
+          color: #4F7CFF; font-size: 14px; font-weight: 600;
           padding: 14px 26px; border-radius: 16px; cursor: pointer;
           transition: all 0.25s; font-family: inherit;
         }
-        .btn-cta-outline:hover { background: rgba(255,255,255,0.13); color: #fff; }
-        .cta-note { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 20px; }
+        .btn-cta-outline:hover { background: #F0F4FF; border-color: #7DD3FC; color: #3B66E8; }
+        .cta-note { font-size: 12px; color: rgba(30, 41, 59, 0.5); margin-top: 20px; }
 
         /* ── Footer ── */
         .lp-footer {
-          padding: 32px 24px; background: #0f172a;
-          border-top: 1px solid #1e293b;
+          padding: 32px 24px; background: #F0F4FF;
+          border-top: 1px solid rgba(79, 124, 255, 0.1);
         }
         .lp-footer-inner {
           max-width: 1140px; margin: 0 auto;
           display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
         .lp-footer-logo { display: flex; align-items: center; gap: 8px; }
-        .lp-footer-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); }
-        .lp-footer-copy { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.3); }
+        .lp-footer-name { font-size: 13px; font-weight: 700; color: #475569; }
+        .lp-footer-copy { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(71, 85, 105, 0.8); }
         .lp-footer-links { display: flex; gap: 20px; }
         .lp-footer-link {
           background: none; border: none; cursor: pointer;
-          font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.3);
+          font-size: 12px; font-weight: 600; color: #475569;
           transition: color 0.2s; padding: 0;
         }
-        .lp-footer-link:hover { color: rgba(255,255,255,0.7); }
+        .lp-footer-link:hover { color: #4F7CFF; }
       `}</style>
 
       {/* ── Navigation ── */}
@@ -723,9 +727,9 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           </div>
           <div className="steps-list">
             {[
-              { step: '01', title: 'Create your free account', desc: 'Sign up with email or Google in seconds. No credit card, no commitments, forever free.', color: '#4f7cff', bg: '#eef2ff' },
-              { step: '02', title: 'Set up your habits & schedule', desc: 'Add your daily habits, pick theme colors, and block out your day in the smart scheduler.', color: '#7c3aed', bg: '#f5f3ff' },
-              { step: '03', title: 'Track your progress & grow', desc: 'View completion charts, keep streaks alive, review mood logs and see how you improve over time.', color: '#ec4899', bg: '#fdf2f8' },
+              { step: '01', title: 'Create your free account', desc: 'Sign up with email or Google in seconds. No credit card, no commitments, forever free.', color: '#4F7CFF', bg: '#F0F4FF' },
+              { step: '02', title: 'Set up your habits & schedule', desc: 'Add your daily habits, pick theme colors, and block out your day in the smart scheduler.', color: '#3B66E8', bg: '#E0F2FE' },
+              { step: '03', title: 'Track your progress & grow', desc: 'View completion charts, keep streaks alive, review mood logs and see how you improve over time.', color: '#0EA5E9', bg: '#F0F9FF' },
             ].map((s, i) => (
               <div key={i} className="step-card">
                 <div className="step-num-wrap" style={{ background: s.bg }}>
@@ -791,7 +795,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
             Join thousands building better habits, staying focused, and feeling great — one day at a time.
           </p>
           <div className="cta-btns">
-            <button className="btn-cta-white" onClick={onSignup}>
+            <button className="btn-cta-primary" onClick={onSignup}>
               Create Free Account <ArrowRight size={16} strokeWidth={2.5} />
             </button>
             <button className="btn-cta-outline" onClick={onLogin}>
@@ -979,7 +983,7 @@ function ContactPage({ onBack }) {
               style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit', opacity: loading ? 0.6 : 1 }} />
           </div>
           <button type="submit" disabled={loading}
-            style={{ background: 'linear-gradient(135deg, #4f7cff, #7c3aed)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 8, fontFamily: 'inherit', opacity: loading ? 0.8 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            style={{ background: 'linear-gradient(135deg, #4F7CFF, #3B66E8)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 8, fontFamily: 'inherit', opacity: loading ? 0.8 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             {loading ? 'Sending Message...' : 'Send Message →'}
           </button>
         </form>
