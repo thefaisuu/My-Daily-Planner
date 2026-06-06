@@ -426,17 +426,17 @@ export default function FocusTimerPage() {
 
   /* ── Tab title ── */
   useEffect(() => {
-    if (!settings.tabTitle) { document.title = 'My Daily Planner'; return; }
+    if (!settings.tabTitle) { document.title = 'My Daily Planner – Make Every Day Count'; return; }
     const cfg = MODES[mode];
     if (secsLeft === 0) {
-      document.title = `My Daily Planner`;
+      document.title = `My Daily Planner – Make Every Day Count`;
     } else {
       document.title = `${fmt(secsLeft)} — ${cfg.label}`;
     }
   }, [secsLeft, mode, settings.tabTitle]);
 
   /* ── Cleanup title on unmount ── */
-  useEffect(() => () => { document.title = 'My Daily Planner'; }, []);
+  useEffect(() => () => { document.title = 'My Daily Planner – Make Every Day Count'; }, []);
 
   const endTimeRef = useRef(null);
 
