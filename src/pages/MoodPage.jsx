@@ -356,7 +356,7 @@ function RecentEntries({ history, darkMode }) {
   );
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 snap-x scrollbar-none">
+    <div className="flex flex-nowrap lg:flex-wrap gap-3 overflow-x-auto lg:overflow-x-visible pb-2 snap-x scrollbar-none">
       {days.map(({ d, key, entry }) => {
         const mood = MOOD_MAP[entry.moodId];
         const label = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });

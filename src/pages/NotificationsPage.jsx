@@ -143,7 +143,12 @@ export default function NotificationsPage() {
       if (rawFocus) {
         const parsed = JSON.parse(rawFocus);
         const today = todayKey();
-        const todayCompletions = parsed.filter(c => c.timestamp && c.timestamp.startsWith(today));
+        const todayCompletions = parsed.filter(c => {
+          if (!c.timestamp) return false;
+          const cDate = new Date(c.timestamp);
+          const cKey = `${cDate.getFullYear()}-${String(cDate.getMonth()+1).padStart(2,'0')}-${String(cDate.getDate()).padStart(2,'0')}`;
+          return cKey === today;
+        });
         todayCompletions.forEach((fc, fidx) => {
           list.push({
             id: `focus-${fc.id || fidx}`,

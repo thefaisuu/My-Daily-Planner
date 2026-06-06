@@ -730,14 +730,14 @@ export default function WaterPage() {
                 ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
 
                 {/* Bar + bottle row */}
-                <div className="flex items-center gap-6 mb-6">
+                <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
                   {/* Water bottle */}
                   <div className="flex-shrink-0">
                     <WaterBottle pct={pct} darkMode={darkMode} />
                   </div>
 
                   {/* Progress + glasses grid */}
-                  <div className="flex-1 min-w-0 space-y-5">
+                  <div className="flex-1 min-w-0 space-y-5 w-full">
                     {/* Progress bar */}
                     <div>
                       <div className="flex justify-between items-center mb-2">

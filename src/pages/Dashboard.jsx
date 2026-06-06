@@ -30,7 +30,9 @@ function habitsKey() {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 function timeAgo(ts) {
+  if (!ts || isNaN(ts)) return 'today';
   const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 0)     return 'just now';
   if (s < 60)    return 'just now';
   if (s < 3600)  return `${Math.floor(s/60)}m ago`;
   if (s < 86400) return `${Math.floor(s/3600)}h ago`;
@@ -1266,6 +1268,7 @@ export default function Dashboard() {
         mood = {
           moodId,
           note: moodData.note || '',
+          savedAt: localStorage.getItem('last_action_mood') || (today + 'T12:00:00.000Z'),
           ...MOOD_MAP[moodId]
         };
       }
