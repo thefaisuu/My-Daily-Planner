@@ -96,10 +96,12 @@ const TESTIMONIALS = [
 
 const SHOWCASE_TABS = [
   { id: 'dashboard', label: 'Dashboard', image: '/showcase-dashboard.png' },
-  { id: 'habits', label: 'Habit Tracker', image: '/showcase-habits.png' },
+  { id: 'schedule', label: 'Schedule', image: '/showcase-schedule.png' },
+  { id: 'habits', label: 'Habits', image: '/showcase-habits.png' },
   { id: 'timer', label: 'Focus Timer', image: '/showcase-timer.png' },
-  { id: 'mood', label: 'Mood Journal', image: '/showcase-mood.png' },
-  { id: 'water', label: 'Water Tracker', image: '/showcase-water.png' },
+  { id: 'mood', label: 'Mood', image: '/showcase-mood.png' },
+  { id: 'notes', label: 'Notes', image: '/showcase-notes.png' },
+  { id: 'water', label: 'Water', image: '/showcase-water.png' },
 ];
 
 function useInView(threshold = 0.1) {
