@@ -94,6 +94,14 @@ const TESTIMONIALS = [
   },
 ];
 
+const SHOWCASE_TABS = [
+  { id: 'dashboard', label: 'Dashboard', image: '/showcase-dashboard.png' },
+  { id: 'habits', label: 'Habit Tracker', image: '/showcase-habits.png' },
+  { id: 'timer', label: 'Focus Timer', image: '/showcase-timer.png' },
+  { id: 'mood', label: 'Mood Journal', image: '/showcase-mood.png' },
+  { id: 'water', label: 'Water Tracker', image: '/showcase-water.png' },
+];
+
 function useInView(threshold = 0.1) {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
@@ -161,6 +169,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(activeTabOverride);
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState('dashboard');
 
   // Sync when parent changes the tab (e.g. via popstate)
   useEffect(() => {
@@ -577,6 +586,97 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           transition: color 0.2s; padding: 0;
         }
         .lp-footer-link:hover { color: #4F7CFF; }
+
+        /* ── Product Showcase ── */
+        .showcase-section {
+          padding: 80px 24px;
+          background: #ffffff;
+        }
+        .showcase-inner {
+          max-width: 1000px;
+          margin: 0 auto;
+          text-align: center;
+        }
+        .showcase-tabs {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 36px;
+        }
+        .showcase-tab {
+          background: #ffffff;
+          border: 1.5px solid rgba(79, 124, 255, 0.12);
+          color: #475569;
+          font-size: 13.5px;
+          font-weight: 700;
+          padding: 10px 20px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.25s ease;
+          font-family: inherit;
+        }
+        .showcase-tab:hover {
+          background: #F0F4FF;
+          border-color: #7DD3FC;
+          color: #4F7CFF;
+        }
+        .showcase-tab.active {
+          background: #4F7CFF;
+          border-color: #4F7CFF;
+          color: #ffffff;
+          box-shadow: 0 4px 14px rgba(79, 124, 255, 0.3);
+        }
+        .browser-mockup {
+          background: #ffffff;
+          border-radius: 20px;
+          border: 1.5px solid rgba(79, 124, 255, 0.15);
+          box-shadow: 0 24px 60px rgba(79, 124, 255, 0.08);
+          overflow: hidden;
+          position: relative;
+        }
+        .browser-header {
+          background: #F0F4FF;
+          border-bottom: 1.5px solid rgba(79, 124, 255, 0.1);
+          padding: 12px 20px;
+          display: flex;
+          align-items: center;
+        }
+        .browser-dots {
+          display: flex;
+          gap: 6px;
+        }
+        .browser-dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+        }
+        .browser-dot.red { background: #ff5f56; }
+        .browser-dot.yellow { background: #ffbd2e; }
+        .browser-dot.green { background: #27c93f; }
+        .browser-address {
+          background: #ffffff;
+          border: 1px solid rgba(79, 124, 255, 0.1);
+          border-radius: 8px;
+          color: #94a3b8;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 24px;
+          margin-left: 28px;
+          flex: 1;
+          max-width: 280px;
+          text-align: center;
+        }
+        .showcase-content {
+          width: 100%;
+          position: relative;
+          background: #ffffff;
+        }
+        .showcase-img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
       `}</style>
 
       {/* ── Navigation ── */}
@@ -679,6 +779,52 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* ── Product Showcase ── */}
+      <section className="showcase-section">
+        <div className="showcase-inner">
+          <div className="section-header">
+            <div className="section-badge">Product Showcase</div>
+            <h2 className="section-h2">
+              Clean, premium, and{' '}
+              <span className="grad">effortless to use</span>
+            </h2>
+            <p className="section-sub">
+              Take a closer look at the interfaces designed to make your daily planning friction-free.
+            </p>
+          </div>
+          
+          <div className="showcase-tabs">
+            {SHOWCASE_TABS.map(tab => (
+              <button
+                key={tab.id}
+                className={`showcase-tab${activeShowcaseTab === tab.id ? ' active' : ''}`}
+                onClick={() => setActiveShowcaseTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="browser-mockup">
+            <div className="browser-header">
+              <div className="browser-dots">
+                <span className="browser-dot red" />
+                <span className="browser-dot yellow" />
+                <span className="browser-dot green" />
+              </div>
+              <div className="browser-address">mydailyplanner.xyz/{activeShowcaseTab}</div>
+            </div>
+            <div className="showcase-content">
+              <img
+                src={SHOWCASE_TABS.find(t => t.id === activeShowcaseTab).image}
+                alt={`${activeShowcaseTab} showcase`}
+                className="showcase-img"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
