@@ -9,7 +9,8 @@ const FEATURES = [
     title: 'Habit Tracker',
     desc: 'Build powerful daily routines with streak tracking, custom theme tags, and progress rings. Turn small habits into life-changing wins.',
     gradient: 'linear-gradient(135deg, #f472b6, #ec4899)',
-    glow: '#f472b633',
+    lightBg: '#fdf2f8',
+    lightBorder: '#fbcfe8',
     tag: 'Streaks & Goals',
   },
   {
@@ -17,7 +18,8 @@ const FEATURES = [
     title: 'Smart Schedule',
     desc: 'Plan every hour with categorized time slots, auto-completion tracking, and a gorgeous agenda view that keeps you on track.',
     gradient: 'linear-gradient(135deg, #818cf8, #6366f1)',
-    glow: '#818cf833',
+    lightBg: '#eef2ff',
+    lightBorder: '#c7d2fe',
     tag: 'Time Blocking',
   },
   {
@@ -25,7 +27,8 @@ const FEATURES = [
     title: 'Water Tracker',
     desc: 'Stay hydrated with visual glass-by-glass logging, daily goals, and streak reminders to keep you at peak performance.',
     gradient: 'linear-gradient(135deg, #38bdf8, #0ea5e9)',
-    glow: '#38bdf833',
+    lightBg: '#f0f9ff',
+    lightBorder: '#bae6fd',
     tag: 'Daily Wellness',
   },
   {
@@ -33,7 +36,8 @@ const FEATURES = [
     title: 'Mood Journal',
     desc: 'Track your emotional wellbeing daily. Log moods from Rough to Amazing with notes and a beautiful monthly calendar view.',
     gradient: 'linear-gradient(135deg, #fb923c, #f97316)',
-    glow: '#fb923c33',
+    lightBg: '#fff7ed',
+    lightBorder: '#fed7aa',
     tag: 'Mental Health',
   },
   {
@@ -41,7 +45,8 @@ const FEATURES = [
     title: 'Smart Notes',
     desc: 'Capture ideas in beautiful color-coded notes with pin support, rich text editor, and instant auto-save as you type.',
     gradient: 'linear-gradient(135deg, #34d399, #10b981)',
-    glow: '#34d39933',
+    lightBg: '#ecfdf5',
+    lightBorder: '#a7f3d0',
     tag: 'Rich Text',
   },
   {
@@ -49,7 +54,8 @@ const FEATURES = [
     title: 'Focus Timer',
     desc: 'Deep work sessions using the Pomodoro technique with customizable intervals, break reminders, and session history.',
     gradient: 'linear-gradient(135deg, #c084fc, #a855f7)',
-    glow: '#c084fc33',
+    lightBg: '#faf5ff',
+    lightBorder: '#e9d5ff',
     tag: 'Pomodoro',
   },
 ];
@@ -88,8 +94,7 @@ const TESTIMONIALS = [
   },
 ];
 
-/* ── Animated number counter ── */
-function useInView(threshold = 0.3) {
+function useInView(threshold = 0.1) {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -104,7 +109,7 @@ function useInView(threshold = 0.3) {
 }
 
 function FeatureCard({ feature, index }) {
-  const [ref, visible] = useInView(0.1);
+  const [ref, visible] = useInView(0.05);
   const Icon = feature.icon;
   return (
     <div
@@ -112,13 +117,12 @@ function FeatureCard({ feature, index }) {
       className="feature-card"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.6s ease ${index * 80}ms, transform 0.6s ease ${index * 80}ms`,
+        transform: visible ? 'translateY(0)' : 'translateY(28px)',
+        transition: `opacity 0.5s ease ${index * 70}ms, transform 0.5s ease ${index * 70}ms`,
       }}
     >
       <div className="feature-card-inner">
         <div className="feature-icon-wrap" style={{ background: feature.gradient }}>
-          <div className="feature-glow" style={{ background: feature.glow }} />
           <Icon size={22} strokeWidth={1.8} color="#fff" />
         </div>
         <div className="feature-tag">{feature.tag}</div>
@@ -133,7 +137,7 @@ function FeatureCard({ feature, index }) {
 }
 
 function StatCard({ value, label, icon: Icon, delay }) {
-  const [ref, visible] = useInView(0.4);
+  const [ref, visible] = useInView(0.3);
   return (
     <div
       ref={ref}
@@ -182,36 +186,38 @@ export default function LandingPage({ onLogin, onSignup }) {
   return (
     <div className="lp-root">
       <style>{`
-        /* ── Landing Page Styles ── */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        /* ── Root ── */
         .lp-root {
           min-height: 100vh;
-          background: #06060e;
-          color: #e2e8f0;
-          font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+          background: #ffffff;
+          color: #1e293b;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
           overflow-x: hidden;
         }
 
-        /* Nav */
+        /* ── Nav ── */
         .lp-nav {
           position: fixed; top: 0; left: 0; right: 0; z-index: 100;
           transition: all 0.3s ease;
-          padding: 0;
         }
         .lp-nav.scrolled {
-          background: rgba(6, 6, 14, 0.85);
+          background: rgba(255,255,255,0.92);
           backdrop-filter: blur(20px);
-          border-bottom: 1px solid rgba(255,255,255,0.06);
+          border-bottom: 1px solid #e2e8f0;
+          box-shadow: 0 1px 20px rgba(0,0,0,0.06);
         }
         .lp-nav-inner {
           max-width: 1200px; margin: 0 auto;
-          padding: 20px 24px;
+          padding: 18px 24px;
           display: flex; align-items: center; justify-content: space-between;
         }
         .lp-logo {
           display: flex; align-items: center; gap: 10px; text-decoration: none;
         }
         .lp-logo-name {
-          font-weight: 800; font-size: 15px; color: #fff; letter-spacing: -0.3px;
+          font-weight: 800; font-size: 15px; color: #1e293b; letter-spacing: -0.3px;
         }
         .lp-nav-links {
           display: flex; align-items: center; gap: 32px;
@@ -219,43 +225,44 @@ export default function LandingPage({ onLogin, onSignup }) {
         @media (max-width: 767px) { .lp-nav-links { display: none; } }
         .lp-nav-link {
           background: none; border: none; cursor: pointer;
-          font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6);
+          font-size: 13px; font-weight: 600; color: #64748b;
           transition: color 0.2s; padding: 0;
         }
-        .lp-nav-link:hover { color: #fff; }
+        .lp-nav-link:hover { color: #1e293b; }
         .lp-nav-ctas {
           display: flex; align-items: center; gap: 10px;
         }
         @media (max-width: 767px) { .lp-nav-ctas { display: none; } }
         .btn-ghost {
-          background: none; border: 1px solid rgba(255,255,255,0.12);
-          color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 600;
+          background: none; border: 1px solid #e2e8f0;
+          color: #475569; font-size: 13px; font-weight: 600;
           padding: 8px 18px; border-radius: 12px; cursor: pointer;
           transition: all 0.2s;
         }
-        .btn-ghost:hover { background: rgba(255,255,255,0.07); color: #fff; border-color: rgba(255,255,255,0.25); }
+        .btn-ghost:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
         .btn-primary {
-          background: linear-gradient(135deg, #6366f1, #4f46e5);
+          background: linear-gradient(135deg, #4f7cff, #3b66e8);
           border: none; color: #fff; font-size: 13px; font-weight: 700;
           padding: 9px 20px; border-radius: 12px; cursor: pointer;
-          transition: all 0.2s; box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+          transition: all 0.2s; box-shadow: 0 4px 16px rgba(79,124,255,0.3);
           display: flex; align-items: center; gap: 6px;
         }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(79,124,255,0.45); }
         .btn-hamburger {
-          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 10px; padding: 8px; cursor: pointer; color: #fff;
+          background: #f8fafc; border: 1px solid #e2e8f0;
+          border-radius: 10px; padding: 8px; cursor: pointer; color: #475569;
           display: none;
         }
         @media (max-width: 767px) { .btn-hamburger { display: flex; align-items: center; justify-content: center; } }
         .mobile-menu {
-          background: rgba(8, 8, 20, 0.97); backdrop-filter: blur(20px);
-          border-top: 1px solid rgba(255,255,255,0.06);
+          background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+          border-top: 1px solid #e2e8f0;
           padding: 16px 24px 20px; display: flex; flex-direction: column; gap: 4px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
         .mobile-menu .lp-nav-link {
           display: block; text-align: left; padding: 10px 0;
-          font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);
+          font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #475569;
         }
         .mobile-menu .btn-primary, .mobile-menu .btn-ghost { width: 100%; justify-content: center; margin-top: 8px; padding: 12px; }
 
@@ -263,84 +270,86 @@ export default function LandingPage({ onLogin, onSignup }) {
         .hero {
           min-height: 100vh;
           display: flex; flex-direction: column; align-items: center; justify-content: center;
-          text-align: center; padding: 100px 24px 80px;
+          text-align: center; padding: 120px 24px 80px;
           position: relative; overflow: hidden;
+          background: linear-gradient(180deg, #f8f7ff 0%, #ffffff 60%);
         }
-        .hero-bg {
-          position: absolute; inset: 0; pointer-events: none;
-        }
+        .hero-bg { position: absolute; inset: 0; pointer-events: none; }
         .hero-orb {
-          position: absolute; border-radius: 50%; filter: blur(120px);
+          position: absolute; border-radius: 50%; filter: blur(80px);
         }
-        .hero-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%); top: -100px; right: -100px; animation: floatOrb 8s ease-in-out infinite; }
-        .hero-orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(168,85,247,0.12), transparent 70%); bottom: -80px; left: -80px; animation: floatOrb 10s ease-in-out infinite reverse; }
-        .hero-orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(236,72,153,0.1), transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: floatOrb 7s ease-in-out infinite 2s; }
-        @keyframes floatOrb { 0%,100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.08) translateY(-20px); } }
+        .hero-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(99,102,241,0.10), transparent 65%); top: -180px; right: -150px; animation: floatOrb 9s ease-in-out infinite; }
+        .hero-orb-2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(168,85,247,0.08), transparent 65%); bottom: -120px; left: -120px; animation: floatOrb 11s ease-in-out infinite reverse; }
+        .hero-orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(236,72,153,0.07), transparent 65%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation: floatOrb 7s ease-in-out infinite 2s; }
+        @keyframes floatOrb { 0%,100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.06) translateY(-18px); } }
 
         .hero-grid {
           position: absolute; inset: 0;
-          background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+          background-image:
+            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
           background-size: 48px 48px;
-          mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+          mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, black, transparent);
         }
 
         .hero-badge {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3);
-          color: #a5b4fc; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+          background: #eef2ff; border: 1px solid #c7d2fe;
+          color: #4f46e5; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; padding: 6px 16px; border-radius: 100px;
-          margin-bottom: 32px; backdrop-filter: blur(8px);
+          margin-bottom: 32px;
           position: relative; z-index: 1;
           animation: fadeInUp 0.6s ease both;
         }
         .hero-badge-dot {
-          width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+          width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
           animation: pulse 2s infinite;
         }
         @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .hero-h1 {
-          font-size: clamp(42px, 6vw, 82px);
-          font-weight: 900; line-height: 1.05; letter-spacing: -2px;
-          color: #fff; margin: 0 0 24px; position: relative; z-index: 1;
+          font-size: clamp(40px, 6vw, 80px);
+          font-weight: 900; line-height: 1.05; letter-spacing: -2.5px;
+          color: #0f172a; margin: 0 0 24px; position: relative; z-index: 1;
           animation: fadeInUp 0.6s ease 0.1s both;
         }
         .hero-h1 .grad {
-          background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+          background: linear-gradient(135deg, #4f7cff 0%, #7c3aed 50%, #ec4899 100%);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
         .hero-sub {
-          font-size: clamp(15px, 2vw, 18px); color: rgba(255,255,255,0.55);
-          max-width: 580px; margin: 0 auto 40px; line-height: 1.7; font-weight: 500;
+          font-size: clamp(15px, 2vw, 18px); color: #64748b;
+          max-width: 560px; margin: 0 auto 40px; line-height: 1.75; font-weight: 450;
           position: relative; z-index: 1;
           animation: fadeInUp 0.6s ease 0.2s both;
         }
 
         .hero-ctas {
           display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-          margin-bottom: 64px; position: relative; z-index: 1;
+          margin-bottom: 60px; position: relative; z-index: 1;
           animation: fadeInUp 0.6s ease 0.3s both;
         }
         .btn-hero-primary {
           display: flex; align-items: center; gap: 10px;
-          background: linear-gradient(135deg, #6366f1, #a855f7);
+          background: linear-gradient(135deg, #4f7cff, #6d28d9);
           border: none; color: #fff; font-size: 15px; font-weight: 700;
           padding: 14px 30px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s; box-shadow: 0 8px 30px rgba(99,102,241,0.4);
+          transition: all 0.25s; box-shadow: 0 8px 32px rgba(79,124,255,0.35);
+          font-family: inherit;
         }
-        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(99,102,241,0.55); }
+        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(79,124,255,0.5); }
         .btn-hero-secondary {
           display: flex; align-items: center; gap: 8px;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-          color: rgba(255,255,255,0.8); font-size: 15px; font-weight: 600;
+          background: #ffffff; border: 1.5px solid #e2e8f0;
+          color: #475569; font-size: 15px; font-weight: 600;
           padding: 14px 28px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s; backdrop-filter: blur(10px);
+          transition: all 0.25s; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+          font-family: inherit;
         }
-        .btn-hero-secondary:hover { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+        .btn-hero-secondary:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
 
         /* Hero mini cards */
         .hero-preview {
@@ -350,55 +359,53 @@ export default function LandingPage({ onLogin, onSignup }) {
         }
         @media (max-width: 600px) { .hero-preview { grid-template-columns: repeat(2,1fr); } }
         .hero-mini-card {
-          background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+          background: #ffffff; border: 1.5px solid #f1f5f9;
           border-radius: 16px; padding: 14px; text-align: left;
-          backdrop-filter: blur(10px); transition: all 0.25s;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.05); transition: all 0.25s;
         }
-        .hero-mini-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-3px); }
+        .hero-mini-card:hover { border-color: #e0e7ff; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(79,124,255,0.12); }
         .hero-mini-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-        .hero-mini-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.4); }
-        .hero-mini-value { font-size: 13px; font-weight: 800; margin-top: 2px; }
+        .hero-mini-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; }
+        .hero-mini-value { font-size: 13px; font-weight: 800; margin-top: 2px; color: #1e293b; }
 
         /* ── Stats ── */
         .stats-section {
           padding: 80px 24px;
-          background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.08));
-          border-top: 1px solid rgba(255,255,255,0.05);
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          background: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #1e1b4b 100%);
         }
         .stats-inner { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
         @media (max-width: 640px) { .stats-inner { grid-template-columns: repeat(2,1fr); } }
         .stat-item { text-align: center; }
         .stat-icon-ring {
           width: 48px; height: 48px; border-radius: 14px;
-          background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3));
-          border: 1px solid rgba(99,102,241,0.3);
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.15);
           display: flex; align-items: center; justify-content: center;
           margin: 0 auto 12px;
         }
         .stat-value { font-size: 36px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
-        .stat-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.8px; }
+        .stat-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.8px; }
 
         /* ── Features ── */
-        .features-section { padding: 100px 24px; background: #06060e; }
+        .features-section { padding: 100px 24px; background: #f8fafc; }
         .section-inner { max-width: 1140px; margin: 0 auto; }
         .section-header { text-align: center; margin-bottom: 64px; }
         .section-badge {
           display: inline-flex; align-items: center; gap: 6px;
-          background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
-          color: #a5b4fc; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+          background: #eef2ff; border: 1px solid #c7d2fe;
+          color: #4f46e5; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 20px;
         }
         .section-h2 {
-          font-size: clamp(30px, 4vw, 50px); font-weight: 900; color: #fff;
+          font-size: clamp(30px, 4vw, 50px); font-weight: 900; color: #0f172a;
           line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 16px;
         }
         .section-h2 .grad {
-          background: linear-gradient(135deg, #818cf8, #c084fc);
+          background: linear-gradient(135deg, #4f7cff, #7c3aed);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
         }
-        .section-sub { font-size: 16px; color: rgba(255,255,255,0.45); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+        .section-sub { font-size: 16px; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.7; }
 
         .features-grid {
           display: grid;
@@ -410,142 +417,134 @@ export default function LandingPage({ onLogin, onSignup }) {
 
         .feature-card { cursor: default; }
         .feature-card-inner {
-          background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+          background: #ffffff; border: 1.5px solid #f1f5f9;
           border-radius: 20px; padding: 28px; height: 100%;
           transition: all 0.3s ease; position: relative; overflow: hidden;
-        }
-        .feature-card-inner::before {
-          content: ''; position: absolute; inset: 0; border-radius: 20px;
-          background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent);
-          opacity: 0; transition: opacity 0.3s;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
         .feature-card:hover .feature-card-inner {
-          border-color: rgba(99,102,241,0.25);
-          background: rgba(99,102,241,0.06);
-          transform: translateY(-4px);
-          box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+          border-color: #e0e7ff;
+          transform: translateY(-5px);
+          box-shadow: 0 20px 48px rgba(79,124,255,0.1);
         }
-        .feature-card:hover .feature-card-inner::before { opacity: 1; }
         .feature-icon-wrap {
           width: 50px; height: 50px; border-radius: 14px;
           display: flex; align-items: center; justify-content: center;
           margin-bottom: 16px; position: relative; overflow: hidden;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        }
-        .feature-glow {
-          position: absolute; inset: -4px; border-radius: 18px; filter: blur(12px); z-index: -1;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
         .feature-tag {
           font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-          color: rgba(255,255,255,0.35); margin-bottom: 8px;
+          color: #94a3b8; margin-bottom: 8px;
         }
-        .feature-title { font-size: 17px; font-weight: 800; color: #fff; margin: 0 0 10px; }
-        .feature-desc { font-size: 13.5px; color: rgba(255,255,255,0.45); line-height: 1.7; margin: 0 0 16px; }
+        .feature-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 10px; }
+        .feature-desc { font-size: 13.5px; color: #64748b; line-height: 1.7; margin: 0 0 16px; }
         .feature-arrow {
           display: flex; align-items: center; justify-content: center;
           width: 28px; height: 28px; border-radius: 8px;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-          color: rgba(255,255,255,0.4); transition: all 0.2s;
+          background: #f1f5f9; border: 1px solid #e2e8f0;
+          color: #94a3b8; transition: all 0.2s;
         }
         .feature-card:hover .feature-arrow {
-          background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4); color: #a5b4fc;
+          background: #eef2ff; border-color: #c7d2fe; color: #4f46e5;
         }
 
         /* ── How It Works ── */
         .how-section {
           padding: 100px 24px;
-          background: radial-gradient(ellipse 100% 60% at 50% 100%, rgba(99,102,241,0.07), transparent),
-            linear-gradient(180deg, #06060e 0%, #0a0a1a 50%, #06060e 100%);
+          background: #ffffff;
         }
         .steps-list { display: flex; flex-direction: column; gap: 16px; max-width: 680px; margin: 0 auto; }
         .step-card {
           display: flex; gap: 20px; align-items: flex-start;
-          background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+          background: #f8fafc; border: 1.5px solid #f1f5f9;
           border-radius: 20px; padding: 24px; transition: all 0.25s;
+          box-shadow: 0 1px 8px rgba(0,0,0,0.03);
         }
-        .step-card:hover { background: rgba(99,102,241,0.05); border-color: rgba(99,102,241,0.2); transform: translateX(4px); }
+        .step-card:hover { background: #ffffff; border-color: #c7d2fe; transform: translateX(4px); box-shadow: 0 8px 24px rgba(79,124,255,0.1); }
         .step-num-wrap {
           flex-shrink: 0; width: 52px; height: 52px; border-radius: 14px;
           display: flex; align-items: center; justify-content: center;
         }
-        .step-num { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+        .step-num { font-size: 16px; font-weight: 900; }
         .step-meta { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
-        .step-title { font-size: 17px; font-weight: 800; color: #fff; margin: 0 0 6px; }
-        .step-desc { font-size: 13.5px; color: rgba(255,255,255,0.45); line-height: 1.65; margin: 0; }
+        .step-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+        .step-desc { font-size: 13.5px; color: #64748b; line-height: 1.65; margin: 0; }
 
         /* ── Testimonials ── */
-        .testimonials-section { padding: 100px 24px; background: #06060e; }
+        .testimonials-section { padding: 100px 24px; background: #f8fafc; }
         .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 960px; margin: 0 auto; }
         @media (max-width: 768px) { .testimonials-grid { grid-template-columns: 1fr; } }
         .testimonial-card {
-          background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+          background: #ffffff; border: 1.5px solid #f1f5f9;
           border-radius: 20px; padding: 28px; transition: all 0.3s;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
-        .testimonial-card:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+        .testimonial-card:hover { border-color: #e0e7ff; transform: translateY(-4px); box-shadow: 0 16px 40px rgba(79,124,255,0.1); }
         .testimonial-stars { display: flex; gap: 3px; margin-bottom: 16px; }
-        .testimonial-star { color: #fbbf24; font-size: 14px; }
-        .testimonial-text { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; font-style: italic; margin: 0 0 20px; }
+        .testimonial-star { color: #f59e0b; font-size: 15px; }
+        .testimonial-text { font-size: 14px; color: #475569; line-height: 1.75; font-style: italic; margin: 0 0 20px; }
         .testimonial-author { display: flex; align-items: center; gap: 12px; }
         .testimonial-avatar {
           width: 40px; height: 40px; border-radius: 12px;
           display: flex; align-items: center; justify-content: center;
           font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0;
         }
-        .testimonial-name { font-size: 14px; font-weight: 800; color: #fff; }
-        .testimonial-role { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+        .testimonial-name { font-size: 14px; font-weight: 800; color: #0f172a; }
+        .testimonial-role { font-size: 11px; color: #94a3b8; margin-top: 2px; }
 
         /* ── CTA Section ── */
         .cta-section {
           padding: 100px 24px; text-align: center; position: relative; overflow: hidden;
-          background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(168,85,247,0.1) 50%, rgba(236,72,153,0.1) 100%);
-          border-top: 1px solid rgba(255,255,255,0.06);
+          background: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #1e1b4b 100%);
         }
         .cta-glow {
           position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-          width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(99,102,241,0.15), transparent 70%);
+          width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(99,102,241,0.2), transparent 70%);
           pointer-events: none;
         }
         .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
         .cta-icon {
           width: 72px; height: 72px; border-radius: 22px;
-          background: linear-gradient(135deg, #6366f1, #a855f7);
+          background: linear-gradient(135deg, #4f7cff, #7c3aed);
           display: flex; align-items: center; justify-content: center;
-          margin: 0 auto 28px; box-shadow: 0 16px 48px rgba(99,102,241,0.4);
+          margin: 0 auto 28px; box-shadow: 0 16px 48px rgba(79,124,255,0.45);
           font-size: 32px;
         }
         .cta-h2 { font-size: clamp(32px, 4vw, 52px); font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 16px; }
         .cta-h2 .gold { color: #fbbf24; }
-        .cta-sub { font-size: 16px; color: rgba(255,255,255,0.5); margin: 0 0 40px; line-height: 1.7; }
+        .cta-sub { font-size: 16px; color: rgba(255,255,255,0.6); margin: 0 0 40px; line-height: 1.7; }
         .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .btn-cta-white {
           display: flex; align-items: center; gap: 8px;
           background: #fff; border: none; color: #1e1b4b; font-size: 15px; font-weight: 800;
           padding: 14px 30px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          transition: all 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+          font-family: inherit;
         }
-        .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+        .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
         .btn-cta-outline {
           display: flex; align-items: center; gap: 8px;
-          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+          background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
           color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600;
           padding: 14px 26px; border-radius: 16px; cursor: pointer;
-          transition: all 0.25s;
+          transition: all 0.25s; font-family: inherit;
         }
-        .btn-cta-outline:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .cta-note { font-size: 12px; color: rgba(255,255,255,0.25); margin-top: 20px; }
+        .btn-cta-outline:hover { background: rgba(255,255,255,0.13); color: #fff; }
+        .cta-note { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 20px; }
 
         /* ── Footer ── */
         .lp-footer {
-          padding: 32px 24px; background: #030308;
-          border-top: 1px solid rgba(255,255,255,0.05);
+          padding: 32px 24px; background: #0f172a;
+          border-top: 1px solid #1e293b;
         }
         .lp-footer-inner {
           max-width: 1140px; margin: 0 auto;
           display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
         .lp-footer-logo { display: flex; align-items: center; gap: 8px; }
-        .lp-footer-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.7); }
-        .lp-footer-copy { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.25); }
+        .lp-footer-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); }
+        .lp-footer-copy { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.3); }
         .lp-footer-links { display: flex; gap: 20px; }
         .lp-footer-link {
           background: none; border: none; cursor: pointer;
@@ -631,10 +630,10 @@ export default function LandingPage({ onLogin, onSignup }) {
 
         <div className="hero-preview">
           {[
-            { icon: CheckSquare, label: 'Habits', value: '5/7 done', color: '#ec4899', bg: 'rgba(236,72,153,0.15)' },
-            { icon: Droplet, label: 'Water', value: '6/8 glasses', color: '#38bdf8', bg: 'rgba(56,189,248,0.15)' },
-            { icon: Smile, label: 'Mood', value: 'Feeling Great', color: '#34d399', bg: 'rgba(52,211,153,0.15)' },
-            { icon: Timer, label: 'Focus', value: '3 sessions', color: '#c084fc', bg: 'rgba(192,132,252,0.15)' },
+            { icon: CheckSquare, label: 'Habits', value: '5/7 done', color: '#ec4899', bg: 'rgba(236,72,153,0.1)' },
+            { icon: Droplet, label: 'Water', value: '6/8 glasses', color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
+            { icon: Smile, label: 'Mood', value: 'Feeling Great', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+            { icon: Timer, label: 'Focus', value: '3 sessions', color: '#a855f7', bg: 'rgba(168,85,247,0.1)' },
           ].map((card, i) => {
             const CardIcon = card.icon;
             return (
@@ -695,9 +694,9 @@ export default function LandingPage({ onLogin, onSignup }) {
           </div>
           <div className="steps-list">
             {[
-              { step: '01', title: 'Create your free account', desc: 'Sign up with email or Google in seconds. No credit card, no commitments, forever free.', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
-              { step: '02', title: 'Set up your habits & schedule', desc: 'Add your daily habits, pick theme colors, and block out your day in the smart scheduler.', color: '#a855f7', bg: 'rgba(168,85,247,0.12)' },
-              { step: '03', title: 'Track your progress & grow', desc: 'View completion charts, keep streaks alive, review mood logs and see how you improve over time.', color: '#ec4899', bg: 'rgba(236,72,153,0.12)' },
+              { step: '01', title: 'Create your free account', desc: 'Sign up with email or Google in seconds. No credit card, no commitments, forever free.', color: '#4f7cff', bg: '#eef2ff' },
+              { step: '02', title: 'Set up your habits & schedule', desc: 'Add your daily habits, pick theme colors, and block out your day in the smart scheduler.', color: '#7c3aed', bg: '#f5f3ff' },
+              { step: '03', title: 'Track your progress & grow', desc: 'View completion charts, keep streaks alive, review mood logs and see how you improve over time.', color: '#ec4899', bg: '#fdf2f8' },
             ].map((s, i) => (
               <div key={i} className="step-card">
                 <div className="step-num-wrap" style={{ background: s.bg }}>
@@ -719,7 +718,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div className="section-inner">
           <div className="section-header">
             <div className="section-badge">
-              <Star size={11} strokeWidth={2} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+              <Star size={11} strokeWidth={2} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
               Loved by Users
             </div>
             <h2 className="section-h2">
@@ -803,19 +802,19 @@ export default function LandingPage({ onLogin, onSignup }) {
 /* ── Legal pages shared layout wrapper ── */
 function LegalPageLayout({ title, children, onBack }) {
   return (
-    <div style={{ minHeight: '100vh', background: '#06060e', color: '#e2e8f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <nav style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(6,6,14,0.9)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0' }}>
+    <div style={{ minHeight: '100vh', background: '#ffffff', color: '#1e293b', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <nav style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 12px rgba(0,0,0,0.05)' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <button onClick={onBack} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 700, padding: '8px 16px', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button onClick={onBack} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', fontSize: 13, fontWeight: 700, padding: '8px 16px', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit' }}>
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
             Back
           </button>
-          <span style={{ fontWeight: 800, fontSize: 15, color: '#fff' }}>{title}</span>
+          <span style={{ fontWeight: 800, fontSize: 15, color: '#0f172a' }}>{title}</span>
           <div style={{ width: 60 }} />
         </div>
       </nav>
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px' }}>
-        <h1 style={{ fontSize: 40, fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: -1 }}>{title}</h1>
+        <h1 style={{ fontSize: 40, fontWeight: 900, color: '#0f172a', marginBottom: 8, letterSpacing: -1 }}>{title}</h1>
         {children}
       </div>
     </div>
@@ -823,10 +822,10 @@ function LegalPageLayout({ title, children, onBack }) {
 }
 
 function Para({ children }) {
-  return <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, margin: '0 0 18px' }}>{children}</p>;
+  return <p style={{ fontSize: 15, color: '#64748b', lineHeight: 1.75, margin: '0 0 18px' }}>{children}</p>;
 }
 function H3({ children }) {
-  return <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff', margin: '32px 0 8px', letterSpacing: -0.5 }}>{children}</h3>;
+  return <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', margin: '32px 0 8px', letterSpacing: -0.5 }}>{children}</h3>;
 }
 
 function PrivacyPage({ onBack }) {
@@ -878,9 +877,9 @@ function ContactPage({ onBack }) {
     <LegalPageLayout title="Contact Us" onBack={onBack}>
       <Para>Have a question, feedback, or feature request? We'd love to hear from you.</Para>
       {submitted ? (
-        <div style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.3)', borderRadius: 16, padding: '24px', textAlign: 'center', marginTop: 32 }}>
+        <div style={{ background: '#ecfdf5', border: '1.5px solid #a7f3d0', borderRadius: 16, padding: '24px', textAlign: 'center', marginTop: 32 }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>✓</div>
-          <p style={{ color: '#34d399', fontWeight: 700, fontSize: 16 }}>Message sent! We'll get back to you soon.</p>
+          <p style={{ color: '#059669', fontWeight: 700, fontSize: 16 }}>Message sent! We'll get back to you soon.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 32 }}>
@@ -889,18 +888,18 @@ function ContactPage({ onBack }) {
             { label: 'Email Address', key: 'email', type: 'email', placeholder: 'your@email.com' },
           ].map(f => (
             <div key={f.key}>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>{f.label}</label>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', marginBottom: 8 }}>{f.label}</label>
               <input type={f.type} required placeholder={f.placeholder} value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, outline: 'none', boxSizing: 'border-box' }} />
+                style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }} />
             </div>
           ))}
           <div>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Message</label>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', marginBottom: 8 }}>Message</label>
             <textarea required rows={5} placeholder="Tell us what's on your mind..." value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-              style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box' }} />
+              style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }} />
           </div>
           <button type="submit"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: 'pointer', marginTop: 8 }}>
+            style={{ background: 'linear-gradient(135deg, #4f7cff, #7c3aed)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: 'pointer', marginTop: 8, fontFamily: 'inherit' }}>
             Send Message →
           </button>
         </form>

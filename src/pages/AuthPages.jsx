@@ -87,33 +87,36 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
   const viewMeta = {
     login: { title: 'Welcome back', sub: 'Sign in to your planner' },
     signup: { title: 'Create account', sub: 'Start your journey today' },
-    'forgot-password': { title: 'Reset password', sub: 'We\'ll send a link to your inbox' },
+    'forgot-password': { title: 'Reset password', sub: "We'll send a link to your inbox" },
   };
 
   return (
     <div style={{
-      minHeight: '100vh', display: 'flex', background: '#06060e',
-      fontFamily: 'Inter, Outfit, system-ui, -apple-system, sans-serif',
+      minHeight: '100vh', display: 'flex',
+      background: 'linear-gradient(135deg, #f8f7ff 0%, #eef2ff 50%, #f0f9ff 100%)',
+      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       position: 'relative', overflow: 'hidden',
     }}>
       <style>{`
-        /* Auth Page Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        /* Auth Page Light Styles */
         .auth-orb {
-          position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none;
+          position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
         }
         .auth-grid {
           position: absolute; inset: 0; pointer-events: none;
-          background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-          background-size: 40px 40px;
+          background-image:
+            linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+          background-size: 44px 44px;
           mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black, transparent);
         }
         .auth-panel-left {
           display: none;
           flex: 1; flex-direction: column; justify-content: center; align-items: flex-start;
-          padding: 60px 80px;
-          background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(168,85,247,0.06) 100%);
-          border-right: 1px solid rgba(255,255,255,0.05);
+          padding: 60px 72px;
+          background: linear-gradient(135deg, #4f7cff 0%, #6d28d9 60%, #7c3aed 100%);
           position: relative; overflow: hidden;
         }
         @media (min-width: 1000px) { .auth-panel-left { display: flex; } }
@@ -126,121 +129,129 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         }
         .auth-back-btn {
           display: inline-flex; align-items: center; gap: 6px;
-          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-          color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600;
+          background: #ffffff; border: 1.5px solid #e2e8f0;
+          color: #475569; font-size: 13px; font-weight: 600;
           padding: 8px 14px; border-radius: 10px; cursor: pointer;
           transition: all 0.2s; margin-bottom: 36px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+          font-family: inherit;
         }
-        .auth-back-btn:hover { color: #fff; background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); }
+        .auth-back-btn:hover { color: #1e293b; background: #f8fafc; border-color: #cbd5e1; box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
         .auth-logo-area { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-        .auth-logo-name { font-size: 15px; font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: -0.3px; }
-        .auth-title { font-size: 30px; font-weight: 900; color: #fff; margin: 0 0 6px; letter-spacing: -1px; line-height: 1.1; }
-        .auth-sub { font-size: 14px; color: rgba(255,255,255,0.4); margin: 0 0 32px; }
+        .auth-logo-name { font-size: 15px; font-weight: 800; color: #1e293b; letter-spacing: -0.3px; }
+        .auth-title { font-size: 30px; font-weight: 900; color: #0f172a; margin: 0 0 6px; letter-spacing: -1px; line-height: 1.1; }
+        .auth-sub { font-size: 14px; color: #64748b; margin: 0 0 32px; }
 
         .auth-alert {
           display: flex; align-items: flex-start; gap: 10px;
           padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 16px;
         }
-        .auth-alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
-        .auth-alert-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: #6ee7b7; }
+        .auth-alert-error { background: #fef2f2; border: 1.5px solid #fecaca; color: #dc2626; }
+        .auth-alert-success { background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #059669; }
 
         .auth-form { display: flex; flex-direction: column; gap: 14px; }
         .auth-field { display: flex; flex-direction: column; gap: 7px; }
-        .auth-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); }
+        .auth-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; }
         .auth-input {
           width: 100%; padding: 12px 16px; border-radius: 12px;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          color: #fff; font-size: 14px; font-weight: 500; outline: none;
+          background: #ffffff; border: 1.5px solid #e2e8f0;
+          color: #1e293b; font-size: 14px; font-weight: 500; outline: none;
           transition: all 0.2s; box-sizing: border-box;
           font-family: inherit;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
-        .auth-input::placeholder { color: rgba(255,255,255,0.2); }
-        .auth-input:focus { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.08); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+        .auth-input::placeholder { color: #cbd5e1; }
+        .auth-input:focus { border-color: #6366f1; background: #fefeff; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
         .auth-input-wrap { position: relative; }
         .auth-input-pw { padding-right: 44px; }
         .auth-pw-toggle {
           position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-          background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer;
+          background: none; border: none; color: #94a3b8; cursor: pointer;
           display: flex; align-items: center; justify-content: center; padding: 4px;
           transition: color 0.2s;
         }
-        .auth-pw-toggle:hover { color: rgba(255,255,255,0.7); }
+        .auth-pw-toggle:hover { color: #475569; }
         .auth-forgot {
           align-self: flex-end; background: none; border: none; cursor: pointer;
-          font-size: 12px; font-weight: 700; color: #818cf8; transition: color 0.2s; padding: 0;
+          font-size: 12px; font-weight: 700; color: #4f7cff; transition: color 0.2s; padding: 0;
+          font-family: inherit;
         }
-        .auth-forgot:hover { color: #a5b4fc; }
+        .auth-forgot:hover { color: #3b66e8; }
 
         .auth-submit {
           width: 100%; padding: 13px; border-radius: 14px;
-          background: linear-gradient(135deg, #6366f1, #a855f7);
+          background: linear-gradient(135deg, #4f7cff, #6d28d9);
           border: none; color: #fff; font-size: 15px; font-weight: 800;
           cursor: pointer; transition: all 0.25s;
-          box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+          box-shadow: 0 8px 24px rgba(79,124,255,0.3);
           display: flex; align-items: center; justify-content: center; gap: 8px;
           margin-top: 4px; font-family: inherit;
         }
-        .auth-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(99,102,241,0.5); }
+        .auth-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(79,124,255,0.45); }
         .auth-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
         .auth-divider {
           display: flex; align-items: center; gap: 12px; margin: 20px 0;
         }
-        .auth-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
-        .auth-divider-text { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.25); }
+        .auth-divider-line { flex: 1; height: 1px; background: #e2e8f0; }
+        .auth-divider-text { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
 
         .auth-google {
           width: 100%; padding: 12px; border-radius: 14px;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700;
+          background: #ffffff; border: 1.5px solid #e2e8f0;
+          color: #475569; font-size: 14px; font-weight: 700;
           cursor: pointer; transition: all 0.2s;
           display: flex; align-items: center; justify-content: center; gap: 10px;
-          font-family: inherit;
+          font-family: inherit; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
         }
-        .auth-google:hover:not(:disabled) { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .auth-google:hover:not(:disabled) { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .auth-google:disabled { opacity: 0.55; cursor: not-allowed; }
 
-        .auth-switch { text-align: center; margin-top: 24px; font-size: 13px; color: rgba(255,255,255,0.35); }
+        .auth-switch { text-align: center; margin-top: 24px; font-size: 13px; color: #64748b; }
         .auth-switch-btn {
           background: none; border: none; cursor: pointer;
-          color: #818cf8; font-weight: 700; font-size: 13px;
-          transition: color 0.2s; padding: 0;
+          color: #4f7cff; font-weight: 700; font-size: 13px;
+          transition: color 0.2s; padding: 0; font-family: inherit;
         }
-        .auth-switch-btn:hover { color: #a5b4fc; }
+        .auth-switch-btn:hover { color: #3b66e8; }
 
         /* Left panel */
         .left-badge {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
-          color: #a5b4fc; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+          background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+          color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 32px;
         }
-        .left-h2 { font-size: 44px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -2px; margin: 0 0 20px; }
+        .left-h2 { font-size: 42px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -2px; margin: 0 0 20px; }
         .left-h2 .grad {
-          background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+          background: linear-gradient(135deg, #fbbf24, #f472b6);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .left-sub { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.7; max-width: 380px; margin: 0 0 40px; }
+        .left-sub { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.7; max-width: 380px; margin: 0 0 40px; }
         .left-features { display: flex; flex-direction: column; gap: 14px; }
         .left-feat {
           display: flex; align-items: center; gap: 12px;
-          font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500;
+          font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 500;
         }
-        .left-feat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .left-feat-label { font-weight: 600; color: rgba(255,255,255,0.7); }
+        .left-feat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.4); }
+        .left-feat-label { font-weight: 700; color: #fff; }
+        .left-panel-orb {
+          position: absolute; border-radius: 50%; pointer-events: none;
+        }
 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spin { animation: spin 0.8s linear infinite; }
       `}</style>
 
       {/* Background decorations */}
-      <div className="auth-orb" style={{ width: 600, height: 600, background: 'radial-gradient(circle, rgba(99,102,241,0.15), transparent 70%)', top: -150, left: -150 }} />
-      <div className="auth-orb" style={{ width: 500, height: 500, background: 'radial-gradient(circle, rgba(168,85,247,0.1), transparent 70%)', bottom: -100, right: -100 }} />
+      <div className="auth-orb" style={{ width: 500, height: 500, background: 'radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%)', top: -120, left: -120 }} />
+      <div className="auth-orb" style={{ width: 400, height: 400, background: 'radial-gradient(circle, rgba(168,85,247,0.1), transparent 70%)', bottom: -80, right: -80 }} />
       <div className="auth-grid" />
 
       {/* Left decorative panel */}
       <div className="auth-panel-left">
-        <div className="auth-orb" style={{ width: 400, height: 400, background: 'radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%)', top: -100, right: -100 }} />
+        <div className="left-panel-orb" style={{ width: 350, height: 350, background: 'rgba(255,255,255,0.06)', top: -100, right: -100, filter: 'blur(60px)' }} />
+        <div className="left-panel-orb" style={{ width: 250, height: 250, background: 'rgba(251,191,36,0.12)', bottom: -60, left: 60, filter: 'blur(50px)' }} />
         <div className="left-badge">
           <Sparkles size={11} strokeWidth={2} />
           Personal Productivity
@@ -254,14 +265,14 @@ export default function AuthPages({ onAuthSuccess, initialView = 'login', onBack
         </p>
         <div className="left-features">
           {[
-            { color: '#ec4899', label: 'Habit Tracker', desc: 'Build streaks & routines' },
-            { color: '#38bdf8', label: 'Smart Schedule', desc: 'Block time, stay on track' },
+            { color: '#f472b6', label: 'Habit Tracker', desc: 'Build streaks & routines' },
+            { color: '#60a5fa', label: 'Smart Schedule', desc: 'Block time, stay on track' },
             { color: '#34d399', label: 'Mood Journal', desc: 'Understand your emotions' },
             { color: '#c084fc', label: 'Focus Timer', desc: 'Deep work with Pomodoro' },
             { color: '#fb923c', label: 'Smart Notes', desc: 'Capture ideas instantly' },
           ].map((f, i) => (
             <div key={i} className="left-feat">
-              <div className="left-feat-dot" style={{ background: f.color }} />
+              <div className="left-feat-dot" style={{ background: f.color, borderColor: 'transparent' }} />
               <span className="left-feat-label">{f.label}</span>
               <span>— {f.desc}</span>
             </div>
