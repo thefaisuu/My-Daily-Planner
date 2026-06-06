@@ -465,11 +465,16 @@ function loadScheduleSlots() {
 }
 
 function PriorityTasksCard({ navigate, darkMode }) {
-  const { user } = useApp();
+  const { user, showToast } = useApp();
   const [slots, setSlots] = useState({});
   const [loading, setLoading] = useState(false);
-  const now         = new Date();
+  const [now, setNow] = useState(new Date());
   const currentHour = now.getHours();
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(id);
+  }, []);
 
   const loadSlots = useCallback(async () => {
     if (!supabase || !user) {
@@ -525,7 +530,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
 
       const init = {};
       SLOT_HOURS.forEach(h => {
-        init[h] = { task: '', done: false, cat: 'work', startTime: `${String(h).padStart(2,'0')}:00`, endTime: `${String(Math.min(h + 1, 23)).padStart(2,'0')}:00` };
+        init[h] = { task: '', done: false, cat: 'work', startTime: `${String(h).padStart(2,'0')}:00`, endTime: `${String(Math.min(h + 1, 23)).padStart(2,'0')}:00`, note: '' };
       });
 
       if (data) {
@@ -538,6 +543,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
             let cat = 'work';
             let startTime = `${String(hour).padStart(2,'0')}:00`;
             let endTime = `${String(Math.min(hour + 1, 23)).padStart(2,'0')}:00`;
+            let note = '';
             try {
               if (row.task.startsWith('{')) {
                 const json = JSON.parse(row.task);
@@ -545,6 +551,7 @@ function PriorityTasksCard({ navigate, darkMode }) {
                 cat = json.cat || 'work';
                 startTime = json.startTime || startTime;
                 endTime = json.endTime || endTime;
+                note = json.note || '';
               }
             } catch (_) {}
 
@@ -573,7 +580,8 @@ function PriorityTasksCard({ navigate, darkMode }) {
               done,
               cat,
               startTime,
-              endTime
+              endTime,
+              note
             };
           }
         }
@@ -598,6 +606,75 @@ function PriorityTasksCard({ navigate, darkMode }) {
     window.addEventListener('planner-data-changed', loadSlots);
     return () => window.removeEventListener('planner-data-changed', loadSlots);
   }, [loadSlots]);
+
+  /* Auto-complete events when they reach their end time in background */
+  useEffect(() => {
+    if (loading) return;
+    const today = (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    })();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+
+    const passedSlots = Object.entries(slots).filter(([hourStr, s]) => {
+      if (!s?.task?.trim() || s.done) return false;
+      const [eh, em] = (s.endTime || '').split(':').map(Number);
+      if (isNaN(eh)) return false;
+      const endMin = eh * 60 + (em || 0);
+      return nowMin >= endMin;
+    });
+
+    if (passedSlots.length > 0) {
+      const nextSlots = { ...slots };
+      passedSlots.forEach(([hourStr, s]) => {
+        nextSlots[hourStr] = { ...s, done: true };
+      });
+      setSlots(nextSlots);
+
+      if (!supabase || !user) {
+        try {
+          const raw = localStorage.getItem('planner_schedule');
+          const parsed = raw ? JSON.parse(raw) : {};
+          passedSlots.forEach(([hourStr, s]) => {
+            if (parsed[hourStr]) {
+              parsed[hourStr].done = true;
+            }
+          });
+          localStorage.setItem('planner_schedule', JSON.stringify(parsed));
+          window.dispatchEvent(new Event('planner-data-changed'));
+        } catch (_) {}
+      } else {
+        (async () => {
+          try {
+            for (const [hourStr, s] of passedSlots) {
+              const hour = parseInt(hourStr);
+              const dbTask = JSON.stringify({
+                task: s.task,
+                cat: s.cat || 'work',
+                startTime: s.startTime || `${String(hour).padStart(2,'0')}:00`,
+                endTime: s.endTime || `${String(Math.min(hour + 1, 23)).padStart(2,'0')}:00`,
+                note: s.note || ''
+              });
+
+              await supabase
+                .from('schedule_tasks')
+                .upsert({
+                  user_id: user.id,
+                  date: today,
+                  time_slot: String(hour),
+                  task: dbTask,
+                  completed: true
+                }, { onConflict: 'user_id,date,time_slot' });
+            }
+            window.dispatchEvent(new Event('planner-data-changed'));
+          } catch (err) {
+            console.error('Failed to auto-complete dashboard slot:', err);
+          }
+        })();
+      }
+      showToast('Event marked done automatically ✓');
+    }
+  }, [now, slots, loading, user, showToast]);
 
   const getMins = (timeStr, defaultHour) => {
     if (timeStr) {

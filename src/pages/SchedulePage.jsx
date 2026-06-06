@@ -736,9 +736,25 @@ function CurrentTimeBar({ darkMode }) {
 }
 
 function loadSchedule(selectedDate = todayISO()) {
-  const init = {};
-  SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
-  return init;
+  try {
+    const raw = localStorage.getItem('planner_schedule');
+    const parsed = raw ? JSON.parse(raw) : {};
+    const hasDifferentDate = Object.values(parsed).some(s => s?.task?.trim() && s.date && s.date !== selectedDate);
+    if (hasDifferentDate) {
+      const init = {};
+      SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
+      return init;
+    }
+    const init = {};
+    SLOTS.forEach(s => {
+      init[s.hour] = parsed[s.hour] || { task: '', done: false, cat: 'work', date: selectedDate };
+    });
+    return init;
+  } catch (_) {
+    const init = {};
+    SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
+    return init;
+  }
 }
 
 function ScheduleSkeleton() {
@@ -770,9 +786,19 @@ export default function SchedulePage() {
   const [loading, setLoading]   = useState(false);
   const [streak, setStreak]     = useState(0);
 
-  const latestEndTime = useMemo(() => {
+  /* Helper to check if event is in the past */
+  const isEventPast = useCallback((endTimeStr) => {
+    if (!endTimeStr) return false;
+    const [h, m] = endTimeStr.split(':').map(Number);
+    if (isNaN(h)) return false;
+    const currentH = now.getHours();
+    const currentM = now.getMinutes();
+    return (currentH * 60 + currentM) >= (h * 60 + (m || 0));
+  }, [now]);
+
+  const getSlotEndTimeLabel = useCallback(() => {
     const filled = Object.values(slotData).filter(s => s?.task?.trim());
-    if (filled.length === 0) return '11:00 PM';
+    if (filled.length === 0) return '';
     const sorted = [...filled].sort((a, b) => {
       const [ah, am] = (a.endTime || '00:00').split(':').map(Number);
       const [bh, bm] = (b.endTime || '00:00').split(':').map(Number);

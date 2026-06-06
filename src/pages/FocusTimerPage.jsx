@@ -345,6 +345,9 @@ export default function FocusTimerPage() {
   const [completed,   setCompleted]   = useState(false);          // just finished?
   const [drawerOpen,  setDrawerOpen]  = useState(false);
   const [label,       setLabel]       = useState('');              // optional task label
+  const [notificationPermission, setNotificationPermission] = useState(
+    'Notification' in window ? Notification.permission : 'denied'
+  );
 
   const intervalRef = useRef(null);
   const runningRef  = useRef(running);
@@ -375,35 +378,29 @@ export default function FocusTimerPage() {
     // 3. Show HTML5 browser notification if permitted
     const options = {
       body: body,
-      icon: '/favicon.svg',
-      badge: '/favicon.svg',
+      icon: window.location.origin + '/favicon.svg',
+      badge: window.location.origin + '/favicon.svg',
       tag: 'focus-timer-notification',
-      renotify: true
+      renotify: true,
+      vibrate: [200, 100, 200],
+      requireInteraction: true
     };
 
     if ('Notification' in window) {
       if (Notification.permission === 'granted') {
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, options);
+          navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration && registration.active) {
+              registration.showNotification(title, options);
+            } else {
+              new Notification(title, options);
+            }
           }).catch(() => {
             new Notification(title, options);
           });
         } else {
           new Notification(title, options);
         }
-      } else if (Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.ready.then(registration => {
-                registration.showNotification(title, options);
-              });
-            } else {
-              new Notification(title, options);
-            }
-          }
-        });
       }
     }
   }, [showToast]);
@@ -441,21 +438,23 @@ export default function FocusTimerPage() {
   /* ── Cleanup title on unmount ── */
   useEffect(() => () => { document.title = 'My Daily Planner'; }, []);
 
+  const endTimeRef = useRef(null);
+
   /* ── Tick ── */
   useEffect(() => {
     if (running) {
+      endTimeRef.current = Date.now() + secsLeft * 1000;
       intervalRef.current = setInterval(() => {
-        setSecsLeft(s => {
-          if (s <= 1) {
-            clearInterval(intervalRef.current);
-            setRunning(false);
-            setCompleted(true);
-            if (settings.sound) playBell();
-            return 0;
-          }
-          return s - 1;
-        });
-      }, 1000);
+        const msLeft = endTimeRef.current - Date.now();
+        const sLeft = Math.max(0, Math.ceil(msLeft / 1000));
+        setSecsLeft(sLeft);
+        if (sLeft <= 0) {
+          clearInterval(intervalRef.current);
+          setRunning(false);
+          setCompleted(true);
+          if (settings.sound) playBell();
+        }
+      }, 250);
     } else {
       clearInterval(intervalRef.current);
     }
@@ -513,7 +512,9 @@ export default function FocusTimerPage() {
     setCompleted(false);
     setRunning(true);
     if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+      Notification.requestPermission().then(perm => {
+        setNotificationPermission(perm);
+      });
     }
   };
   const handlePause  = () => setRunning(false);
@@ -601,6 +602,32 @@ export default function FocusTimerPage() {
 
           {/* ════ CENTER PANEL ════ */}
           <div className="flex-1 flex flex-col items-center justify-center gap-6 py-4">
+
+            {/* Notification Permission Alert */}
+            {notificationPermission === 'default' && (
+              <div className={`flex items-center justify-between gap-4 px-4 py-2.5 rounded-2xl text-xs font-semibold max-w-sm w-full border animate-pulse
+                ${darkMode ? 'bg-indigo-950/40 border-indigo-800 text-indigo-300' : 'bg-indigo-50 border-indigo-200 text-indigo-700'}`}>
+                <div className="flex items-center gap-2">
+                  <Bell size={14} className="flex-shrink-0" />
+                  <span>Enable browser alerts so you don't miss timer notifications!</span>
+                </div>
+                <button
+                  onClick={() => {
+                    if ('Notification' in window) {
+                      Notification.requestPermission().then(perm => {
+                        setNotificationPermission(perm);
+                        if (perm === 'granted') {
+                          showToast('Notifications enabled! ✓');
+                        }
+                      });
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold transition-all cursor-pointer"
+                >
+                  Enable
+                </button>
+              </div>
+            )}
 
             {/* Mode tabs */}
             <div className={`flex p-1.5 gap-1 rounded-2xl flex-wrap justify-center ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
