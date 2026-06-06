@@ -796,7 +796,7 @@ export default function SchedulePage() {
     return (currentH * 60 + currentM) >= (h * 60 + (m || 0));
   }, [now]);
 
-  const getSlotEndTimeLabel = useCallback(() => {
+  const latestEndTime = useMemo(() => {
     const filled = Object.values(slotData).filter(s => s?.task?.trim());
     if (filled.length === 0) return '';
     const sorted = [...filled].sort((a, b) => {
@@ -805,6 +805,7 @@ export default function SchedulePage() {
       return (bh * 60 + bm) - (ah * 60 + am);
     });
     const latest = sorted[0];
+    if (!latest?.endTime) return '';
     const [h, m] = latest.endTime.split(':').map(Number);
     const ampm = h < 12 ? 'AM' : 'PM';
     const h12 = h % 12 || 12;
