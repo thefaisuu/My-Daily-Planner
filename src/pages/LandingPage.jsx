@@ -285,26 +285,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         }
         .mobile-menu .btn-primary, .mobile-menu .btn-ghost, .mobile-menu .btn-contact-nav { width: 100%; justify-content: center; margin-top: 8px; padding: 12px; }
 
-        /* Contact Us floating button */
-        .contact-float {
-          position: fixed; bottom: 28px; left: 28px; z-index: 90;
-          display: flex; align-items: center; gap: 8px;
-          background: #ffffff; border: 1.5px solid #e2e8f0;
-          color: #475569; font-size: 13px; font-weight: 700;
-          padding: 10px 18px; border-radius: 100px; cursor: pointer;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-          transition: all 0.25s; font-family: inherit;
-        }
-        .contact-float:hover {
-          background: #0ea5e9; color: #fff; border-color: #0ea5e9;
-          box-shadow: 0 8px 28px rgba(14,165,233,0.35);
-          transform: translateY(-2px);
-        }
-        .contact-float-dot {
-          width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
-          animation: pulse 2s infinite;
-          flex-shrink: 0;
-        }
+
 
         /* ── Hero ── */
         .hero {
@@ -843,12 +824,7 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
         </div>
       </footer>
 
-      {/* ── Floating Contact Us button ── */}
-      <button className="contact-float" onClick={() => goTab('contact')}>
-        <span className="contact-float-dot" />
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-        Contact Us
-      </button>
+
     </div>
   );
 }
@@ -922,11 +898,56 @@ function TermsPage({ onBack }) {
 
 function ContactPage({ onBack }) {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError('');
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
+    if (!accessKey) {
+      console.warn("Web3Forms access key not found. Please add VITE_WEB3FORMS_ACCESS_KEY to your env configuration.");
+      // Fallback behavior for local testing/missing key
+      setTimeout(() => {
+        setLoading(false);
+        setSubmitted(true);
+      }, 800);
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          from_name: "My Daily Planner Contact Form"
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      setError("Unable to connect to the mail server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <LegalPageLayout title="Contact Us" onBack={onBack}>
       <Para>Have a question, feedback, or feature request? We'd love to hear from you.</Para>
@@ -937,24 +958,29 @@ function ContactPage({ onBack }) {
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 32 }}>
+          {error && (
+            <div style={{ padding: '12px 16px', borderRadius: 12, backgroundColor: '#fff1f2', border: '1.5px solid #fecdd3', color: '#be123c', fontSize: 13, fontWeight: 600 }}>
+              ⚠️ {error}
+            </div>
+          )}
           {[
             { label: 'Full Name', key: 'name', type: 'text', placeholder: 'Your name' },
             { label: 'Email Address', key: 'email', type: 'email', placeholder: 'your@email.com' },
           ].map(f => (
             <div key={f.key}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', marginBottom: 8 }}>{f.label}</label>
-              <input type={f.type} required placeholder={f.placeholder} value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }} />
+              <input type={f.type} required disabled={loading} placeholder={f.placeholder} value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', opacity: loading ? 0.6 : 1 }} />
             </div>
           ))}
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', marginBottom: 8 }}>Message</label>
-            <textarea required rows={5} placeholder="Tell us what's on your mind..." value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-              style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }} />
+            <textarea required disabled={loading} rows={5} placeholder="Tell us what's on your mind..." value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
+              style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', color: '#1e293b', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit', opacity: loading ? 0.6 : 1 }} />
           </div>
-          <button type="submit"
-            style={{ background: 'linear-gradient(135deg, #4f7cff, #7c3aed)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: 'pointer', marginTop: 8, fontFamily: 'inherit' }}>
-            Send Message →
+          <button type="submit" disabled={loading}
+            style={{ background: 'linear-gradient(135deg, #4f7cff, #7c3aed)', border: 'none', color: '#fff', fontWeight: 800, fontSize: 14, padding: '14px 28px', borderRadius: 14, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 8, fontFamily: 'inherit', opacity: loading ? 0.8 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {loading ? 'Sending Message...' : 'Send Message →'}
           </button>
         </form>
       )}
