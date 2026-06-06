@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useApp } from './context/AppContext';
 import { X, AlertTriangle, Info } from 'lucide-react';
 import Sidebar from './components/Sidebar';
@@ -14,35 +14,79 @@ import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPages from './pages/AuthPages';
 import LandingPage from './pages/LandingPage';
+
+/* ─────────────────────────────────────────
+   Route map: URL path  ↔  app page name
+───────────────────────────────────────── */
+const NAV_ROUTES = {
+  '/dashboard':     'Dashboard',
+  '/schedule':      'Schedule',
+  '/habits':        'Habits',
+  '/focus':         'Focus Timer',
+  '/mood':          'Mood',
+  '/notes':         'Notes',
+  '/water':         'Water',
+  '/notifications': 'Notifications',
+  '/settings':      'Settings',
+};
+
+// Reverse map: page name → URL path
+const NAV_PATHS = Object.fromEntries(
+  Object.entries(NAV_ROUTES).map(([path, name]) => [name, path])
+);
+
+// Page titles shown in the browser tab
+const PAGE_TITLES = {
+  '/':              'My Daily Planner – Make Every Day Count',
+  '/login':         'Sign In – My Daily Planner',
+  '/signup':        'Create Account – My Daily Planner',
+  '/dashboard':     'Dashboard – My Daily Planner',
+  '/schedule':      'Schedule – My Daily Planner',
+  '/habits':        'Habits – My Daily Planner',
+  '/focus':         'Focus Timer – My Daily Planner',
+  '/mood':          'Mood Journal – My Daily Planner',
+  '/notes':         'Smart Notes – My Daily Planner',
+  '/water':         'Water Tracker – My Daily Planner',
+  '/notifications': 'Notifications – My Daily Planner',
+  '/settings':      'Settings – My Daily Planner',
+};
+
+function setPageTitle(path) {
+  document.title = PAGE_TITLES[path] || 'My Daily Planner – Make Every Day Count';
+}
+
+function navigateTo(path, replace = false) {
+  if (replace) {
+    window.history.replaceState({}, '', path);
+  } else {
+    window.history.pushState({}, '', path);
+  }
+  setPageTitle(path);
+}
+
 /* ── Programmatic synth chime sound ── */
 const playNotificationSound = () => {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const now = audioCtx.currentTime;
-    
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(587.33, now); // D5
+    osc1.frequency.setValueAtTime(587.33, now);
     gain1.gain.setValueAtTime(0.08, now);
     gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    
     osc1.connect(gain1);
     gain1.connect(audioCtx.destination);
-    
     osc1.start(now);
     osc1.stop(now + 0.25);
-    
     const osc2 = audioCtx.createOscillator();
     const gain2 = audioCtx.createGain();
     osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(880.00, now + 0.08); // A5
+    osc2.frequency.setValueAtTime(880.00, now + 0.08);
     gain2.gain.setValueAtTime(0.12, now + 0.08);
     gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    
     osc2.connect(gain2);
     gain2.connect(audioCtx.destination);
-    
     osc2.start(now + 0.08);
     osc2.stop(now + 0.35);
   } catch (e) {
@@ -52,9 +96,7 @@ const playNotificationSound = () => {
 
 function ToastNotification({ message, type, action, playSound, onDone }) {
   useEffect(() => {
-    if (playSound) {
-      playNotificationSound();
-    }
+    if (playSound) playNotificationSound();
     if (action) return;
     const id = setTimeout(onDone, 4000);
     return () => clearTimeout(id);
@@ -72,13 +114,8 @@ function ToastNotification({ message, type, action, playSound, onDone }) {
         <span>{cleanMessage}</span>
       </div>
       {action && (
-        <button
-          onClick={() => {
-            action.callback();
-            onDone();
-          }}
-          className="px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-extrabold transition-all cursor-pointer"
-        >
+        <button onClick={() => { action.callback(); onDone(); }}
+          className="px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-extrabold transition-all cursor-pointer">
           {action.label}
         </button>
       )}
@@ -88,7 +125,6 @@ function ToastNotification({ message, type, action, playSound, onDone }) {
 
 function PageRenderer() {
   const { activeNav } = useApp();
-
   const renderPage = () => {
     switch (activeNav) {
       case 'Dashboard':      return <Dashboard />;
@@ -103,7 +139,6 @@ function PageRenderer() {
       default:               return <Dashboard />;
     }
   };
-
   return (
     <div key={activeNav} className="page-transition h-full w-full">
       {renderPage()}
@@ -111,42 +146,140 @@ function PageRenderer() {
   );
 }
 
+/* ── Main App ── */
 export default function App() {
-  const { user, setUser, authLoading, toast, setToast, confirmModal, closeConfirm } = useApp();
-  const [authView, setAuthView] = useState(null); // null = landing, 'login' | 'signup' = auth modal
+  const {
+    user, setUser, authLoading,
+    toast, setToast,
+    confirmModal, closeConfirm,
+    activeNav, setActiveNav,
+  } = useApp();
 
+  const getInitialAuthView = () => {
+    const p = window.location.pathname;
+    if (p === '/login') return 'login';
+    if (p === '/signup') return 'signup';
+    return null;
+  };
+
+  const [authView, setAuthView] = useState(getInitialAuthView);
+
+  // ── Set title on mount for non-authed pages
+  useEffect(() => {
+    if (!user) {
+      if (authView) {
+        setPageTitle(authView === 'login' ? '/login' : '/signup');
+      } else {
+        setPageTitle('/');
+      }
+    }
+  }, [authView, user]);
+
+  // ── When user logs in, sync URL from path or go to /dashboard
+  useEffect(() => {
+    if (!user) return;
+    const path = window.location.pathname;
+    const pageFromUrl = NAV_ROUTES[path];
+    if (pageFromUrl) {
+      setActiveNav(pageFromUrl);
+      setPageTitle(path);
+    } else {
+      navigateTo('/dashboard', true);
+      setActiveNav('Dashboard');
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Sync activeNav → URL + title
+  useEffect(() => {
+    if (!user) return;
+    const path = NAV_PATHS[activeNav] || '/dashboard';
+    if (window.location.pathname !== path) {
+      navigateTo(path);
+    } else {
+      setPageTitle(path);
+    }
+  }, [activeNav, user]);
+
+  // ── Handle browser back/forward
+  useEffect(() => {
+    const onPopState = () => {
+      const path = window.location.pathname;
+      setPageTitle(path);
+      if (!user) {
+        if (path === '/login') setAuthView('login');
+        else if (path === '/signup') setAuthView('signup');
+        else setAuthView(null);
+        return;
+      }
+      const page = NAV_ROUTES[path];
+      if (page) {
+        setActiveNav(page);
+      } else {
+        navigateTo('/dashboard', true);
+        setActiveNav('Dashboard');
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [user, setActiveNav]);
+
+  // ── Auth handlers
+  const handleLogin = useCallback(() => {
+    navigateTo('/login');
+    setAuthView('login');
+  }, []);
+
+  const handleSignup = useCallback(() => {
+    navigateTo('/signup');
+    setAuthView('signup');
+  }, []);
+
+  const handleAuthBack = useCallback(() => {
+    navigateTo('/');
+    setAuthView(null);
+  }, []);
+
+  const handleAuthSuccess = useCallback((usr) => {
+    setUser(usr);
+    setAuthView(null);
+    navigateTo('/dashboard', true);
+  }, [setUser]);
+
+  // ── Loading screen
   if (authLoading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
           <svg className="animate-spin h-8 w-8 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
           </svg>
-          <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 animate-pulse">Restoring session...</span>
+          <span className="text-sm font-semibold text-slate-500 animate-pulse">Restoring session...</span>
         </div>
       </div>
     );
   }
 
+  // ── Not logged in: landing or auth pages
   if (!user) {
     if (authView) {
       return (
         <AuthPages
           initialView={authView}
-          onAuthSuccess={(usr) => { setUser(usr); setAuthView(null); }}
-          onBack={() => setAuthView(null)}
+          onAuthSuccess={handleAuthSuccess}
+          onBack={handleAuthBack}
         />
       );
     }
     return (
       <LandingPage
-        onLogin={() => setAuthView('login')}
-        onSignup={() => setAuthView('signup')}
+        onLogin={handleLogin}
+        onSignup={handleSignup}
       />
     );
   }
 
+  // ── Dashboard shell
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
@@ -186,22 +319,18 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
         onClick={onCancel}
       />
-      
-      {/* Card container */}
-      <div 
+      <div
         className={`relative border shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center transition-all ${
           darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-800'
         }`}
         role="dialog"
         aria-modal="true"
       >
-        {/* Close Button */}
-        <button 
+        <button
           onClick={onCancel}
           className={`absolute top-5 right-5 transition-colors cursor-pointer ${
             darkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
@@ -211,35 +340,25 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
         </button>
 
         <div className="flex flex-col items-center text-center space-y-4">
-          {/* Icon */}
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md ${
-            isDanger 
+            isDanger
               ? darkMode
                 ? 'bg-rose-950/40 text-rose-400 border border-rose-900/50'
-                : 'bg-rose-50 text-rose-500 border border-rose-100' 
+                : 'bg-rose-50 text-rose-500 border border-rose-100'
               : darkMode
                 ? 'bg-blue-950/40 text-blue-400 border border-blue-900/50'
                 : 'bg-blue-50 text-[#4F7CFF] border border-blue-100'
           }`}>
-            {isDanger ? (
-              <AlertTriangle size={28} strokeWidth={1.5} />
-            ) : (
-              <Info size={28} strokeWidth={1.5} />
-            )}
+            {isDanger ? <AlertTriangle size={28} strokeWidth={1.5} /> : <Info size={28} strokeWidth={1.5} />}
           </div>
-
-          {/* Title */}
           <h3 className={`text-lg font-black tracking-tight ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             {title}
           </h3>
-
-          {/* Message */}
           <p className={`text-sm font-semibold leading-relaxed max-w-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {message}
           </p>
         </div>
 
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
           <button
             onClick={onCancel}
@@ -254,7 +373,7 @@ function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText
           <button
             onClick={onConfirm}
             className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center cursor-pointer ${
-              isDanger 
+              isDanger
                 ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100/50'
                 : 'bg-gradient-to-r from-[#4F7CFF] to-[#3B66E8] hover:shadow-blue-100/50'
             }`}
