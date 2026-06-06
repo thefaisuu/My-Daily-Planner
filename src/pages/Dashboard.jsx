@@ -37,6 +37,16 @@ function timeAgo(ts) {
   return `${Math.floor(s/86400)}d ago`;
 }
 
+function stripHtml(html) {
+  if (!html) return '';
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  } catch (_) {
+    return html.replace(/<[^>]*>/g, '');
+  }
+}
+
 function getTimePeriod(date = new Date()) {
   const hrs = date.getHours();
   if (hrs >= 5 && hrs < 12)  return 'Morning';
@@ -413,7 +423,7 @@ function NotesCard({ notes, navigate, darkMode }) {
                 )}
                 <p className="text-xs leading-relaxed line-clamp-2"
                   style={{ color: darkMode ? '#94a3b8' : c.text + 'aa' }}>
-                  {note.body}
+                  {stripHtml(note.body)}
                 </p>
                 <p className="text-[10px] mt-1.5 font-semibold" style={{ color: c.accent }}>
                   {timeAgo(note.updatedAt)}
@@ -465,7 +475,30 @@ function PriorityTasksCard({ navigate, darkMode }) {
     if (!supabase || !user) {
       try {
         const raw = localStorage.getItem('planner_schedule');
-        setSlots(raw ? JSON.parse(raw) : {});
+        const parsed = raw ? JSON.parse(raw) : {};
+        // Auto-complete past slots in local storage
+        let changed = false;
+        const d = new Date();
+        const today = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+        Object.keys(parsed).forEach(h => {
+          const slot = parsed[h];
+          if (slot && slot.date === today && slot.task?.trim() && !slot.done) {
+            const [eh, em] = (slot.endTime || '').split(':').map(Number);
+            if (!isNaN(eh)) {
+              const endMin = eh * 60 + (em || 0);
+              if (nowMin >= endMin) {
+                slot.done = true;
+                changed = true;
+              }
+            }
+          }
+        });
+        if (changed) {
+          localStorage.setItem('planner_schedule', JSON.stringify(parsed));
+          window.dispatchEvent(new Event('planner-data-changed'));
+        }
+        setSlots(parsed);
       } catch (_) {
         setSlots({});
       }
@@ -482,7 +515,6 @@ function PriorityTasksCard({ navigate, darkMode }) {
         return `${y}-${m}-${day}`;
       };
       const today = todayISO();
-      console.log('Dashboard loading slots for today:', today, 'user:', user.id);
       const { data, error } = await supabase
         .from('schedule_tasks')
         .select('date, time_slot, task, completed')
@@ -491,15 +523,15 @@ function PriorityTasksCard({ navigate, darkMode }) {
 
       if (error) throw error;
 
-      console.log('Dashboard slots data from DB:', data);
-
       const init = {};
       SLOT_HOURS.forEach(h => {
         init[h] = { task: '', done: false, cat: 'work', startTime: `${String(h).padStart(2,'0')}:00`, endTime: `${String(Math.min(h + 1, 23)).padStart(2,'0')}:00` };
       });
 
       if (data) {
-        data.forEach(row => {
+        let changed = false;
+        const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+        for (const row of data) {
           const hour = parseInt(row.time_slot);
           if (!isNaN(hour) && init[hour] !== undefined) {
             let parsedTask = row.task;
@@ -516,17 +548,39 @@ function PriorityTasksCard({ navigate, darkMode }) {
               }
             } catch (_) {}
 
+            let done = row.completed;
+            const [eh, em] = endTime.split(':').map(Number);
+            if (!isNaN(eh) && !done && parsedTask.trim()) {
+              const endMin = eh * 60 + (em || 0);
+              if (nowMin >= endMin) {
+                done = true;
+                changed = true;
+                // Sync back to Supabase
+                await supabase
+                  .from('schedule_tasks')
+                  .upsert({
+                    user_id: user.id,
+                    date: row.date,
+                    time_slot: row.time_slot,
+                    task: row.task,
+                    completed: true
+                  }, { onConflict: 'user_id,date,time_slot' });
+              }
+            }
+
             init[hour] = {
               task: parsedTask,
-              done: row.completed,
+              done,
               cat,
               startTime,
               endTime
             };
           }
-        });
+        }
+        if (changed) {
+          window.dispatchEvent(new Event('planner-data-changed'));
+        }
       }
-      console.log('Dashboard final slots map:', init);
       setSlots(init);
     } catch (err) {
       console.error('Failed to load dashboard schedule tasks:', err);
@@ -588,8 +642,8 @@ function PriorityTasksCard({ navigate, darkMode }) {
     })
     .sort((a, b) => a.startMin - b.startMin);
 
-  const current  = filled.find(s => s.isCurrent) || null;
-  const upcoming = filled.filter(s => !s.isPast && !s.isCurrent).slice(0, current ? 2 : 3);
+  const current  = filled.find(s => s.isCurrent && !s.done) || null;
+  const upcoming = filled.filter(s => !s.isPast && !s.isCurrent && !s.done).slice(0, current ? 2 : 3);
   const display  = [...(current ? [current] : []), ...upcoming];
 
   const doneCount  = filled.filter(s => s.done).length;

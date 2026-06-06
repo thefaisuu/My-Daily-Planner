@@ -591,7 +591,7 @@ function TodaysFocusCard({ slots, currentHour, darkMode, onAddSlot, streak, now 
   // For current and next events
   const [currentEvent, nextEvent] = useMemo(() => {
     const nowMin = now.getHours() * 60 + now.getMinutes();
-    const filledEvents = Object.values(slots).filter(s => s?.task?.trim());
+    const filledEvents = Object.values(slots).filter(s => s?.task?.trim() && !s.done);
     
     let active = null;
     let upcoming = [];
@@ -788,7 +788,31 @@ export default function SchedulePage() {
   // Load from DB or fallback
   const loadScheduleData = useCallback(async () => {
     if (!supabase || !user) {
-      setSlotData(loadSchedule(selectedDate));
+      const localSlots = loadSchedule(selectedDate);
+      // Auto-complete today's past slots in local storage
+      const today = todayISO();
+      if (selectedDate === today) {
+        let changed = false;
+        const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+        Object.keys(localSlots).forEach(h => {
+          const slot = localSlots[h];
+          if (slot && slot.task?.trim() && !slot.done) {
+            const [eh, em] = (slot.endTime || '').split(':').map(Number);
+            if (!isNaN(eh)) {
+              const endMin = eh * 60 + (em || 0);
+              if (nowMin >= endMin) {
+                slot.done = true;
+                changed = true;
+              }
+            }
+          }
+        });
+        if (changed) {
+          saveSchedule(selectedDate, localSlots);
+          window.dispatchEvent(new Event('planner-data-changed'));
+        }
+      }
+      setSlotData(localSlots);
       return;
     }
     setLoading(true);
@@ -805,7 +829,10 @@ export default function SchedulePage() {
       SLOTS.forEach(s => { init[s.hour] = { task: '', done: false, cat: 'work', date: selectedDate }; });
 
       if (data) {
-        data.forEach(row => {
+        let changed = false;
+        const today = todayISO();
+        const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+        for (const row of data) {
           const hour = parseInt(row.time_slot);
           if (!isNaN(hour) && init[hour]) {
             let parsedTask = row.task;
@@ -825,9 +852,31 @@ export default function SchedulePage() {
               }
             } catch (_) {}
 
+            let done = row.completed;
+            if (selectedDate === today && !done && parsedTask.trim()) {
+              const [eh, em] = endTime.split(':').map(Number);
+              if (!isNaN(eh)) {
+                const endMin = eh * 60 + (em || 0);
+                if (nowMin >= endMin) {
+                  done = true;
+                  changed = true;
+                  // Sync back to Supabase
+                  await supabase
+                    .from('schedule_tasks')
+                    .upsert({
+                      user_id: user.id,
+                      date: row.date,
+                      time_slot: row.time_slot,
+                      task: row.task,
+                      completed: true
+                    }, { onConflict: 'user_id,date,time_slot' });
+                }
+              }
+            }
+
             init[hour] = {
               task: parsedTask,
-              done: row.completed,
+              done,
               cat,
               date: row.date,
               startTime,
@@ -835,7 +884,10 @@ export default function SchedulePage() {
               note
             };
           }
-        });
+        }
+        if (changed) {
+          window.dispatchEvent(new Event('planner-data-changed'));
+        }
       }
       setSlotData(init);
     } catch (err) {
@@ -956,6 +1008,55 @@ export default function SchedulePage() {
     window.addEventListener('planner-data-changed', handler);
     return () => window.removeEventListener('planner-data-changed', handler);
   }, [loadScheduleData]);
+
+  // Auto-complete events when they reach their end time
+  useEffect(() => {
+    const today = todayISO();
+    if (selectedDate !== today) return; // only auto-complete today's events
+    if (loading) return; // don't process if loading
+    
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    
+    // Find slots that are filled, not marked done, and whose end time has passed
+    const passedSlots = Object.entries(slotData).filter(([hour, s]) => {
+      if (!s?.task?.trim() || s.done) return false;
+      const [eh, em] = (s.endTime || '').split(':').map(Number);
+      if (isNaN(eh)) return false;
+      const endMin = eh * 60 + (em || 0);
+      return nowMin >= endMin;
+    });
+
+    if (passedSlots.length > 0) {
+      const prev = { ...slotData };
+      const nextData = { ...slotData };
+      
+      passedSlots.forEach(([hourStr, s]) => {
+        const hour = parseInt(hourStr);
+        nextData[hour] = { ...s, done: true };
+      });
+      
+      // Update state locally
+      setSlotData(nextData);
+      
+      // Sync each one to database/localStorage
+      passedSlots.forEach(([hourStr, s]) => {
+        const hour = parseInt(hourStr);
+        syncSlotToDB(
+          hour,
+          s.task,
+          s.cat,
+          s.date,
+          s.startTime,
+          s.endTime,
+          s.note,
+          true,
+          prev
+        );
+      });
+      
+      showToast('Past event(s) marked done automatically ✓');
+    }
+  }, [now, slotData, selectedDate, loading]);
 
 
   /* Modal state */

@@ -367,20 +367,41 @@ export default function FocusTimerPage() {
     // 1. Show react toast with playSound = true
     showToast(`${title}: ${body}`, 'success', null, true);
 
-    // 2. Show HTML5 browser notification if permitted
+    // 2. Play device vibration pattern if supported
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200]);
+    }
+
+    // 3. Show HTML5 browser notification if permitted
+    const options = {
+      body: body,
+      icon: '/favicon.svg',
+      badge: '/favicon.svg',
+      tag: 'focus-timer-notification',
+      renotify: true
+    };
+
     if ('Notification' in window) {
       if (Notification.permission === 'granted') {
-        new Notification(title, {
-          body: body,
-          icon: '/favicon.ico',
-        });
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(title, options);
+          }).catch(() => {
+            new Notification(title, options);
+          });
+        } else {
+          new Notification(title, options);
+        }
       } else if (Notification.permission === 'default') {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
-            new Notification(title, {
-              body: body,
-              icon: '/favicon.ico',
-            });
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, options);
+              });
+            } else {
+              new Notification(title, options);
+            }
           }
         });
       }
@@ -471,7 +492,8 @@ export default function FocusTimerPage() {
 
         if (currentSettings.autoStart) { switchMode(next, true); }
       } else {
-        triggerNotification('Break Over!', 'Ready to focus again? Let\'s get back to work!');
+        const breakLabel = currentMode === 'long_break' ? 'Long Break' : 'Short Break';
+        triggerNotification(`${breakLabel} Over!`, "Ready to focus again? Let's get back to work!");
         if (currentSettings.autoStart) { switchMode('focus', true); }
       }
   }, [completed, triggerNotification, switchMode]);
