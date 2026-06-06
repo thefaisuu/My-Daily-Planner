@@ -714,12 +714,12 @@ export default function WaterPage() {
                   { iconName: 'Droplets',   colorType: 'info', label: 'Volume', val: `${(totalMl / 1000).toFixed(2)}L`, sub: `${totalMl} ml` },
                   { iconName: 'Hourglass',   colorType: 'warning', label: 'Remaining', val: remaining, sub: `${remaining * mlPerGlass} ml left` },
                 ].map((s, i) => (
-                  <div key={i} className={`rounded-2xl p-4 border shadow-sm flex flex-col gap-1.5
+                  <div key={i} className={`rounded-2xl p-3 sm:p-4 border shadow-sm flex flex-col gap-1 sm:gap-1.5
                     ${darkMode ? 'bg-slate-800/70 border-slate-700/50' : 'bg-white/80 border-sky-100/40'}`}>
                     <PastelIcon name={s.iconName} colorType={s.colorType} circleSize="w-8 h-8" size={16} />
                     <div>
-                      <p className={`text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
-                      <p className={`text-[10px] font-bold uppercase tracking-wide mt-0.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.sub}</p>
+                      <p className={`text-lg sm:text-xl font-black ${darkMode ? 'text-slate-100' : 'text-slate-700'}`}>{s.val}</p>
+                      <p className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wide mt-0.5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.sub}</p>
                     </div>
                   </div>
                 ))}

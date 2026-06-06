@@ -147,7 +147,7 @@ function FeatureCard({ feature, index }) {
 }
 
 function StatCard({ value, label, icon: Icon, delay }) {
-  const [ref, visible] = useInView(0.3);
+  const [ref, visible] = useInView(0.05);
   return (
     <div
       ref={ref}
@@ -408,7 +408,11 @@ export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'la
           border-bottom: 1.5px solid rgba(79, 124, 255, 0.1);
         }
         .stats-inner { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
-        @media (max-width: 640px) { .stats-inner { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 640px) {
+          .stats-inner { grid-template-columns: repeat(2,1fr); gap: 12px; }
+          .stat-value { font-size: 26px; }
+          .stat-label { font-size: 10px; }
+        }
         .stat-item { text-align: center; }
         .stat-icon-ring {
           width: 48px; height: 48px; border-radius: 14px;
