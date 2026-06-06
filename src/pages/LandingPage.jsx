@@ -157,10 +157,16 @@ function StatCard({ value, label, icon: Icon, delay }) {
   );
 }
 
-export default function LandingPage({ onLogin, onSignup }) {
+export default function LandingPage({ onLogin, onSignup, activeTabOverride = 'landing', onTabChange }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('landing');
+  const [activeTab, setActiveTab] = useState(activeTabOverride);
+
+  // Sync when parent changes the tab (e.g. via popstate)
+  useEffect(() => {
+    setActiveTab(activeTabOverride);
+    if (activeTabOverride !== 'landing') window.scrollTo(0, 0);
+  }, [activeTabOverride]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -173,14 +179,20 @@ export default function LandingPage({ onLogin, onSignup }) {
     setMobileMenuOpen(false);
   };
 
+  const goTab = (tab) => {
+    setActiveTab(tab);
+    window.scrollTo(0, 0);
+    onTabChange?.(tab);
+  };
+
   if (activeTab === 'privacy') {
-    return <PrivacyPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+    return <PrivacyPage onBack={() => goTab('landing')} />;
   }
   if (activeTab === 'terms') {
-    return <TermsPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+    return <TermsPage onBack={() => goTab('landing')} />;
   }
   if (activeTab === 'contact') {
-    return <ContactPage onBack={() => { setActiveTab('landing'); window.scrollTo(0, 0); }} />;
+    return <ContactPage onBack={() => goTab('landing')} />;
   }
 
   return (
@@ -220,7 +232,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           font-weight: 800; font-size: 15px; color: #1e293b; letter-spacing: -0.3px;
         }
         .lp-nav-links {
-          display: flex; align-items: center; gap: 32px;
+          display: flex; align-items: center; gap: 28px;
         }
         @media (max-width: 767px) { .lp-nav-links { display: none; } }
         .lp-nav-link {
@@ -233,6 +245,13 @@ export default function LandingPage({ onLogin, onSignup }) {
           display: flex; align-items: center; gap: 10px;
         }
         @media (max-width: 767px) { .lp-nav-ctas { display: none; } }
+        .btn-contact-nav {
+          background: none; border: 1px solid #e2e8f0;
+          color: #475569; font-size: 13px; font-weight: 600;
+          padding: 7px 14px; border-radius: 10px; cursor: pointer;
+          transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-contact-nav:hover { background: #f0f9ff; color: #0ea5e9; border-color: #bae6fd; }
         .btn-ghost {
           background: none; border: 1px solid #e2e8f0;
           color: #475569; font-size: 13px; font-weight: 600;
@@ -264,7 +283,28 @@ export default function LandingPage({ onLogin, onSignup }) {
           display: block; text-align: left; padding: 10px 0;
           font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #475569;
         }
-        .mobile-menu .btn-primary, .mobile-menu .btn-ghost { width: 100%; justify-content: center; margin-top: 8px; padding: 12px; }
+        .mobile-menu .btn-primary, .mobile-menu .btn-ghost, .mobile-menu .btn-contact-nav { width: 100%; justify-content: center; margin-top: 8px; padding: 12px; }
+
+        /* Contact Us floating button */
+        .contact-float {
+          position: fixed; bottom: 28px; left: 28px; z-index: 90;
+          display: flex; align-items: center; gap: 8px;
+          background: #ffffff; border: 1.5px solid #e2e8f0;
+          color: #475569; font-size: 13px; font-weight: 700;
+          padding: 10px 18px; border-radius: 100px; cursor: pointer;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+          transition: all 0.25s; font-family: inherit;
+        }
+        .contact-float:hover {
+          background: #0ea5e9; color: #fff; border-color: #0ea5e9;
+          box-shadow: 0 8px 28px rgba(14,165,233,0.35);
+          transform: translateY(-2px);
+        }
+        .contact-float-dot {
+          width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+          animation: pulse 2s infinite;
+          flex-shrink: 0;
+        }
 
         /* ── Hero ── */
         .hero {
@@ -567,6 +607,10 @@ export default function LandingPage({ onLogin, onSignup }) {
             ))}
           </div>
           <div className="lp-nav-ctas">
+            <button className="btn-contact-nav" onClick={() => goTab('contact')}>
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+              Contact
+            </button>
             <button className="btn-ghost" onClick={onLogin}>Log In</button>
             <button className="btn-primary" onClick={onSignup}>
               Get Started <ArrowRight size={14} strokeWidth={2.5} />
@@ -585,6 +629,10 @@ export default function LandingPage({ onLogin, onSignup }) {
             {[['features', 'Features'], ['how-it-works', 'How It Works'], ['testimonials', 'Reviews']].map(([id, label]) => (
               <button key={id} className="lp-nav-link" onClick={() => scrollTo(id)}>{label}</button>
             ))}
+            <button className="btn-contact-nav" onClick={() => { goTab('contact'); setMobileMenuOpen(false); }}>
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+              Contact Us
+            </button>
             <button className="btn-ghost" onClick={onLogin}>Log In</button>
             <button className="btn-primary" onClick={onSignup}>Get Started Free →</button>
           </div>
@@ -786,15 +834,21 @@ export default function LandingPage({ onLogin, onSignup }) {
             <span>by Haider &amp; Faisal</span>
           </div>
           <div className="lp-footer-links">
-            {['Privacy', 'Terms', 'Contact'].map(link => (
-              <button key={link} className="lp-footer-link"
-                onClick={() => { setActiveTab(link.toLowerCase()); window.scrollTo(0, 0); }}>
-                {link}
+            {[['Privacy', 'privacy'], ['Terms', 'terms'], ['Contact', 'contact']].map(([label, tab]) => (
+              <button key={tab} className="lp-footer-link" onClick={() => goTab(tab)}>
+                {label}
               </button>
             ))}
           </div>
         </div>
       </footer>
+
+      {/* ── Floating Contact Us button ── */}
+      <button className="contact-float" onClick={() => goTab('contact')}>
+        <span className="contact-float-dot" />
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+        Contact Us
+      </button>
     </div>
   );
 }

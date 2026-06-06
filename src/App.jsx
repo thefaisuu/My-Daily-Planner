@@ -16,7 +16,7 @@ import AuthPages from './pages/AuthPages';
 import LandingPage from './pages/LandingPage';
 
 /* ─────────────────────────────────────────
-   Route map: URL path  ↔  app page name
+   Route maps
 ───────────────────────────────────────── */
 const NAV_ROUTES = {
   '/dashboard':     'Dashboard',
@@ -30,16 +30,25 @@ const NAV_ROUTES = {
   '/settings':      'Settings',
 };
 
-// Reverse map: page name → URL path
 const NAV_PATHS = Object.fromEntries(
   Object.entries(NAV_ROUTES).map(([path, name]) => [name, path])
 );
 
-// Page titles shown in the browser tab
+// All public (non-auth) routes that map to LandingPage tabs
+const PUBLIC_TAB_ROUTES = {
+  '/':         'landing',
+  '/privacy':  'privacy',
+  '/terms':    'terms',
+  '/contact':  'contact',
+};
+
 const PAGE_TITLES = {
   '/':              'My Daily Planner – Make Every Day Count',
   '/login':         'Sign In – My Daily Planner',
   '/signup':        'Create Account – My Daily Planner',
+  '/privacy':       'Privacy Policy – My Daily Planner',
+  '/terms':         'Terms of Service – My Daily Planner',
+  '/contact':       'Contact Us – My Daily Planner',
   '/dashboard':     'Dashboard – My Daily Planner',
   '/schedule':      'Schedule – My Daily Planner',
   '/habits':        'Habits – My Daily Planner',
@@ -64,7 +73,18 @@ function navigateTo(path, replace = false) {
   setPageTitle(path);
 }
 
-/* ── Programmatic synth chime sound ── */
+/* ── Determine initial public view from URL ── */
+function getInitialPublicView() {
+  const p = window.location.pathname;
+  if (p === '/login')   return 'login';
+  if (p === '/signup')  return 'signup';
+  if (p === '/privacy') return 'privacy';
+  if (p === '/terms')   return 'terms';
+  if (p === '/contact') return 'contact';
+  return 'landing';
+}
+
+/* ── Synth chime sound ── */
 const playNotificationSound = () => {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -75,23 +95,17 @@ const playNotificationSound = () => {
     osc1.frequency.setValueAtTime(587.33, now);
     gain1.gain.setValueAtTime(0.08, now);
     gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    osc1.connect(gain1);
-    gain1.connect(audioCtx.destination);
-    osc1.start(now);
-    osc1.stop(now + 0.25);
+    osc1.connect(gain1); gain1.connect(audioCtx.destination);
+    osc1.start(now); osc1.stop(now + 0.25);
     const osc2 = audioCtx.createOscillator();
     const gain2 = audioCtx.createGain();
     osc2.type = 'sine';
     osc2.frequency.setValueAtTime(880.00, now + 0.08);
     gain2.gain.setValueAtTime(0.12, now + 0.08);
     gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    osc2.connect(gain2);
-    gain2.connect(audioCtx.destination);
-    osc2.start(now + 0.08);
-    osc2.stop(now + 0.35);
-  } catch (e) {
-    console.warn('Failed to play notification audio:', e);
-  }
+    osc2.connect(gain2); gain2.connect(audioCtx.destination);
+    osc2.start(now + 0.08); osc2.stop(now + 0.35);
+  } catch (e) { console.warn('Failed to play notification audio:', e); }
 };
 
 function ToastNotification({ message, type, action, playSound, onDone }) {
@@ -146,7 +160,9 @@ function PageRenderer() {
   );
 }
 
-/* ── Main App ── */
+/* ══════════════════════════════════════════
+   Main App
+══════════════════════════════════════════ */
 export default function App() {
   const {
     user, setUser, authLoading,
@@ -155,27 +171,21 @@ export default function App() {
     activeNav, setActiveNav,
   } = useApp();
 
-  const getInitialAuthView = () => {
-    const p = window.location.pathname;
-    if (p === '/login') return 'login';
-    if (p === '/signup') return 'signup';
-    return null;
-  };
+  // Single state for everything shown when NOT logged in:
+  // 'landing' | 'login' | 'signup' | 'privacy' | 'terms' | 'contact'
+  const [publicView, setPublicView] = useState(getInitialPublicView);
 
-  const [authView, setAuthView] = useState(getInitialAuthView);
-
-  // ── Set title on mount for non-authed pages
+  // ── Keep title in sync with publicView (non-authed)
   useEffect(() => {
-    if (!user) {
-      if (authView) {
-        setPageTitle(authView === 'login' ? '/login' : '/signup');
-      } else {
-        setPageTitle('/');
-      }
-    }
-  }, [authView, user]);
+    if (user) return;
+    const pathMap = {
+      landing: '/', login: '/login', signup: '/signup',
+      privacy: '/privacy', terms: '/terms', contact: '/contact',
+    };
+    setPageTitle(pathMap[publicView] || '/');
+  }, [publicView, user]);
 
-  // ── When user logs in, sync URL from path or go to /dashboard
+  // ── When user logs in, sync URL from path or default to /dashboard
   useEffect(() => {
     if (!user) return;
     const path = window.location.pathname;
@@ -189,7 +199,7 @@ export default function App() {
     }
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Sync activeNav → URL + title
+  // ── Sync activeNav → URL + title (authed users)
   useEffect(() => {
     if (!user) return;
     const path = NAV_PATHS[activeNav] || '/dashboard';
@@ -200,17 +210,22 @@ export default function App() {
     }
   }, [activeNav, user]);
 
-  // ── Handle browser back/forward
+  // ── Browser back/forward button support
   useEffect(() => {
     const onPopState = () => {
       const path = window.location.pathname;
       setPageTitle(path);
+
       if (!user) {
-        if (path === '/login') setAuthView('login');
-        else if (path === '/signup') setAuthView('signup');
-        else setAuthView(null);
+        if (path === '/login')        setPublicView('login');
+        else if (path === '/signup')  setPublicView('signup');
+        else if (path === '/privacy') setPublicView('privacy');
+        else if (path === '/terms')   setPublicView('terms');
+        else if (path === '/contact') setPublicView('contact');
+        else                          setPublicView('landing');
         return;
       }
+
       const page = NAV_ROUTES[path];
       if (page) {
         setActiveNav(page);
@@ -223,25 +238,19 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, [user, setActiveNav]);
 
-  // ── Auth handlers
-  const handleLogin = useCallback(() => {
-    navigateTo('/login');
-    setAuthView('login');
-  }, []);
-
-  const handleSignup = useCallback(() => {
-    navigateTo('/signup');
-    setAuthView('signup');
-  }, []);
-
-  const handleAuthBack = useCallback(() => {
-    navigateTo('/');
-    setAuthView(null);
+  // ── Public navigation helpers (updates both URL and state atomically)
+  const goTo = useCallback((view) => {
+    const pathMap = {
+      landing: '/', login: '/login', signup: '/signup',
+      privacy: '/privacy', terms: '/terms', contact: '/contact',
+    };
+    navigateTo(pathMap[view] || '/');
+    setPublicView(view);
   }, []);
 
   const handleAuthSuccess = useCallback((usr) => {
     setUser(usr);
-    setAuthView(null);
+    setPublicView('landing');
     navigateTo('/dashboard', true);
   }, [setUser]);
 
@@ -260,26 +269,29 @@ export default function App() {
     );
   }
 
-  // ── Not logged in: landing or auth pages
+  // ── Not logged in
   if (!user) {
-    if (authView) {
+    if (publicView === 'login' || publicView === 'signup') {
       return (
         <AuthPages
-          initialView={authView}
+          initialView={publicView}
           onAuthSuccess={handleAuthSuccess}
-          onBack={handleAuthBack}
+          onBack={() => goTo('landing')}
         />
       );
     }
+    // Landing + legal pages (privacy/terms/contact handled inside LandingPage via tab)
     return (
       <LandingPage
-        onLogin={handleLogin}
-        onSignup={handleSignup}
+        activeTabOverride={publicView}         // 'landing' | 'privacy' | 'terms' | 'contact'
+        onTabChange={(tab) => goTo(tab)}       // LandingPage calls this for footer links
+        onLogin={() => goTo('login')}
+        onSignup={() => goTo('signup')}
       />
     );
   }
 
-  // ── Dashboard shell
+  // ── Authenticated dashboard
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
@@ -316,68 +328,34 @@ export default function App() {
 function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText, cancelText, isDanger }) {
   const { darkMode } = useApp();
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
-        onClick={onCancel}
-      />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in" onClick={onCancel} />
       <div
         className={`relative border shadow-2xl rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 z-10 scale-in-center transition-all ${
           darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-800'
         }`}
-        role="dialog"
-        aria-modal="true"
+        role="dialog" aria-modal="true"
       >
-        <button
-          onClick={onCancel}
-          className={`absolute top-5 right-5 transition-colors cursor-pointer ${
-            darkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
-          }`}
-        >
+        <button onClick={onCancel} className={`absolute top-5 right-5 transition-colors cursor-pointer ${darkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`}>
           <X size={18} strokeWidth={1.5} />
         </button>
-
         <div className="flex flex-col items-center text-center space-y-4">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md ${
             isDanger
-              ? darkMode
-                ? 'bg-rose-950/40 text-rose-400 border border-rose-900/50'
-                : 'bg-rose-50 text-rose-500 border border-rose-100'
-              : darkMode
-                ? 'bg-blue-950/40 text-blue-400 border border-blue-900/50'
-                : 'bg-blue-50 text-[#4F7CFF] border border-blue-100'
+              ? darkMode ? 'bg-rose-950/40 text-rose-400 border border-rose-900/50' : 'bg-rose-50 text-rose-500 border border-rose-100'
+              : darkMode ? 'bg-blue-950/40 text-blue-400 border border-blue-900/50' : 'bg-blue-50 text-[#4F7CFF] border border-blue-100'
           }`}>
             {isDanger ? <AlertTriangle size={28} strokeWidth={1.5} /> : <Info size={28} strokeWidth={1.5} />}
           </div>
-          <h3 className={`text-lg font-black tracking-tight ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>
-            {title}
-          </h3>
-          <p className={`text-sm font-semibold leading-relaxed max-w-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            {message}
-          </p>
+          <h3 className={`text-lg font-black tracking-tight ${darkMode ? 'text-slate-100' : 'text-slate-800'}`}>{title}</h3>
+          <p className={`text-sm font-semibold leading-relaxed max-w-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{message}</p>
         </div>
-
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
-          <button
-            onClick={onCancel}
-            className={`flex-1 py-3 px-4 rounded-2xl border-2 font-bold text-sm transition-all text-center cursor-pointer ${
-              darkMode
-                ? 'border-slate-800 text-slate-400 hover:bg-slate-800'
-                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-          >
+          <button onClick={onCancel} className={`flex-1 py-3 px-4 rounded-2xl border-2 font-bold text-sm transition-all text-center cursor-pointer ${darkMode ? 'border-slate-800 text-slate-400 hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
             {cancelText || 'Cancel'}
           </button>
-          <button
-            onClick={onConfirm}
-            className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center cursor-pointer ${
-              isDanger
-                ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100/50'
-                : 'bg-gradient-to-r from-[#4F7CFF] to-[#3B66E8] hover:shadow-blue-100/50'
-            }`}
-          >
+          <button onClick={onConfirm} className={`flex-1 py-3 px-4 rounded-2xl text-white font-bold text-sm shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all text-center cursor-pointer ${isDanger ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-100/50' : 'bg-gradient-to-r from-[#4F7CFF] to-[#3B66E8] hover:shadow-blue-100/50'}`}>
             {confirmText || 'Confirm'}
           </button>
         </div>
