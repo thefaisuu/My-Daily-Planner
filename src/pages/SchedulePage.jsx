@@ -834,7 +834,7 @@ export default function SchedulePage() {
           }
         });
         if (changed) {
-          saveSchedule(selectedDate, localSlots);
+          localStorage.setItem('planner_schedule', JSON.stringify(localSlots));
           window.dispatchEvent(new Event('planner-data-changed'));
         }
       }
